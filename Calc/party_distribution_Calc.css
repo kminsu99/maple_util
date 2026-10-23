@@ -85,7 +85,43 @@ header p {
     min-width: 180px;
 }
 
+.price-input-row {
+    display: flex;
+    gap: 8px;
+}
+
+.mode-btn {
+    flex: 0 0 auto;
+    min-width: 56px;
+    padding: 0 12px;
+    background: rgba(240, 180, 41, 0.12);
+    border: 1px solid rgba(240, 180, 41, 0.4);
+    border-radius: 10px;
+    color: var(--accent);
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.mode-btn:hover {
+    background: rgba(240, 180, 41, 0.22);
+}
+
+.mode-btn.raw {
+    background: rgba(74, 158, 255, 0.1);
+    border-color: rgba(74, 158, 255, 0.35);
+    color: var(--blue);
+}
+
+.mode-btn.raw:hover {
+    background: rgba(74, 158, 255, 0.2);
+}
+
 .price-input-wrap input {
+    flex: 1;
+    min-width: 0;
     width: 100%;
     background: var(--surface2);
     border: 1px solid var(--border);

@@ -21,7 +21,10 @@
     <div class="sell-section">
         <div class="sell-label">판매 가격</div>
         <div class="price-input-wrap">
-            <input type="number" id="sellPrice" placeholder="금액 입력" min="0" oninput="calc()">
+            <div class="price-input-row">
+                <button class="mode-btn" id="modeBtn" onclick="toggleMode()" title="입력 모드 변경">억</button>
+                <input type="number" id="sellPrice" placeholder="억 단위 입력 (예: 1.5)" min="0" step="any" oninput="calc()">
+            </div>
             <div class="meso-display" id="mesoDisplay"></div>
         </div>
 
@@ -88,6 +91,37 @@
         let memberData = []; // [{id, otherServer, mvp}]
 
         const MAX_MEMBERS = 5;
+        const UK = 100000000;
+
+        // 입력 모드: 'uk' = 억 단위(소수점 허용), 'raw' = 메소 그대로
+        let inputMode = 'uk';
+
+        function getSellPrice() {
+            const v = document.getElementById('sellPrice').value;
+            if (inputMode === 'uk') return Math.round((parseFloat(v) || 0) * UK);
+            return parseInt(v) || 0;
+        }
+
+        function toggleMode() {
+            const input = document.getElementById('sellPrice');
+            const price = getSellPrice();
+            inputMode = inputMode === 'uk' ? 'raw' : 'uk';
+            const btn = document.getElementById('modeBtn');
+            if (inputMode === 'uk') {
+                btn.textContent = '억';
+                btn.classList.remove('raw');
+                input.step = 'any';
+                input.placeholder = '억 단위 입력 (예: 1.5)';
+                input.value = price > 0 ? String(price / UK) : '';
+            } else {
+                btn.textContent = '메소';
+                btn.classList.add('raw');
+                input.step = '1';
+                input.placeholder = '금액 입력';
+                input.value = price > 0 ? String(price) : '';
+            }
+            calc();
+        }
 
         function addMember() {
             if (memberData.length >= MAX_MEMBERS) return;
@@ -182,10 +216,12 @@
         }
 
         function calc() {
-            const sellPrice = parseInt(document.getElementById('sellPrice').value) || 0;
-            // 억 단위 메소 표시
+            const sellPrice = getSellPrice();
+            // 억 모드: 메소 환산 표시 / 메소 모드: 억 단위 표시
             const mesoEl = document.getElementById('mesoDisplay');
-            if (sellPrice > 0) {
+            if (sellPrice > 0 && inputMode === 'uk') {
+                mesoEl.innerHTML = `<span class="meso-val">${fmt(sellPrice)}</span> <span class="meso-unit">메소</span>`;
+            } else if (sellPrice > 0) {
                 const uk = (sellPrice / 100000000).toFixed(4).replace(/\.?0+$/, '');
                 mesoEl.innerHTML = `<span class="meso-val">${uk}억</span> <span class="meso-unit">메소</span>`;
             } else {
@@ -237,9 +273,6 @@
                 // T = floor(leaderReceive / (1 + sumInvKeep))
                 T = Math.floor(leaderReceive / (1 + sumInvKeep));
             }
-
-            // 파티장 실제 수령
-            const leaderActual = totalMembers === 0 ? leaderReceive : T;
 
             // 파티원 transfer, receive
             const memberResults = memberFees.map(m => {
