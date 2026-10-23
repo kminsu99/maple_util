@@ -42,18 +42,29 @@
                 <label for="weeklyNormal">주간 일반 경험치</label>
                 <input type="number" id="weeklyNormal" min="0" value="2000" oninput="calc()">
             </div>
+            <!-- 주간 보스: 지역(아케인/그란디스) → 보스(난이도·경험치) -->
             <div class="field">
-                <label for="boss1">주간 보스 처치 1</label>
-                <select id="boss1" class="boss-select" onchange="calc()"></select>
+                <label for="boss1-region">주간 보스 처치 1</label>
+                <div class="boss-row">
+                    <select id="boss1-region" class="boss-select" onchange="onRegionChange(1)"></select>
+                    <select id="boss1-boss" class="boss-select" onchange="calc()"></select>
+                </div>
             </div>
             <div class="field">
-                <label for="boss2">주간 보스 처치 2</label>
-                <select id="boss2" class="boss-select" onchange="calc()"></select>
+                <label for="boss2-region">주간 보스 처치 2</label>
+                <div class="boss-row">
+                    <select id="boss2-region" class="boss-select" onchange="onRegionChange(2)"></select>
+                    <select id="boss2-boss" class="boss-select" onchange="calc()"></select>
+                </div>
             </div>
             <div class="field">
-                <label for="boss3">주간 보스 처치 3</label>
-                <select id="boss3" class="boss-select" onchange="calc()"></select>
+                <label for="boss3-region">주간 보스 처치 3</label>
+                <div class="boss-row">
+                    <select id="boss3-region" class="boss-select" onchange="onRegionChange(3)"></select>
+                    <select id="boss3-boss" class="boss-select" onchange="calc()"></select>
+                </div>
             </div>
+            <button type="button" class="table-btn" onclick="openBossTable()">보스 경험치 표 보기</button>
         </section>
 
         <!-- 결과 -->
@@ -110,9 +121,37 @@
         </section>
     </div>
 
+    <footer class="source">
+        ※ 메이플스토리 공식 홈페이지 :
+        <a href="https://maplestory.nexon.com/Guide/N23GameInformation/Articles/408" target="_blank"
+            rel="noopener">유니온 아티팩트</a>
+    </footer>
+
+    <!-- 보스 경험치 표 이미지 -->
+    <dialog class="img-modal" id="bossTableModal" onclick="if (event.target === this) this.close()">
+        <button type="button" class="img-modal-close" onclick="this.parentElement.close()" title="닫기">×</button>
+        <img src="data/artifact_boss_exp.png" alt="주간 보스 처치 경험치 표">
+    </dialog>
+
     <script>
         const MAX_LEVEL = ARTIFACT_LEVEL_EXP[ARTIFACT_LEVEL_EXP.length - 1].level;
         const STORAGE_KEY = 'unionArtifactCalc';
+        const BOSS_SLOTS = [1, 2, 3];
+
+        // 지역 구분 기준: 노멀 선택받은 세렌 경험치
+        // 아케인 = 기준 미만, 그란디스 = 기준 이상 (노멀 세렌 포함)
+        const SEREN_EXP = ARTIFACT_BOSS_EXP.find(b => b.boss === '선택받은 세렌' && b.difficulty === '노멀').exp;
+
+        function regionOf(b) {
+            return b.exp < SEREN_EXP ? 'arcane' : 'grandis';
+        }
+
+        // 지역별 보스 목록 (데이터 인덱스, 경험치 오름차순)
+        const BOSS_BY_REGION = { arcane: [], grandis: [] };
+        ARTIFACT_BOSS_EXP
+            .map((b, i) => i)
+            .sort((a, b) => ARTIFACT_BOSS_EXP[a].exp - ARTIFACT_BOSS_EXP[b].exp)
+            .forEach(i => BOSS_BY_REGION[regionOf(ARTIFACT_BOSS_EXP[i])].push(i));
 
         // 레벨 N에 도달하기 위한 누적 경험치 = 1 ~ N-1 레벨 needExp 합
         // (데이터의 totalExp 열은 45레벨부터 오차가 있어 사용하지 않음)
@@ -150,12 +189,34 @@
             const cur = document.getElementById('curLevel');
             for (let lv = 1; lv <= MAX_LEVEL; lv++) cur.add(new Option(`Lv.${lv}`, lv));
 
-            document.querySelectorAll('.boss-select').forEach(sel => {
-                sel.add(new Option('선택 안 함', ''));
-                ARTIFACT_BOSS_EXP.forEach((b, i) => {
-                    sel.add(new Option(`${b.difficulty} ${b.boss} (${fmt(b.exp)})`, i));
-                });
+            BOSS_SLOTS.forEach(n => {
+                const region = document.getElementById(`boss${n}-region`);
+                region.add(new Option('선택 안 함', ''));
+                region.add(new Option('아케인', 'arcane'));
+                region.add(new Option('그란디스', 'grandis'));
+                fillBosses(n);
             });
+        }
+
+        function fillBosses(n) {
+            const region = document.getElementById(`boss${n}-region`).value;
+            const sel = document.getElementById(`boss${n}-boss`);
+            sel.innerHTML = '';
+            sel.add(new Option('보스 선택', ''));
+            if (region) BOSS_BY_REGION[region].forEach(i => {
+                const b = ARTIFACT_BOSS_EXP[i];
+                sel.add(new Option(`${b.difficulty} ${b.boss} (${fmt(b.exp)})`, i));
+            });
+            sel.disabled = !region;
+        }
+
+        function openBossTable() {
+            document.getElementById('bossTableModal').showModal();
+        }
+
+        function onRegionChange(n) {
+            fillBosses(n);
+            calc();
         }
 
         function fillTargetLevels() {
@@ -201,8 +262,9 @@
 
             const weeklyNormal = Math.max(0, parseInt(document.getElementById('weeklyNormal').value) || 0);
             let bossExp = 0;
-            document.querySelectorAll('.boss-select').forEach(sel => {
-                if (sel.value !== '') bossExp += ARTIFACT_BOSS_EXP[sel.value].exp;
+            BOSS_SLOTS.forEach(n => {
+                const v = document.getElementById(`boss${n}-boss`).value;
+                if (v !== '') bossExp += ARTIFACT_BOSS_EXP[v].exp;
             });
             const weeklyExp = weeklyNormal + bossExp;
 
@@ -243,12 +305,21 @@
             saveInputs();
         }
 
-        const INPUT_IDS = ['curLevel', 'curExp', 'targetLevel', 'weeklyNormal', 'boss1', 'boss2', 'boss3'];
+        const INPUT_IDS = ['curLevel', 'curExp', 'targetLevel', 'weeklyNormal'];
+        const BOSS_PARTS = ['region', 'boss'];
 
         function saveInputs() {
             const data = {};
             INPUT_IDS.forEach(id => data[id] = document.getElementById(id).value);
+            BOSS_SLOTS.forEach(n => BOSS_PARTS.forEach(p => {
+                data[`boss${n}-${p}`] = document.getElementById(`boss${n}-${p}`).value;
+            }));
             try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch (e) { }
+        }
+
+        function setSelect(el, value) {
+            el.value = value;
+            if (el.selectedIndex < 0) el.selectedIndex = 0;
         }
 
         function loadInputs() {
@@ -260,8 +331,14 @@
             INPUT_IDS.filter(id => id !== 'curLevel').forEach(id => {
                 const el = document.getElementById(id);
                 if (data[id] === undefined) return;
-                el.value = data[id];
-                if (el.tagName === 'SELECT' && el.selectedIndex < 0) el.selectedIndex = 0;
+                if (el.tagName === 'SELECT') setSelect(el, data[id]);
+                else el.value = data[id];
+            });
+            // 보스는 지역 → 보스 순서로 목록을 채우며 복원
+            BOSS_SLOTS.forEach(n => {
+                setSelect(document.getElementById(`boss${n}-region`), data[`boss${n}-region`] || '');
+                fillBosses(n);
+                setSelect(document.getElementById(`boss${n}-boss`), data[`boss${n}-boss`] || '');
             });
         }
 

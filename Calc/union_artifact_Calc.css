@@ -59,7 +59,7 @@ header p {
     max-width: 960px;
     margin: 0 auto;
     display: grid;
-    grid-template-columns: minmax(0, 340px) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 460px) minmax(0, 1fr);
     gap: 16px;
     align-items: start;
 }
@@ -134,6 +134,23 @@ header p {
     color: var(--blue) !important;
 }
 
+/* 주간 보스: 지역 | 보스(난이도·경험치) */
+.boss-row {
+    display: grid;
+    grid-template-columns: 0.8fr 2.7fr;
+    gap: 6px;
+}
+
+.boss-row select {
+    padding: 10px 8px;
+    font-size: 0.8rem;
+}
+
+.boss-row select:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
 .hint {
     margin-top: 5px;
     font-family: 'JetBrains Mono', monospace;
@@ -145,6 +162,80 @@ header p {
 .hint.warn {
     color: var(--red);
     font-family: 'Noto Sans KR', sans-serif;
+}
+
+.table-btn {
+    width: 100%;
+    margin-top: 4px;
+    padding: 10px 12px;
+    background: rgba(74, 158, 255, 0.08);
+    border: 1px dashed rgba(74, 158, 255, 0.4);
+    border-radius: 10px;
+    color: var(--blue);
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.table-btn:hover {
+    background: rgba(74, 158, 255, 0.16);
+}
+
+/* ── 보스 경험치 표 모달 ── */
+.img-modal {
+    margin: auto;
+    padding: 0;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: var(--surface);
+    max-width: min(946px, 94vw);
+    max-height: 90vh;
+    overflow: auto;
+}
+
+.img-modal::backdrop {
+    background: rgba(5, 6, 9, 0.75);
+}
+
+.img-modal img {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.img-modal-close {
+    position: sticky;
+    top: 8px;
+    float: right;
+    margin: 8px 8px -42px 0;
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: rgba(18, 21, 28, 0.85);
+    color: var(--text-bright);
+    font-size: 1.2rem;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.img-modal-close:hover {
+    background: rgba(231, 76, 60, 0.3);
+}
+
+/* ── 출처 ── */
+.source {
+    max-width: 960px;
+    margin: 28px auto 0;
+    text-align: center;
+    font-size: 0.75rem;
+    color: var(--muted);
+}
+
+.source a {
+    color: var(--blue);
 }
 
 /* ── 결과 ── */
@@ -249,5 +340,12 @@ header p {
     .schedule th,
     .schedule td {
         padding: 6px 4px;
+    }
+}
+
+/* 좁은 화면: 지역은 윗줄, 보스는 아랫줄 전체 */
+@media (max-width: 480px) {
+    .boss-row {
+        grid-template-columns: 1fr;
     }
 }
