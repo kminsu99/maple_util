@@ -1,0 +1,13 @@
+.git/
+.env
+
+#test용
+test/
+test
+input
+ouput
+memo
+gitcmd
+
+#maple util repo
+maple_util/
