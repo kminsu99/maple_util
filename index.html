@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>maple_util</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=Noto+Sans+KR:wght@400;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg: #eaf3fb;
+            --surface: #ffffff;
+            --ink: #1d2a3a;
+            --muted: #5a6b7d;
+            --accent: #f2a516;
+            --line: #c9dbea;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg: #142030;
+                --surface: #1c2b3e;
+                --ink: #e8eef5;
+                --muted: #9fb1c4;
+                --accent: #ffbe3d;
+                --line: #2e4258;
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: var(--bg);
+            color: var(--ink);
+            font-family: "Noto Sans KR", system-ui, sans-serif;
+            display: flex;
+            justify-content: center;
+            padding: 3rem 1.25rem;
+        }
+
+        main {
+            width: 100%;
+            max-width: 560px;
+        }
+
+        h1 {
+            font-family: "Do Hyeon", "Noto Sans KR", sans-serif;
+            font-weight: 400;
+            font-size: 2.6rem;
+            margin: 0 0 .25rem;
+        }
+
+        p.lead {
+            color: var(--muted);
+            margin: 0 0 2rem;
+        }
+
+        nav ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: grid;
+            gap: .75rem;
+        }
+
+        nav a {
+            display: block;
+            padding: 1.1rem 1.25rem;
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-left: 6px solid var(--accent);
+            border-radius: 6px;
+            color: var(--ink);
+            text-decoration: none;
+        }
+
+        nav a:hover {
+            border-color: var(--accent);
+        }
+
+        nav a:focus-visible {
+            outline: 3px solid var(--accent);
+            outline-offset: 2px;
+        }
+
+        nav strong {
+            display: block;
+            font-size: 1.1rem;
+        }
+
+        nav span {
+            color: var(--muted);
+            font-size: .9rem;
+        }
+
+        footer {
+            margin-top: 2.5rem;
+            color: var(--muted);
+            font-size: .85rem;
+        }
+    </style>
+</head>
+
+<body>
+    <main>
+        <h1>maple_util</h1>
+        <p class="lead">메이플 플레이에 쓰는 도구 모음</p>
+
+        <nav>
+            <ul>
+                <li>
+                    <a href="Calc/party_distribution_Calc.html">
+                        <strong>파티 분배 계산기</strong>
+                        <span>파티원별 분배 금액 계산</span>
+                    </a>
+                </li>
+                <!-- 메뉴 추가 시 위 <li>를 복사해서 사용 -->
+            </ul>
+        </nav>
+
+        <footer>KMS</footer>
+    </main>
+</body>
+
+</html>
