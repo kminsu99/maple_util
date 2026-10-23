@@ -1,0 +1,67 @@
+/* ── 계산기 공통 스타일 (색상 변수 · 초기화 · 헤더 · 노트) ── */
+:root {
+    --bg: #0a0c10;
+    --surface: #12151c;
+    --surface2: #1a1e28;
+    --border: #252a38;
+    --accent: #f0b429;
+    --accent2: #e86b2b;
+    --blue: #4a9eff;
+    --green: #2ecc71;
+    --red: #e74c3c;
+    --muted: #5a6480;
+    --text: #c8d0e8;
+    --text-bright: #eef2ff;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans KR', sans-serif;
+    min-height: 100vh;
+    padding: 32px 16px 60px;
+    background-image:
+        radial-gradient(ellipse 60% 40% at 20% 10%, rgba(240, 180, 41, 0.06) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 30% at 80% 80%, rgba(74, 158, 255, 0.05) 0%, transparent 60%);
+}
+
+header {
+    text-align: center;
+    margin-bottom: 36px;
+}
+
+header h1 {
+    font-size: 2rem;
+    font-weight: 900;
+    color: var(--text-bright);
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+}
+
+header h1 span {
+    color: var(--accent);
+}
+
+header p {
+    margin-top: 8px;
+    font-size: 0.82rem;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+}
+
+.note {
+    margin-top: 14px;
+    font-size: 0.73rem;
+    color: var(--muted);
+    line-height: 1.7;
+}
+
+.note b {
+    color: var(--accent);
+}

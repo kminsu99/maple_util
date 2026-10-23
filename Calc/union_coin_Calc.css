@@ -1,0 +1,222 @@
+/* ── 카드 ── */
+.card {
+    max-width: 560px;
+    margin: 0 auto 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px 26px;
+}
+
+/* ── 입력 ── */
+.field {
+    margin-bottom: 16px;
+}
+
+.field label {
+    display: block;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: var(--text);
+    margin-bottom: 6px;
+}
+
+.input-unit {
+    position: relative;
+}
+
+.input-unit input {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 44px 12px 16px;
+    font-size: 1.3rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    color: var(--accent);
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.input-unit input:focus {
+    border-color: var(--accent);
+}
+
+.input-unit input::placeholder {
+    color: var(--muted);
+    font-size: 0.9rem;
+}
+
+.input-unit .unit {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--muted);
+    pointer-events: none;
+}
+
+.hint {
+    margin-top: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--accent2);
+    min-height: 1.2em;
+}
+
+/* ── 결과 ── */
+.result-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.result-item {
+    background: var(--surface2);
+    border-radius: 10px;
+    padding: 14px 16px;
+}
+
+.rlabel {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    margin-bottom: 4px;
+}
+
+.rval {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--green);
+}
+
+/* ── 구매 항목 (유부 / 유행 / 유힘) ── */
+.item+.item {
+    margin-top: 18px;
+    padding-top: 18px;
+    border-top: 1px solid var(--border);
+}
+
+/* 항목 아이콘: 이름 자리(왼쪽 칸)에 표시 */
+.item-icon {
+    display: block;
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+}
+
+.item-body {
+    display: grid;
+    grid-template-columns: 56px minmax(0, 1fr);
+    gap: 12px;
+    align-items: center;
+}
+
+.item-name {
+    display: flex;
+    justify-content: center;
+}
+
+.tier-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.tier-row {
+    display: grid;
+    grid-template-columns: 48px minmax(0, 1fr) 64px;
+    gap: 10px;
+    align-items: center;
+}
+
+.tier-label {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.tier-range {
+    width: 100%;
+    accent-color: var(--accent);
+    cursor: pointer;
+}
+
+.tier-count {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 6px 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--accent);
+    text-align: right;
+    outline: none;
+}
+
+.tier-count:focus {
+    border-color: var(--accent);
+}
+
+.item-cost {
+    margin-top: 10px;
+    text-align: right;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--muted);
+}
+
+.item-cost span {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1rem;
+    color: var(--accent2);
+}
+
+/* ── 남는 코인량 ── */
+.remain-card {
+    text-align: center;
+}
+
+.remain-val {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--green);
+}
+
+.remain-val.minus {
+    color: var(--red);
+}
+
+.remain-detail {
+    margin-top: 4px;
+    font-family: 'JetBrains Mono', 'Noto Sans KR', monospace;
+    font-size: 0.75rem;
+    color: var(--muted);
+}
+
+@media (max-width: 600px) {
+    header h1 {
+        font-size: 1.5rem;
+    }
+
+    .card {
+        padding: 18px;
+    }
+
+    .item-body {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .item-name {
+        justify-content: flex-start;
+    }
+}

@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>유니온 코인 계산기</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="common.css">
+    <link rel="stylesheet" href="union_coin_Calc.css">
+</head>
+
+<body>
+    <header>
+        <h1>유니온 <span>코인</span> 계산기</h1>
+        <p>전투력 기준 획득 코인 · 구매 비용 · 남는 코인</p>
+    </header>
+
+    <!-- 전투력 / 획득 코인 -->
+    <section class="card">
+        <div class="field">
+            <label for="power">전투력</label>
+            <div class="input-unit">
+                <input type="number" id="power" placeholder="억 단위 입력 (예: 12.5)" min="0" step="any" oninput="calc()">
+                <span class="unit">억</span>
+            </div>
+            <div class="hint" id="powerHint"></div>
+        </div>
+
+        <div class="result-grid">
+            <div class="result-item">
+                <div class="rlabel">하루 획득 코인</div>
+                <div class="rval" id="resDaily">—</div>
+            </div>
+            <div class="result-item">
+                <div class="rlabel">주간 획득 코인</div>
+                <div class="rval" id="resWeekly">—</div>
+            </div>
+        </div>
+
+        <div class="note">※ 하루 코인 = 전투력 × 8.64 × 10<sup>-7</sup> · 주간 코인 = 하루 코인 × 7</div>
+    </section>
+
+    <!-- 구매 항목 (유부 / 유행) -->
+    <section class="card" id="itemsCard"></section>
+
+    <!-- 남는 코인량 -->
+    <section class="card remain-card">
+        <div class="rlabel">남는 코인량</div>
+        <div class="remain-val" id="resRemain">—</div>
+        <div class="remain-detail" id="resRemainDetail"></div>
+    </section>
+
+    <script>
+        const UK = 100000000;
+        const COIN_RATE = 8.64e-7; // 전투력 1당 하루 코인
+        const MAX_COUNT = 20;
+
+        // 표시 순서대로의 단계
+        const TIERS = [3, 2, 1];
+
+        // 항목별 단계당 개당 비용, 아이콘
+        const ITEMS = [
+            { key: 'yubu', name: '유부', icon: 'data/union_buff_meso.webp', costs: { 3: 70, 2: 50, 1: 30 } },
+            { key: 'yuhaeng', name: '유행', icon: 'data/union_buff_drop.webp', costs: { 3: 70, 2: 50, 1: 30 } },
+            { key: 'yuhim', name: '유힘', icon: 'data/union_buff_stat.webp', costs: { 3: 30, 2: 20, 1: 10 } },
+        ];
+
+        function fmt(n, digits = 0) {
+            return n.toLocaleString('ko-KR', { maximumFractionDigits: digits });
+        }
+
+        function clampCount(v) {
+            const n = parseInt(v);
+            if (isNaN(n)) return 0;
+            return Math.min(MAX_COUNT, Math.max(0, n));
+        }
+
+        function buildItems() {
+            const card = document.getElementById('itemsCard');
+            ITEMS.forEach(item => {
+                const block = document.createElement('div');
+                block.className = 'item';
+
+                const rows = TIERS.map(lv => {
+                    const id = `${item.key}-${lv}`;
+                    return `
+                <div class="tier-row">
+                    <span class="tier-label">${lv}단계</span>
+                    <input type="range" class="tier-range" id="${id}-range" min="0" max="${MAX_COUNT}" step="1" value="0">
+                    <input type="number" class="tier-count" id="${id}-count" min="0" max="${MAX_COUNT}" step="1" value="0">
+                </div>`;
+                }).join('');
+
+                block.innerHTML = `
+            <div class="item-body">
+                <div class="item-name">
+                    <img class="item-icon" src="${item.icon}" alt="${item.name}" title="${item.name}" width="40" height="40">
+                </div>
+                <div class="tier-list">${rows}</div>
+            </div>
+            <div class="item-cost">비용 <span id="${item.key}-cost">0</span></div>`;
+                card.appendChild(block);
+
+                TIERS.forEach(lv => bindTier(`${item.key}-${lv}`));
+            });
+        }
+
+        // 막대기 ↔ 입력칸 동기화
+        function bindTier(id) {
+            const range = document.getElementById(`${id}-range`);
+            const count = document.getElementById(`${id}-count`);
+
+            range.addEventListener('input', () => {
+                count.value = range.value;
+                calc();
+            });
+            count.addEventListener('input', () => {
+                range.value = clampCount(count.value);
+                calc();
+            });
+            count.addEventListener('change', () => {
+                count.value = clampCount(count.value);
+            });
+            // 마우스 휠로 1씩 조절
+            range.addEventListener('wheel', e => {
+                e.preventDefault();
+                const v = clampCount(parseInt(range.value) + (e.deltaY < 0 ? 1 : -1));
+                range.value = v;
+                count.value = v;
+                calc();
+            }, { passive: false });
+        }
+
+        function getCount(id) {
+            return clampCount(document.getElementById(`${id}-range`).value);
+        }
+
+        function calc() {
+            const power = Math.round((parseFloat(document.getElementById('power').value) || 0) * UK);
+            const daily = power * COIN_RATE;
+            const weekly = daily * 7;
+
+            document.getElementById('powerHint').textContent = power > 0 ? `= ${fmt(power)}` : '';
+            document.getElementById('resDaily').textContent = power > 0 ? fmt(daily, 2) : '—';
+            document.getElementById('resWeekly').textContent = power > 0 ? fmt(weekly, 2) : '—';
+
+            let totalCost = 0;
+            ITEMS.forEach(item => {
+                const cost = TIERS.reduce((acc, lv) => acc + getCount(`${item.key}-${lv}`) * item.costs[lv], 0);
+                document.getElementById(`${item.key}-cost`).textContent = fmt(cost);
+                totalCost += cost;
+            });
+
+            const remain = weekly - totalCost;
+            const remainEl = document.getElementById('resRemain');
+            remainEl.textContent = fmt(remain, 2);
+            remainEl.classList.toggle('minus', remain < 0);
+            document.getElementById('resRemainDetail').textContent =
+                `주간 ${fmt(weekly, 2)} − 사용 ${fmt(totalCost)}`;
+        }
+
+        buildItems();
+        calc();
+    </script>
+</body>
+
+</html>
