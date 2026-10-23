@@ -1,0 +1,253 @@
+:root {
+    --bg: #0a0c10;
+    --surface: #12151c;
+    --surface2: #1a1e28;
+    --border: #252a38;
+    --accent: #f0b429;
+    --accent2: #e86b2b;
+    --blue: #4a9eff;
+    --green: #2ecc71;
+    --red: #e74c3c;
+    --muted: #5a6480;
+    --text: #c8d0e8;
+    --text-bright: #eef2ff;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans KR', sans-serif;
+    min-height: 100vh;
+    padding: 32px 16px 60px;
+    background-image:
+        radial-gradient(ellipse 60% 40% at 20% 10%, rgba(240, 180, 41, 0.06) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 30% at 80% 80%, rgba(74, 158, 255, 0.05) 0%, transparent 60%);
+}
+
+header {
+    text-align: center;
+    margin-bottom: 36px;
+}
+
+header h1 {
+    font-size: 2rem;
+    font-weight: 900;
+    color: var(--text-bright);
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+}
+
+header h1 span {
+    color: var(--accent);
+}
+
+header p {
+    margin-top: 8px;
+    font-size: 0.82rem;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+}
+
+/* ── 레이아웃 ── */
+.layout {
+    max-width: 960px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: minmax(0, 340px) minmax(0, 1fr);
+    gap: 16px;
+    align-items: start;
+}
+
+.card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 22px 24px;
+}
+
+.card h2 {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    margin-bottom: 14px;
+}
+
+.card h2:not(:first-child) {
+    margin-top: 22px;
+    padding-top: 18px;
+    border-top: 1px solid var(--border);
+}
+
+/* ── 입력 ── */
+.field {
+    margin-bottom: 12px;
+}
+
+.field label {
+    display: block;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: var(--text);
+    margin-bottom: 5px;
+}
+
+.field input,
+.field select {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-size: 0.95rem;
+    font-family: 'JetBrains Mono', 'Noto Sans KR', monospace;
+    font-weight: 700;
+    color: var(--accent);
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.field select {
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 0.88rem;
+    cursor: pointer;
+}
+
+.field select option {
+    background: var(--surface2);
+    color: var(--text);
+}
+
+.field input:focus,
+.field select:focus {
+    border-color: var(--accent);
+}
+
+.boss-select {
+    color: var(--blue) !important;
+}
+
+.hint {
+    margin-top: 5px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--muted);
+    min-height: 1.2em;
+}
+
+.hint.warn {
+    color: var(--red);
+    font-family: 'Noto Sans KR', sans-serif;
+}
+
+/* ── 결과 ── */
+.result-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.result-item {
+    background: var(--surface2);
+    border-radius: 10px;
+    padding: 12px 14px;
+}
+
+.result-item.wide {
+    grid-column: 1 / -1;
+}
+
+.rlabel {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    margin-bottom: 4px;
+}
+
+.rval {
+    font-family: 'JetBrains Mono', 'Noto Sans KR', monospace;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-bright);
+}
+
+.rval.accent {
+    color: var(--accent2);
+}
+
+.rval.big {
+    font-size: 1.25rem;
+    color: var(--green);
+}
+
+.note {
+    margin-top: 14px;
+    font-size: 0.73rem;
+    color: var(--muted);
+    line-height: 1.7;
+}
+
+/* ── 레벨별 일정 ── */
+.schedule {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'JetBrains Mono', 'Noto Sans KR', monospace;
+    font-size: 0.8rem;
+}
+
+.schedule th {
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: var(--muted);
+    text-align: right;
+    padding: 6px 8px;
+    border-bottom: 1px solid var(--border);
+}
+
+.schedule td {
+    text-align: right;
+    padding: 7px 8px;
+    border-bottom: 1px solid var(--surface2);
+}
+
+.schedule th:first-child,
+.schedule td:first-child {
+    text-align: left;
+}
+
+.schedule tr.target td {
+    color: var(--accent);
+    font-weight: 700;
+}
+
+@media (max-width: 760px) {
+    .layout {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    header h1 {
+        font-size: 1.5rem;
+    }
+
+    .card {
+        padding: 18px;
+    }
+
+    .schedule {
+        font-size: 0.72rem;
+    }
+
+    .schedule th,
+    .schedule td {
+        padding: 6px 4px;
+    }
+}

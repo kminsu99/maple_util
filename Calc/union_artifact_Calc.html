@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>유니온 아티팩트 계산기</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="union_artifact_Calc.css">
+    <script src="data/artifact_boss_exp.js"></script>
+    <script src="data/artifact_user_exp.js"></script>
+</head>
+
+<body>
+    <header>
+        <h1>유니온 <span>아티팩트</span> 계산기</h1>
+        <p>목표 레벨까지 필요 경험치 · 남은 주 · 예상 날짜</p>
+    </header>
+
+    <div class="layout">
+        <!-- 입력 -->
+        <section class="card">
+            <h2>현재 상태</h2>
+            <div class="field">
+                <label for="curLevel">현재 레벨</label>
+                <select id="curLevel" onchange="onLevelChange()"></select>
+            </div>
+            <div class="field">
+                <label for="curExp">현재 경험치</label>
+                <input type="number" id="curExp" min="0" value="0" oninput="calc()">
+                <div class="hint" id="curExpHint"></div>
+            </div>
+            <div class="field">
+                <label for="targetLevel">목표 레벨</label>
+                <select id="targetLevel" onchange="calc()"></select>
+            </div>
+
+            <h2>주간 획득</h2>
+            <div class="field">
+                <label for="weeklyNormal">주간 일반 경험치</label>
+                <input type="number" id="weeklyNormal" min="0" value="2000" oninput="calc()">
+            </div>
+            <div class="field">
+                <label for="boss1">주간 보스 처치 1</label>
+                <select id="boss1" class="boss-select" onchange="calc()"></select>
+            </div>
+            <div class="field">
+                <label for="boss2">주간 보스 처치 2</label>
+                <select id="boss2" class="boss-select" onchange="calc()"></select>
+            </div>
+            <div class="field">
+                <label for="boss3">주간 보스 처치 3</label>
+                <select id="boss3" class="boss-select" onchange="calc()"></select>
+            </div>
+        </section>
+
+        <!-- 결과 -->
+        <section class="card">
+            <h2>계산 결과</h2>
+            <div class="result-grid">
+                <div class="result-item">
+                    <div class="rlabel">주간 보스 경험치</div>
+                    <div class="rval" id="resBossExp">—</div>
+                </div>
+                <div class="result-item">
+                    <div class="rlabel">주간 획득 경험치</div>
+                    <div class="rval" id="resWeeklyExp">—</div>
+                </div>
+                <div class="result-item">
+                    <div class="rlabel">현재 누적 경험치</div>
+                    <div class="rval" id="resCurTotal">—</div>
+                </div>
+                <div class="result-item">
+                    <div class="rlabel">목표 누적 경험치</div>
+                    <div class="rval" id="resTargetTotal">—</div>
+                </div>
+                <div class="result-item wide">
+                    <div class="rlabel">필요 획득 경험치</div>
+                    <div class="rval accent" id="resNeed">—</div>
+                </div>
+                <div class="result-item">
+                    <div class="rlabel">남은 주</div>
+                    <div class="rval big" id="resWeeks">—</div>
+                </div>
+                <div class="result-item">
+                    <div class="rlabel">예상 날짜</div>
+                    <div class="rval big" id="resDate">—</div>
+                </div>
+            </div>
+
+            <div class="note">
+                ※ 이번 주 퀘스트는 모두 완료했다는 가정하에, 다음 주(목요일 초기화)부터 계산합니다.<br>
+                ※ 예상 날짜는 목표 레벨에 도달하는 주차의 일요일입니다.
+            </div>
+
+            <h2 class="sub">레벨별 도달 예상</h2>
+            <table class="schedule">
+                <thead>
+                    <tr>
+                        <th>레벨</th>
+                        <th>누적 경험치</th>
+                        <th>주차</th>
+                        <th>예상 날짜</th>
+                    </tr>
+                </thead>
+                <tbody id="scheduleBody"></tbody>
+            </table>
+        </section>
+    </div>
+
+    <script>
+        const MAX_LEVEL = ARTIFACT_LEVEL_EXP[ARTIFACT_LEVEL_EXP.length - 1].level;
+        const STORAGE_KEY = 'unionArtifactCalc';
+
+        // 레벨 N에 도달하기 위한 누적 경험치 = 1 ~ N-1 레벨 needExp 합
+        // (데이터의 totalExp 열은 45레벨부터 오차가 있어 사용하지 않음)
+        const reachExp = [0, 0];
+        ARTIFACT_LEVEL_EXP.forEach(row => {
+            if (row.level < MAX_LEVEL) reachExp[row.level + 1] = reachExp[row.level] + row.needExp;
+        });
+
+        function needExpOf(level) {
+            const row = ARTIFACT_LEVEL_EXP.find(r => r.level === level);
+            return row ? row.needExp : null;
+        }
+
+        function fmt(n) {
+            return n.toLocaleString('ko-KR');
+        }
+
+        // 이번 주 목요일(주간 초기화) 기준, n주 뒤 그 주의 일요일
+        function sundayAfterWeeks(weeks) {
+            const d = new Date();
+            d.setHours(0, 0, 0, 0);
+            d.setDate(d.getDate() - ((d.getDay() - 4 + 7) % 7));
+            d.setDate(d.getDate() + weeks * 7 + 3);
+            return d;
+        }
+
+        function fmtDate(d) {
+            const days = ['일', '월', '화', '수', '목', '금', '토'];
+            const mm = String(d.getMonth() + 1).padStart(2, '0');
+            const dd = String(d.getDate()).padStart(2, '0');
+            return `${d.getFullYear()}.${mm}.${dd} (${days[d.getDay()]})`;
+        }
+
+        function initSelects() {
+            const cur = document.getElementById('curLevel');
+            for (let lv = 1; lv <= MAX_LEVEL; lv++) cur.add(new Option(`Lv.${lv}`, lv));
+
+            document.querySelectorAll('.boss-select').forEach(sel => {
+                sel.add(new Option('선택 안 함', ''));
+                ARTIFACT_BOSS_EXP.forEach((b, i) => {
+                    sel.add(new Option(`${b.difficulty} ${b.boss} (${fmt(b.exp)})`, i));
+                });
+            });
+        }
+
+        function fillTargetLevels() {
+            const curLevel = parseInt(document.getElementById('curLevel').value);
+            const target = document.getElementById('targetLevel');
+            const prev = parseInt(target.value) || MAX_LEVEL;
+            target.innerHTML = '';
+            for (let lv = curLevel + 1; lv <= MAX_LEVEL; lv++) target.add(new Option(`Lv.${lv}`, lv));
+            if (curLevel >= MAX_LEVEL) target.add(new Option(`Lv.${MAX_LEVEL}`, MAX_LEVEL));
+            target.value = Math.max(prev, Math.min(curLevel + 1, MAX_LEVEL));
+        }
+
+        function onLevelChange() {
+            fillTargetLevels();
+            calc();
+        }
+
+        function setText(id, text) {
+            document.getElementById(id).textContent = text;
+        }
+
+        function calc() {
+            const curLevel = parseInt(document.getElementById('curLevel').value);
+            const targetLevel = parseInt(document.getElementById('targetLevel').value);
+            const curExpInput = document.getElementById('curExp');
+            const levelNeed = needExpOf(curLevel);
+
+            // 현재 경험치는 현재 레벨 필요 경험치 미만으로 제한
+            let curExp = Math.max(0, parseInt(curExpInput.value) || 0);
+            const hint = document.getElementById('curExpHint');
+            if (levelNeed === null) {
+                curExp = 0;
+                hint.textContent = '최고 레벨입니다.';
+                hint.classList.remove('warn');
+            } else if (curExp >= levelNeed) {
+                hint.textContent = `현재 레벨 필요 경험치(${fmt(levelNeed)})보다 작아야 합니다.`;
+                hint.classList.add('warn');
+                curExp = levelNeed - 1;
+            } else {
+                hint.textContent = `/ ${fmt(levelNeed)} (${(curExp / levelNeed * 100).toFixed(1)}%)`;
+                hint.classList.remove('warn');
+            }
+
+            const weeklyNormal = Math.max(0, parseInt(document.getElementById('weeklyNormal').value) || 0);
+            let bossExp = 0;
+            document.querySelectorAll('.boss-select').forEach(sel => {
+                if (sel.value !== '') bossExp += ARTIFACT_BOSS_EXP[sel.value].exp;
+            });
+            const weeklyExp = weeklyNormal + bossExp;
+
+            const curTotal = reachExp[curLevel] + curExp;
+            const targetTotal = reachExp[targetLevel];
+            const need = Math.max(0, targetTotal - curTotal);
+
+            setText('resBossExp', fmt(bossExp));
+            setText('resWeeklyExp', fmt(weeklyExp));
+            setText('resCurTotal', fmt(curTotal));
+            setText('resTargetTotal', fmt(targetTotal));
+            setText('resNeed', fmt(need));
+
+            const tbody = document.getElementById('scheduleBody');
+            tbody.innerHTML = '';
+
+            if (need === 0) {
+                setText('resWeeks', '달성');
+                setText('resDate', '—');
+            } else if (weeklyExp === 0) {
+                setText('resWeeks', '—');
+                setText('resDate', '주간 경험치 없음');
+            } else {
+                const weeks = Math.ceil(need / weeklyExp);
+                setText('resWeeks', `${weeks}주`);
+                setText('resDate', fmtDate(sundayAfterWeeks(weeks)));
+
+                for (let lv = curLevel + 1; lv <= targetLevel; lv++) {
+                    const w = Math.ceil((reachExp[lv] - curTotal) / weeklyExp);
+                    const tr = document.createElement('tr');
+                    if (lv === targetLevel) tr.className = 'target';
+                    tr.innerHTML = `<td>Lv.${lv}</td><td>${fmt(reachExp[lv])}</td>` +
+                        `<td>${w}주</td><td>${fmtDate(sundayAfterWeeks(w))}</td>`;
+                    tbody.appendChild(tr);
+                }
+            }
+
+            saveInputs();
+        }
+
+        const INPUT_IDS = ['curLevel', 'curExp', 'targetLevel', 'weeklyNormal', 'boss1', 'boss2', 'boss3'];
+
+        function saveInputs() {
+            const data = {};
+            INPUT_IDS.forEach(id => data[id] = document.getElementById(id).value);
+            try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch (e) { }
+        }
+
+        function loadInputs() {
+            let data = null;
+            try { data = JSON.parse(localStorage.getItem(STORAGE_KEY)); } catch (e) { }
+            if (!data) return;
+            document.getElementById('curLevel').value = data.curLevel || 1;
+            fillTargetLevels();
+            INPUT_IDS.filter(id => id !== 'curLevel').forEach(id => {
+                const el = document.getElementById(id);
+                if (data[id] === undefined) return;
+                el.value = data[id];
+                if (el.tagName === 'SELECT' && el.selectedIndex < 0) el.selectedIndex = 0;
+            });
+        }
+
+        // 초기화
+        initSelects();
+        fillTargetLevels();
+        loadInputs();
+        calc();
+    </script>
+</body>
+
+</html>
