@@ -160,9 +160,51 @@
             remainEl.classList.toggle('minus', remain < 0);
             document.getElementById('resRemainDetail').textContent =
                 `주간 ${fmt(weekly, 2)} − 사용 ${fmt(totalCost)}`;
+
+            scheduleSave();
+        }
+
+        // ── localStorage 저장 / 불러오기 ──
+        // 입력값 전체를 JSON 하나로 묶어 키 1개에 덮어쓴다.
+        // { v: 버전, p: 전투력(억), c: { "yubu-3": 개수, ... } } (0개는 생략)
+        const STORAGE_KEY = 'unionCoinCalc';
+        const STORAGE_VERSION = 1;
+        const SAVE_DELAY = 300; // 연속 입력 시 마지막 입력 후 저장 (ms)
+        let saveTimer = null;
+
+        function scheduleSave() {
+            clearTimeout(saveTimer);
+            saveTimer = setTimeout(saveInputs, SAVE_DELAY);
+        }
+
+        function saveInputs() {
+            const data = { v: STORAGE_VERSION, p: document.getElementById('power').value, c: {} };
+            ITEMS.forEach(item => TIERS.forEach(lv => {
+                const id = `${item.key}-${lv}`;
+                const n = getCount(id);
+                if (n > 0) data.c[id] = n;
+            }));
+            try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch (e) { }
+        }
+
+        function loadInputs() {
+            let data = null;
+            try { data = JSON.parse(localStorage.getItem(STORAGE_KEY)); } catch (e) { return; }
+            if (!data || data.v !== STORAGE_VERSION) return;
+
+            const power = parseFloat(data.p);
+            if (power > 0) document.getElementById('power').value = power;
+
+            ITEMS.forEach(item => TIERS.forEach(lv => {
+                const id = `${item.key}-${lv}`;
+                const n = clampCount(data.c && data.c[id]);
+                document.getElementById(`${id}-range`).value = n;
+                document.getElementById(`${id}-count`).value = n;
+            }));
         }
 
         buildItems();
+        loadInputs();
         calc();
     </script>
 </body>
