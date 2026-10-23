@@ -55,6 +55,18 @@ header p {
     letter-spacing: 0.05em;
 }
 
+/* 숫자 입력칸의 위아래 조절 버튼 숨김 */
+input[type="number"] {
+    appearance: textfield;
+    -moz-appearance: textfield;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
 .note {
     margin-top: 14px;
     font-size: 0.73rem;
