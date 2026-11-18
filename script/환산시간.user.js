@@ -3,8 +3,8 @@
 // @namespace    maple_util
 // @version      1.0
 // @description  메이플 스카우터 보스 카드의 % 아래에 예상 클리어 시간을 표시
-// @match        https://maplescouter.com/*
-// @match        https://www.maplescouter.com/*
+// @match        https://maplescouter.com/*/result*
+// @match        https://maplescouter.com/*/multi-result*
 // @grant        GM_getValue
 // @grant        GM_setValue
 // @grant        GM_addStyle
@@ -59,6 +59,8 @@
   }
 
   function process() {
+    const PAGE_RE = /^\/[a-z]{2}\/(result|multi-result)\/?$/;
+    if (!PAGE_RE.test(location.pathname)) return;
     const siteMinutes = readSiteMinutes();
     if (siteMinutes) baselineMinutes = siteMinutes;
 
