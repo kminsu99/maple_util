@@ -145,7 +145,7 @@
     font-size: 0.7rem;
     line-height: 14px;
     text-align: center;
-    color: #0a0c10;
+    color: var(--on-green);
 }
 
 .sb-name {
@@ -586,7 +586,7 @@
 .sb-edit.is-on {
     background: var(--accent);
     border-color: var(--accent);
-    color: #1d1d1d;
+    color: var(--on-accent);
     font-weight: 700;
 }
 
@@ -603,8 +603,8 @@
 }
 
 .sb-settings-reset:hover {
-    border-color: #e06c6c;
-    color: #e06c6c;
+    border-color: var(--red);
+    color: var(--red);
 }
 
 .sb-cat.is-editing {

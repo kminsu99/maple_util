@@ -1,5 +1,5 @@
 /* ── 라이트 모드 ──
- * <html data-theme="light"> 일 때 적용 (scheduler/js/theme.js의 [☀ 라이트] 버튼).
+ * <html data-theme="light"> 일 때 적용 (base_js/theme.js의 [☀ 라이트] 버튼).
  * dark.css의 변수를 같은 이름으로 덮어쓴다.
  */
 :root[data-theme="light"] {
@@ -7,12 +7,12 @@
     --surface: #ffffff;
     --surface2: #eceff6;
     --border: #d3d9e6;
-    --accent: #d08e00;
-    --accent2: #d4601c;
-    --blue: #2a78dc;
-    --green: #1e9e55;
-    --red: #d23a2c;
-    --muted: #78829a;
+    --accent: #926300;
+    --accent2: #b05017;
+    --blue: #266cc6;
+    --green: #187d43;
+    --red: #c8372a;
+    --muted: #646c80;
     --text: #2b3244;
     --text-bright: #121622;
     --shadow: rgba(30, 40, 70, 0.18);
@@ -20,14 +20,19 @@
     --bg-glow2: rgba(74, 158, 255, 0.08);
     color-scheme: light;
 
+    /* 진해진 강조색 · 초록 배경 위에서는 흰 글자 */
+    --on-accent: #ffffff;
+    --on-green: #ffffff;
+
     /* scheduler: 밝은 배경에서 잘 보이도록 게이지·D-day 색을 조금 진하게 */
-    --gauge-daily: #1f9fd6;
-    --gauge-weekly: #e07b12;
-    --gauge-monthly: #d64545;
-    --dday-red: #e02424;
+    --gauge-daily: #17749c;
+    --gauge-weekly: #a45a0d;
+    --gauge-monthly: #c13e3e;
+    --dday-red: #d32222;
 }
 
-/* scheduler: 서버 색 글씨(노랑 등)가 흰 배경에서 흐리지 않게 조금 어둡게 */
-:root[data-theme="light"] .world-box-head strong {
-    color: color-mix(in srgb, var(--world-color) 72%, #000);
+/* scheduler: 서버 색 글씨(노랑 등)가 흰 배경에서 흐리지 않게 어둡게 (서버 10색 모두 대비 4.5 이상) */
+:root[data-theme="light"] .world-box-head strong,
+:root[data-theme="light"] .world-shared-label {
+    color: color-mix(in srgb, var(--world-color) 55%, #000);
 }

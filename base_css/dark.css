@@ -10,14 +10,18 @@
     --accent2: #e86b2b;
     --blue: #4a9eff;
     --green: #2ecc71;
-    --red: #e74c3c;
-    --muted: #5a6480;
+    --red: #e85142;
+    --muted: #7d859b;
     --text: #c8d0e8;
     --text-bright: #eef2ff;
     --shadow: rgba(0, 0, 0, 0.45);
     --bg-glow1: rgba(240, 180, 41, 0.06);
     --bg-glow2: rgba(74, 158, 255, 0.05);
     color-scheme: dark;
+
+    /* 강조색 · 초록 배경 위에 올라가는 글자 (버튼, 체크 표시) */
+    --on-accent: #1d1d1d;
+    --on-green: #0a0c10;
 
     /* scheduler: 보스 게이지 (일일 하늘색 · 주간 주황색 · 월간 붉은색) · D-day 임박 */
     --gauge-daily: #5ec8f2;

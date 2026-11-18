@@ -34,7 +34,7 @@
     border: 1px solid var(--accent);
     border-radius: 6px;
     background: var(--accent);
-    color: #1d1d1d;
+    color: var(--on-accent);
     font: inherit;
     font-size: 0.83rem;
     font-weight: 700;
@@ -66,7 +66,7 @@
 
 .cp-done.is-dirty {
     background: var(--green);
-    color: #0a0c10;
+    color: var(--on-green);
 }
 
 .cp-msg {
@@ -157,7 +157,7 @@
 .cp-item.is-on .cp-toggle {
     background: var(--accent);
     border-color: var(--accent);
-    color: #1d1d1d;
+    color: var(--on-accent);
     font-weight: 700;
 }
 
