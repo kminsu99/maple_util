@@ -401,8 +401,9 @@
     margin-bottom: 4px;
 }
 
+/* 요약 값: "분배 요약" 제목과 같은 본문 폰트 사용 */
 .summary-item .sval {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: 'Noto Sans KR', sans-serif;
     font-size: 1.1rem;
     font-weight: 700;
     color: var(--text-bright);

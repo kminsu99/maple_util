@@ -8,11 +8,18 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap"
         rel="stylesheet">
+    <link rel="stylesheet" href="../base_css/base.css">
+    <link rel="stylesheet" href="../base_css/dark.css">
+    <link rel="stylesheet" href="../base_css/light.css">
     <link rel="stylesheet" href="common.css">
     <link rel="stylesheet" href="union_coin_Calc.css">
+    <!-- 저장된 테마를 그리기 전에 적용 (깜빡임 방지) -->
+    <script src="../base_js/theme.js"></script>
 </head>
 
 <body>
+    <button type="button" class="theme-btn" id="btnTheme"></button>
+
     <header>
         <h1>유니온 <span>코인</span> 계산기</h1>
         <p>전투력 기준 획득 코인 · 구매 비용 · 남는 코인</p>
@@ -54,6 +61,8 @@
     <section class="card" id="itemsCard"></section>
 
     <script>
+        Theme.mount(document.getElementById('btnTheme'));
+
         const UK = 100000000;
         const COIN_RATE = 8.64e-7; // 전투력 1당 하루 코인
         const MAX_COUNT = 20;

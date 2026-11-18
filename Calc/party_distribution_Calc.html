@@ -8,11 +8,18 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap"
         rel="stylesheet">
+    <link rel="stylesheet" href="../base_css/base.css">
+    <link rel="stylesheet" href="../base_css/dark.css">
+    <link rel="stylesheet" href="../base_css/light.css">
     <link rel="stylesheet" href="common.css">
     <link rel="stylesheet" href="party_distribution_Calc.css">
+    <!-- 저장된 테마를 그리기 전에 적용 (깜빡임 방지) -->
+    <script src="../base_js/theme.js"></script>
 </head>
 
 <body>
+    <button type="button" class="theme-btn" id="btnTheme"></button>
+
     <header>
         <h1>파티 <span>분배</span> 계산기</h1>
         <p>아이템 판매 후 · 수수료 공제 · 균등 수령액 산출</p>
@@ -88,6 +95,8 @@
     </div>
 
     <script>
+        Theme.mount(document.getElementById('btnTheme'));
+
         let nextId = 0;
         let memberData = []; // [{id, otherServer, mvp}]
 

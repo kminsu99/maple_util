@@ -8,13 +8,20 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap"
         rel="stylesheet">
+    <link rel="stylesheet" href="../base_css/base.css">
+    <link rel="stylesheet" href="../base_css/dark.css">
+    <link rel="stylesheet" href="../base_css/light.css">
     <link rel="stylesheet" href="common.css">
     <link rel="stylesheet" href="union_artifact_Calc.css">
     <script src="data/artifact_boss_exp.js"></script>
     <script src="data/artifact_user_exp.js"></script>
+    <!-- 저장된 테마를 그리기 전에 적용 (깜빡임 방지) -->
+    <script src="../base_js/theme.js"></script>
 </head>
 
 <body>
+    <button type="button" class="theme-btn" id="btnTheme"></button>
+
     <header>
         <h1>유니온 <span>아티팩트</span> 계산기</h1>
         <p>목표 레벨까지 필요 경험치 · 남은 주 · 예상 날짜</p>
@@ -135,6 +142,8 @@
     </dialog>
 
     <script>
+        Theme.mount(document.getElementById('btnTheme'));
+
         const MAX_LEVEL = ARTIFACT_LEVEL_EXP[ARTIFACT_LEVEL_EXP.length - 1].level;
         const STORAGE_KEY = 'unionArtifactCalc';
         const BOSS_SLOTS = [1, 2, 3];
