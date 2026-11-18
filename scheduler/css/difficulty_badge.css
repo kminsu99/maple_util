@@ -1,0 +1,62 @@
+/* ── 보스 난이도 배지 (알약 모양 · 세로 그라데이션 · 얇은 테두리) ──
+ * 색은 위키 난이도 표기 형식 기준 (이지·노멀·하드·카오스·익스트림)
+ */
+/* 고정 폭: 난이도 글자 수와 관계없이 보스명이 항상 같은 위치에서 시작 */
+.dif-badge {
+    flex: 0 0 4.4rem;
+    width: 4.4rem;
+    box-sizing: border-box;
+    display: inline-block;
+    padding: 0 4px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    border-radius: 15px;
+    border: 1px solid #a3adbd;
+    background-image: linear-gradient(to bottom, #7a8597, #535c6b);
+    color: #fff;
+    font-size: 0.68rem;
+    font-weight: 700;
+    line-height: 18px;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.dif-extreme {
+    background-image: linear-gradient(to bottom, #333333, #222233);
+    border-color: #ee3355;
+    color: #ee3355;
+}
+
+.dif-chaos {
+    background-image: linear-gradient(to bottom, #333333, #222233);
+    border-color: #ffe1be;
+    color: #ffe1be;
+}
+
+.dif-hard {
+    background-image: linear-gradient(to bottom, #bb4466, #aa3355);
+    border-color: #cc5588;
+    color: #fff;
+}
+
+.dif-normal {
+    background-image: linear-gradient(to bottom, #51b2cc, #319dbc);
+    border-color: #44bbcc;
+    color: #fff;
+}
+
+.dif-easy {
+    background-image: linear-gradient(to bottom, #888888, #666666);
+    border-color: #bbbbbb;
+    color: #fff;
+}
+
+/* 난이도 없음: 자리만 차지 */
+.dif-none {
+    visibility: hidden;
+}
+
+/* 완료 항목에서는 흐리게 */
+.sb-item.is-done .dif-badge {
+    opacity: 0.55;
+}

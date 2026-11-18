@@ -1,0 +1,105 @@
+/* ── 스케줄러 페이지 레이아웃 ── */
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: grid;
+    gap: 20px;
+}
+
+/* 상단 가운데 설정 버튼 (API 키 등록 / 캐릭터 등록) */
+.top-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+}
+
+/* 우상단 구석: API 키 버튼, 박스는 버튼 아래로 펼쳐짐 */
+.key-corner {
+    position: absolute;
+    top: 8px;
+    right: 16px;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+}
+
+.key-corner .top-btn {
+    padding: 5px 12px;
+    font-size: 0.78rem;
+}
+
+.key-corner #apiKeyBox {
+    width: min(400px, calc(100vw - 32px));
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+}
+
+/* 좁은 화면: 위 구석 버튼들과 겹치지 않게 본문을 내림 */
+@media (max-width: 520px) {
+    .container {
+        padding-top: 16px;
+    }
+}
+
+.top-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    color: var(--text-bright);
+    font: inherit;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.top-btn:hover,
+.top-btn[aria-expanded="true"] {
+    border-color: var(--accent);
+}
+
+.top-btn:disabled {
+    opacity: 0.5;
+    cursor: default;
+}
+
+.top-btn-state {
+    font-size: 0.7rem;
+    font-weight: 400;
+    padding: 1px 7px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    color: var(--muted);
+}
+
+.top-btn-state.is-set {
+    border-color: var(--green);
+    color: var(--green);
+}
+
+[hidden] {
+    display: none !important;
+}
+
+.panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 18px;
+}
+
+.panel h2 {
+    font-size: 1rem;
+    color: var(--text-bright);
+    margin-bottom: 10px;
+}
+
+.empty {
+    font-size: 0.85rem;
+    color: var(--muted);
+}

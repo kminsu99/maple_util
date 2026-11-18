@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>스케줄러</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/api_key_box.css">
+    <link rel="stylesheet" href="css/character_picker.css">
+    <link rel="stylesheet" href="css/schedule_board.css">
+    <link rel="stylesheet" href="css/difficulty_badge.css">
+    <link rel="stylesheet" href="css/scheduler.css">
+</head>
+
+<body>
+    <a class="back-link" href="../index.html">← maple_util</a>
+
+    <!-- 우상단 구석: API 키 등록 버튼 + 펼침 박스 -->
+    <div class="key-corner">
+        <button type="button" class="top-btn" id="btnApiKey" aria-controls="apiKeyBox" aria-expanded="false">
+            API 키 등록 <span class="top-btn-state"></span>
+        </button>
+        <section id="apiKeyBox" hidden></section>
+    </div>
+
+    <div class="container">
+        <nav class="top-actions" aria-label="캐릭터">
+            <button type="button" class="top-btn" id="btnCharacters" aria-controls="characterPicker">
+                캐릭터 등록/해제
+            </button>
+        </nav>
+
+        <section id="characterPicker" hidden></section>
+
+        <div id="scheduleBoard"></div>
+
+        <footer class="site-footer">
+            Data based on <a href="https://openapi.nexon.com/" target="_blank" rel="noopener">NEXON Open API</a>
+        </footer>
+    </div>
+
+    <!-- 순서 중요: 공통 → 데이터 → API → UI → 페이지 -->
+    <script src="js/util.js"></script>
+    <script src="js/store.js"></script>
+    <script src="js/reset.js"></script>
+    <script src="js/api_key.js"></script>
+    <script src="js/nexon_api.js"></script>
+    <script src="js/characters.js"></script>
+    <script src="js/scheduler_state.js"></script>
+    <script src="js/difficulty.js"></script>
+    <script src="js/api_key_box.js"></script>
+    <script src="js/character_picker.js"></script>
+    <script src="js/schedule_board.js"></script>
+    <script src="js/scheduler.js"></script>
+</body>
+
+</html>

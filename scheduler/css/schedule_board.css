@@ -1,0 +1,985 @@
+/* ── 스케줄 보드 ── */
+.sb {
+    display: grid;
+    gap: 20px;
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+}
+
+/* 툴바 */
+.sb-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 14px;
+    font-size: 0.8rem;
+    color: var(--muted);
+}
+
+.sb-date {
+    margin-right: auto;
+}
+
+.sb-filter {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+}
+
+.sb-filter input {
+    accent-color: var(--accent);
+}
+
+.sb-refresh {
+    padding: 5px 11px;
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font: inherit;
+    cursor: pointer;
+}
+
+.sb-refresh:hover {
+    border-color: var(--accent);
+}
+
+.sb-error {
+    font-size: 0.85rem;
+    color: var(--red);
+}
+
+/* 대분류 */
+.sb-cat-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.sb-cat h2 {
+    color: var(--accent);
+}
+
+.sb-cat-head h2 {
+    margin-bottom: 0;
+}
+
+.sb-limit {
+    font-size: 0.8rem;
+    color: var(--text-bright);
+    font-variant-numeric: tabular-nums;
+}
+
+.sb-group+.sb-group {
+    margin-top: 18px;
+    padding-top: 16px;
+    border-top: 1px dashed var(--border);
+}
+
+.sb-group-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.sb-group-head h3 {
+    font-size: 0.9rem;
+    color: var(--text-bright);
+}
+
+.sb-cat > .sb-group:first-child .sb-group-head h3 {
+    font-size: 1rem;
+    color: var(--accent);
+}
+
+.sb-count {
+    margin-left: 4px;
+    font-size: 0.8rem;
+    color: var(--accent);
+    font-variant-numeric: tabular-nums;
+}
+
+.sb-reset {
+    font-size: 0.72rem;
+    color: var(--muted);
+    white-space: nowrap;
+}
+
+/* 항목 (API 결과 표시, 읽기 전용) */
+.sb-items {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+    gap: 6px;
+}
+
+.sb-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 10px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 0.85rem;
+    min-width: 0;
+}
+
+.sb-mark {
+    flex: 0 0 16px;
+    height: 16px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-size: 0.7rem;
+    line-height: 14px;
+    text-align: center;
+    color: #0a0c10;
+}
+
+.sb-name {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.sb-sub {
+    flex: 0 0 auto;
+    font-size: 0.72rem;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+}
+
+.sb-item.is-done {
+    border-color: rgba(46, 204, 113, 0.4);
+}
+
+.sb-item.is-done .sb-mark {
+    background: var(--green);
+    border-color: var(--green);
+}
+
+.sb-item.is-done .sb-name {
+    color: var(--muted);
+    text-decoration: line-through;
+}
+
+/* 보스 표: 캐릭터(왼쪽) × 일일보스/주간보스/월간보스(오른쪽 3칸) */
+.bm-scroll {
+    overflow-x: auto;
+}
+
+.bm-wrap {
+    min-width: 760px;
+    display: grid;
+    gap: 10px;
+}
+
+.bm {
+    display: grid;
+    /* 캐릭터 | 일일보스 | 주간보스(넓게, 펼치면 2열) | 월간보스 */
+    grid-template-columns: minmax(96px, 140px) minmax(150px, 0.8fr) minmax(320px, 2fr) minmax(150px, 0.8fr);
+    gap: 6px;
+    align-items: start;
+}
+
+/* 제목 줄: 아래 월드 박스와 열 위치가 맞도록 박스와 같은 테두리·여백 */
+.bm-head-row {
+    border: 1px solid transparent;
+    border-left-width: 4px;
+    padding: 0 10px 0 12px;
+}
+
+.bm-head {
+    display: grid;
+    gap: 4px;
+    align-content: start;
+    padding: 8px 10px;
+    border-bottom: 2px solid var(--border);
+}
+
+.bm-head-name {
+    font-size: 0.8rem;
+    color: var(--muted);
+    align-self: stretch;
+    display: flex;
+    align-items: flex-end;
+}
+
+.bm-head-top {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+}
+
+.bm-head-top strong {
+    font-size: 0.9rem;
+    color: var(--text-bright);
+}
+
+.bm-col-toggle {
+    justify-self: start;
+    padding: 3px 10px;
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    font: inherit;
+    font-size: 0.72rem;
+    cursor: pointer;
+}
+
+.bm-col-toggle:hover,
+.bm-col-toggle[aria-pressed="true"] {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+.bm-name {
+    display: grid;
+    gap: 2px;
+    padding: 8px 4px;
+    min-width: 0;
+}
+
+.bm-name strong {
+    font-size: 0.88rem;
+    color: var(--text-bright);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.bm-name span {
+    font-size: 0.7rem;
+    color: var(--muted);
+}
+
+.bm-cell {
+    display: grid;
+    gap: 6px;
+    padding: 6px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    min-width: 0;
+}
+
+.bm-cell.is-complete {
+    border-color: rgba(46, 204, 113, 0.45);
+}
+
+.bm-cell.is-empty {
+    background: transparent;
+    border-style: dashed;
+    place-items: center;
+    min-height: 36px;
+}
+
+.bm-span {
+    grid-column: span 3;
+    font-size: 0.8rem;
+    min-height: 36px;
+    align-content: center;
+}
+
+.bm-none {
+    font-size: 0.8rem;
+    color: var(--muted);
+}
+
+.bm-toggle {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    padding: 2px 2px;
+    background: transparent;
+    border: 0;
+    color: var(--text-bright);
+    font: inherit;
+    cursor: pointer;
+    text-align: left;
+}
+
+.bm-prog {
+    font-size: 0.85rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+
+.bm-cell.is-complete .bm-prog {
+    color: var(--green);
+}
+
+.bm-bar {
+    height: 6px;
+    border-radius: 999px;
+    background: var(--border);
+    overflow: hidden;
+}
+
+.bm-bar i {
+    display: block;
+    height: 100%;
+    background: var(--accent);
+    border-radius: inherit;
+}
+
+.bm-cell.is-complete .bm-bar i {
+    background: var(--green);
+}
+
+.bm-caret {
+    font-size: 0.7rem;
+    color: var(--muted);
+}
+
+.bm-limit {
+    font-size: 0.7rem;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+}
+
+.bm-list {
+    list-style: none;
+    display: grid;
+    gap: 4px;
+    padding-top: 6px;
+    border-top: 1px dashed var(--border);
+}
+
+/* 주간보스 펼친 목록: 2열 */
+.bm-cell-bossWeekly .bm-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 12px;
+}
+
+.bm-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.78rem;
+    min-width: 0;
+}
+
+.bm-item .sb-name {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.bm-item.is-done .sb-mark {
+    background: var(--green);
+    border-color: var(--green);
+}
+
+.bm-item.is-done .sb-name {
+    color: var(--muted);
+    text-decoration: line-through;
+}
+
+.bm-item.is-done .dif-badge {
+    opacity: 0.55;
+}
+
+/* 같은 월드끼리 색 테두리 박스 (보스 표·일일 표 공용, --world-color는 JS에서 월드별 지정) */
+.world-boxes {
+    display: grid;
+    gap: 14px;
+}
+
+.world-box {
+    border: 1px solid var(--world-color);
+    border-left-width: 4px;
+    border-radius: 8px;
+    padding: 10px 10px 10px 12px;
+    background: color-mix(in srgb, var(--world-color) 5%, transparent);
+}
+
+.world-box-head {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.world-box-head strong {
+    font-size: 0.85rem;
+    color: var(--world-color);
+}
+
+.world-box-head span {
+    font-size: 0.72rem;
+    color: var(--muted);
+}
+
+/* 월드 공유 항목 줄 (몬스터파크 등): 월드 박스 안, 캐릭터 목록 위 */
+.world-shared {
+    display: grid;
+    grid-template-columns: minmax(96px, 140px) 1fr;
+    gap: 6px;
+    align-items: center;
+    margin-bottom: 8px;
+    padding-bottom: 8px;
+    border-bottom: 1px dashed color-mix(in srgb, var(--world-color) 40%, transparent);
+}
+
+.world-shared-label {
+    padding: 0 4px;
+    font-size: 0.75rem;
+    color: var(--world-color);
+    font-weight: 700;
+}
+
+.world-shared .sb-items {
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+}
+
+.world-shared .sb-item {
+    background: var(--surface);
+}
+
+/* 일일 컨텐츠 표: 캐릭터(왼쪽) × 해당 캐릭터의 일일 컨텐츠(오른쪽) */
+.dm {
+    display: grid;
+    grid-template-columns: minmax(96px, 140px) 1fr;
+    gap: 6px;
+    align-items: start;
+}
+
+.dm-cell {
+    gap: 8px;
+}
+
+.dm-cell .sb-items {
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+}
+
+.dm-cell .sb-item {
+    background: var(--surface);
+}
+
+.dm-cell.is-empty {
+    justify-items: start;
+    padding: 8px 10px;
+}
+
+/* 주간 컨텐츠 (등록 캐릭터 전체) */
+.sb-agg-sub {
+    margin: -6px 0 10px;
+    font-size: 0.72rem;
+    color: var(--muted);
+}
+
+/* 2열 배치 (좁은 화면은 1열) */
+.sb-agg {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px;
+    align-items: start;
+}
+
+@media (max-width: 640px) {
+    .sb-agg {
+        grid-template-columns: 1fr;
+    }
+}
+
+.sb-agg-item {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 10px;
+    padding: 8px 10px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 0.85rem;
+}
+
+.sb-agg-item .sb-name {
+    flex: 0 1 auto;
+    color: var(--text-bright);
+}
+
+.sb-agg-item.is-done {
+    border-color: rgba(46, 204, 113, 0.4);
+}
+
+.sb-agg-item.is-done .sb-mark {
+    background: var(--green);
+    border-color: var(--green);
+}
+
+.sb-agg-item.is-done .sb-name {
+    color: var(--muted);
+    text-decoration: line-through;
+}
+
+.sb-agg-clear {
+    font-size: 0.72rem;
+    color: var(--muted);
+}
+
+.sb-agg-count {
+    color: var(--accent);
+    font-variant-numeric: tabular-nums;
+}
+
+/* 캐릭터 이름 태그: 줄 오른쪽 끝에 붙임 */
+.sb-agg-names {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 4px;
+    margin-left: auto;
+}
+
+.sb-agg-name {
+    padding: 1px 8px;
+    border-radius: 999px;
+    border: 1px solid rgba(46, 204, 113, 0.5);
+    color: var(--green);
+    font-size: 0.72rem;
+}
+
+/* 주간 컨텐츠 편집 (에픽 던전 표시 여부·담당 캐릭터) */
+.sb-cat-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.sb-edit {
+    padding: 4px 12px;
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    font: inherit;
+    font-size: 0.75rem;
+    cursor: pointer;
+}
+
+.sb-edit:hover {
+    border-color: var(--accent);
+}
+
+.sb-edit.is-on {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #1d1d1d;
+    font-weight: 700;
+}
+
+/* 편집 중 [초기화] (해당 섹션 설정만) */
+.sb-settings-reset {
+    padding: 4px 12px;
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    font: inherit;
+    font-size: 0.75rem;
+    cursor: pointer;
+}
+
+.sb-settings-reset:hover {
+    border-color: #e06c6c;
+    color: #e06c6c;
+}
+
+.sb-cat.is-editing {
+    border-color: var(--accent);
+}
+
+.ep-edit {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    margin-left: auto;
+    font-size: 0.75rem;
+    color: var(--text);
+}
+
+.ep-show,
+.ep-assign {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+}
+
+.ep-show input {
+    accent-color: var(--accent);
+}
+
+.ep-assign-select {
+    padding: 3px 6px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--surface);
+    color: var(--text-bright);
+    font: inherit;
+    font-size: 0.75rem;
+    max-width: 180px;
+}
+
+.ep-owner {
+    margin-left: auto;
+    padding: 1px 8px;
+    border-radius: 999px;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    font-size: 0.72rem;
+}
+
+.sb-agg-item.is-hidden {
+    opacity: 0.45;
+    border-style: dashed;
+}
+
+.ep-note {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin: -4px 0 10px;
+    color: var(--accent);
+}
+
+/* 주간 컨텐츠 상단 게이지 (메인 / 서브) */
+.wk-gauges {
+    display: grid;
+    gap: 6px;
+    margin: 0 0 12px;
+}
+
+.wk-gauge {
+    --gauge-color: var(--accent);
+    display: grid;
+    grid-template-columns: 34px 1fr auto;
+    align-items: center;
+    gap: 10px;
+}
+
+.wk-gauge.is-sub {
+    --gauge-color: var(--blue);
+}
+
+/* 보스 게이지: 일일 하늘색, 주간 주황색, 월간 살짝 붉은색 */
+.wk-gauge.is-daily {
+    --gauge-color: #5ec8f2;
+}
+
+.wk-gauge.is-weekly {
+    --gauge-color: #f5a04a;
+}
+
+.wk-gauge.is-monthly {
+    --gauge-color: #e57373;
+}
+
+.wk-gauge.is-complete {
+    --gauge-color: var(--green);
+}
+
+.wk-gauge-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--gauge-color);
+}
+
+.wk-gauge-bar {
+    height: 10px;
+    border-radius: 999px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    overflow: hidden;
+}
+
+.wk-gauge.is-sub .wk-gauge-bar {
+    height: 7px;
+}
+
+.wk-gauge-bar i {
+    display: block;
+    height: 100%;
+    background: var(--gauge-color);
+    border-radius: inherit;
+    transition: width 0.3s;
+}
+
+.wk-gauge-num {
+    display: inline-flex;
+    justify-content: flex-end;
+    align-items: baseline;
+    min-width: 42px;
+    text-align: right;
+    font-size: 0.78rem;
+    color: var(--text-bright);
+    font-variant-numeric: tabular-nums;
+}
+
+/* 메인/서브 전환 버튼 (편집 모드) */
+.tag-btn {
+    padding: 1px 8px;
+    border-radius: 4px;
+    border: 1px solid var(--accent);
+    background: transparent;
+    color: var(--accent);
+    font: inherit;
+    font-size: 0.7rem;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.tag-btn.is-sub {
+    border-color: var(--blue);
+    color: var(--blue);
+}
+
+.tag-btn:hover {
+    filter: brightness(1.2);
+}
+
+.tag-btn b {
+    font-weight: 700;
+}
+
+/* 보스 편집: 펼친 목록의 보스 옆 메인/서브 버튼 */
+.sb-cat.is-editing > .ep-note {
+    margin: 0 0 10px;
+}
+
+/* 메뉴 순서 변경 (편집 모드) */
+.ord-btns {
+    display: inline-flex;
+    gap: 2px;
+}
+
+.ord-btn {
+    width: 22px;
+    height: 22px;
+    padding: 0;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--surface);
+    color: var(--text);
+    font-size: 0.6rem;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.ord-btn:hover:not(:disabled) {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+.ord-btn:disabled {
+    opacity: 0.3;
+    cursor: default;
+}
+
+/* 드래그 손잡이와 끌기 상태 */
+.ord-handle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 22px;
+    color: var(--muted);
+    font-size: 0.9rem;
+    cursor: grab;
+    user-select: none;
+}
+
+.ord-handle:hover {
+    color: var(--accent);
+}
+
+.sb-agg-item.is-dragging {
+    opacity: 0.4;
+}
+
+.sb-agg-item.drop-before {
+    box-shadow: inset 3px 0 0 var(--accent), 0 -2px 0 var(--accent);
+}
+
+.sb-agg-item.drop-after {
+    box-shadow: inset -3px 0 0 var(--accent), 0 2px 0 var(--accent);
+}
+
+.ord-reset {
+    padding: 2px 10px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--text);
+    font: inherit;
+    font-size: 0.72rem;
+    cursor: pointer;
+}
+
+.ord-reset:hover {
+    border-color: var(--accent);
+}
+
+/* 아직 클리어하지 않은 해당 캐릭터 (무릉도장 등) */
+.sb-agg-member {
+    padding: 1px 8px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-size: 0.72rem;
+}
+
+.sb-agg-note {
+    margin-top: 8px;
+    font-size: 0.72rem;
+    color: var(--muted);
+}
+
+@media (max-width: 480px) {
+    .sb-items {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ── 맨 위 요약 (주간 컨텐츠 / 보스 / 일일 컨텐츠 게이지) ── */
+.sum-panel {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.sum-card {
+    min-width: 0;
+}
+
+.sum-card + .sum-card {
+    padding-left: 16px;
+    border-left: 1px solid var(--border);
+}
+
+.sum-card-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.sum-card-head strong {
+    font-size: 0.9rem;
+    color: var(--text-bright);
+}
+
+.sum-card .wk-gauges {
+    margin: 0;
+}
+
+.sum-empty {
+    margin: 0;
+    font-size: 0.75rem;
+    color: var(--muted);
+}
+
+@media (max-width: 640px) {
+    .sum-panel {
+        grid-template-columns: 1fr;
+    }
+
+    .sum-card + .sum-card {
+        padding-left: 0;
+        padding-top: 12px;
+        border-left: 0;
+        border-top: 1px solid var(--border);
+    }
+}
+
+/* ── 큰 박스 접기/펴기 (접어도 제목·게이지는 표시) ── */
+.sb-fold {
+    padding: 4px 12px;
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    font: inherit;
+    font-size: 0.75rem;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.sb-fold:hover {
+    border-color: var(--accent);
+}
+
+.sb-cat.is-folded > :not(.sb-cat-head):not(.wk-gauges) {
+    display: none;
+}
+
+.sb-cat.is-folded .sb-edit,
+.sb-cat.is-folded .sb-settings-reset {
+    display: none;
+}
+
+.sb-cat.is-folded > .wk-gauges {
+    margin-bottom: 0;
+}
+
+/* 초기화까지 남은 일수 D-n
+ * 항상 'D+숫자 2자리' 너비를 확보해 위치 고정
+ * 완료 초록 / 미완료 주황 / 미완료 + 임박 빨강 */
+.dday {
+    display: inline-block;
+    min-width: 3.3ch;
+    margin-left: 6px;
+    text-align: left;
+    font-size: 0.75rem;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+}
+
+.dday.is-done {
+    color: var(--green);
+}
+
+.dday.is-pending {
+    color: #f5a04a;
+}
+
+.dday.is-urgent {
+    color: #ff5252;
+}
+
+/* n/n 숫자 칸 너비 고정 (예: 12/34) → 게이지 막대 길이 통일 */
+.wk-gauge-count {
+    display: inline-block;
+    min-width: 5ch;
+    text-align: right;
+}
+
+/* 일일보스: D-day 자리만 확보 */
+.dday.is-empty {
+    visibility: hidden;
+}
