@@ -1,0 +1,87 @@
+/* ── maple_util 공통 기본 틀 (Calc · scheduler 공용) ──
+ * 초기화 · body 배경 · 헤더 · 숫자 입력칸 · [hidden]
+ * 색상 변수는 dark.css(기본) / light.css(라이트 모드)에 있다.
+ * 각 페이지는 base.css → dark.css → light.css 순으로 먼저 불러오고, 자기 스타일은 그 뒤에 덧붙인다.
+ */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans KR', sans-serif;
+    min-height: 100vh;
+    padding: 32px 16px 60px;
+    background-image:
+        radial-gradient(ellipse 60% 40% at 20% 10%, var(--bg-glow1) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 30% at 80% 80%, var(--bg-glow2) 0%, transparent 60%);
+}
+
+a {
+    color: var(--accent);
+}
+
+[hidden] {
+    display: none !important;
+}
+
+/* ── 페이지 헤더 ── */
+header {
+    text-align: center;
+    margin-bottom: 36px;
+}
+
+header h1 {
+    font-size: 2rem;
+    font-weight: 900;
+    color: var(--text-bright);
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+}
+
+header h1 span {
+    color: var(--accent);
+}
+
+header p {
+    margin-top: 8px;
+    font-size: 0.82rem;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+}
+
+/* 숫자 입력칸의 위아래 조절 버튼 숨김 */
+input[type="number"] {
+    appearance: textfield;
+    -moz-appearance: textfield;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* ── 테마 전환 버튼 (우상단 구석, base_js/theme.js) ── */
+.theme-btn {
+    position: absolute;
+    top: 8px;
+    right: 16px;
+    z-index: 10;
+    padding: 5px 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    color: var(--text-bright);
+    font: inherit;
+    font-size: 0.78rem;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.theme-btn:hover {
+    border-color: var(--accent);
+}
