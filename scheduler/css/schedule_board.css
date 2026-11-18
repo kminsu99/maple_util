@@ -688,15 +688,15 @@
 
 /* 보스 게이지: 일일 하늘색, 주간 주황색, 월간 살짝 붉은색 */
 .wk-gauge.is-daily {
-    --gauge-color: #5ec8f2;
+    --gauge-color: var(--gauge-daily, #5ec8f2);
 }
 
 .wk-gauge.is-weekly {
-    --gauge-color: #f5a04a;
+    --gauge-color: var(--gauge-weekly, #f5a04a);
 }
 
 .wk-gauge.is-monthly {
-    --gauge-color: #e57373;
+    --gauge-color: var(--gauge-monthly, #e57373);
 }
 
 .wk-gauge.is-complete {
@@ -965,11 +965,11 @@
 }
 
 .dday.is-pending {
-    color: #f5a04a;
+    color: var(--gauge-weekly, #f5a04a);
 }
 
 .dday.is-urgent {
-    color: #ff5252;
+    color: var(--dday-red, #ff5252);
 }
 
 /* n/n 숫자 칸 너비 고정 (예: 12/34) → 게이지 막대 길이 통일 */

@@ -26,6 +26,11 @@
     gap: 8px;
 }
 
+.corner-row {
+    display: flex;
+    gap: 6px;
+}
+
 .key-corner .top-btn {
     padding: 5px 12px;
     font-size: 0.78rem;
@@ -33,7 +38,7 @@
 
 .key-corner #apiKeyBox {
     width: min(400px, calc(100vw - 32px));
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+    box-shadow: 0 8px 24px var(--shadow);
 }
 
 /* 좁은 화면: 위 구석 버튼들과 겹치지 않게 본문을 내림 */
@@ -80,10 +85,6 @@
 .top-btn-state.is-set {
     border-color: var(--green);
     color: var(--green);
-}
-
-[hidden] {
-    display: none !important;
 }
 
 .panel {

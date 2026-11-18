@@ -8,22 +8,30 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap"
         rel="stylesheet">
+    <link rel="stylesheet" href="../base_css/base.css">
+    <link rel="stylesheet" href="../base_css/dark.css">
+    <link rel="stylesheet" href="../base_css/light.css">
     <link rel="stylesheet" href="css/base.css">
     <link rel="stylesheet" href="css/api_key_box.css">
     <link rel="stylesheet" href="css/character_picker.css">
     <link rel="stylesheet" href="css/schedule_board.css">
     <link rel="stylesheet" href="css/difficulty_badge.css">
     <link rel="stylesheet" href="css/scheduler.css">
+    <!-- 저장된 테마를 그리기 전에 적용 (깜빡임 방지) -->
+    <script src="../base_js/theme.js"></script>
 </head>
 
 <body>
     <a class="back-link" href="../index.html">← maple_util</a>
 
-    <!-- 우상단 구석: API 키 등록 버튼 + 펼침 박스 -->
+    <!-- 우상단 구석: 테마 전환 + API 키 등록 버튼 + 펼침 박스 -->
     <div class="key-corner">
-        <button type="button" class="top-btn" id="btnApiKey" aria-controls="apiKeyBox" aria-expanded="false">
-            API 키 등록 <span class="top-btn-state"></span>
-        </button>
+        <div class="corner-row">
+            <button type="button" class="top-btn" id="btnTheme"></button>
+            <button type="button" class="top-btn" id="btnApiKey" aria-controls="apiKeyBox" aria-expanded="false">
+                API 키 등록 <span class="top-btn-state"></span>
+            </button>
+        </div>
         <section id="apiKeyBox" hidden></section>
     </div>
 

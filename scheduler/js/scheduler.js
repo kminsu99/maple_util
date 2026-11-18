@@ -12,6 +12,7 @@
         ApiKeyBox.mount(keyBox);
         CharacterPicker.mount(document.getElementById('characterPicker'), { trigger: charBtn });
         ScheduleBoard.mount(document.getElementById('scheduleBoard'));
+        Theme.mount(document.getElementById('btnTheme'));
 
         // ── 상단 [API 키 등록] 버튼: 키 입력 박스 펼치기/접기 ──
         function setKeyBoxOpen(open) {
