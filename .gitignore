@@ -11,3 +11,5 @@ gitcmd
 
 #maple util repo
 maple_util/
+
+*.zip
