@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body { width: 240px; padding: 14px; font-family: sans-serif; font-size: 14px; }
+    h1 { font-size: 16px; margin: 0 0 10px; }
+    label { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+    input { width: 70px; padding: 4px; font-size: 14px; }
+    p { color: #666; font-size: 12px; margin: 10px 0 0; line-height: 1.4; }
+  </style>
+</head>
+<body>
+  <h1>⏱ 클리어 시간 설정</h1>
+  <label>기준 시간(분) <input type="number" id="baseline" min="1" step="1" value="20"></label>
+  <p>퍼센트가 몇 분 기준인지 정해요. 기본값은 20분이에요.</p>
+  <script src="popup.js"></script>
+</body>
+</html>

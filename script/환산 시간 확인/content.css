@@ -1,0 +1,14 @@
+.mst-time {
+  display: block;
+  margin-top: 4px;
+  padding-top: 4px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.3;
+  text-align: center;
+  white-space: nowrap;
+  color: #aeb4bf;          /* 차분한 회색 */
+}
+.mst-time.mst-fast { color: #8dbfa0; }   /* 부드러운 초록 */
+.mst-time.mst-slow { color: #c99a9a; }   /* 부드러운 붉은빛 */

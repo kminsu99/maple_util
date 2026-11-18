@@ -1,0 +1,103 @@
+// ==UserScript==
+// @name         환산 클리어 시간 추가
+// @namespace    maple_util
+// @version      1.0
+// @description  메이플 스카우터 보스 카드의 % 아래에 예상 클리어 시간을 표시
+// @match        https://maplescouter.com/*
+// @match        https://www.maplescouter.com/*
+// @grant        GM_getValue
+// @grant        GM_setValue
+// @grant        GM_addStyle
+// @grant        GM_registerMenuCommand
+// @run-at       document-idle
+// ==/UserScript==
+
+(function () {
+  "use strict";
+
+  // 클리어 시간 = 기준 시간 ÷ (퍼센트 ÷ 100)
+  let baselineMinutes = GM_getValue("baselineMinutes", 20);
+  const PERCENT_RE = /^(\d{1,5}(?:\.\d+)?)\s*%$/;
+
+  GM_addStyle(`
+    .mst-time { display:block; margin-top:4px; padding-top:4px;
+      border-top:1px solid rgba(255,255,255,.08); font-size:12px; font-weight:600;
+      line-height:1.3; text-align:center; white-space:nowrap; color:#7c8594; }
+    .mst-time.mst-fast { color:#2e9e5b; }
+    .mst-time.mst-slow { color:#d64545; }
+  `);
+
+  function formatTime(totalSeconds) {
+    const s = Math.round(totalSeconds);
+    const h = Math.floor(s / 3600);
+    const m = Math.floor((s % 3600) / 60);
+    const sec = s % 60;
+    if (h > 0) return `${h}시간 ${m}분`;
+    return `${m}분 ${String(sec).padStart(2, "0")}초`;
+  }
+
+  // 보스 카드(이미지가 있는 상자) 안의 %만 처리
+  function isInsideCard(el) {
+    let node = el.parentElement;
+    for (let i = 0; i < 5 && node; i++) {
+      if (node.querySelector("img")) return true;
+      node = node.parentElement;
+    }
+    return false;
+  }
+
+  function process() {
+    document.body.querySelectorAll("*").forEach((el) => {
+      if (el.children.length > 0 || el.classList.contains("mst-time")) return;
+      const match = el.textContent.trim().match(PERCENT_RE);
+      if (!match) return;
+
+      const pct = parseFloat(match[1]);
+      if (!(pct > 0) || !isInsideCard(el)) return;
+
+      const key = `${pct}|${baselineMinutes}`;
+      let box = el.nextElementSibling;
+      if (box && box.classList.contains("mst-time")) {
+        if (box.dataset.key === key) return;
+      } else {
+        box = document.createElement("div");
+        box.className = "mst-time";
+        el.insertAdjacentElement("afterend", box);
+      }
+
+      const seconds = (baselineMinutes * 60) / (pct / 100);
+      box.dataset.key = key;
+      box.textContent = `⏱ ${formatTime(seconds)}`;
+      box.classList.toggle("mst-fast", seconds <= baselineMinutes * 60);
+      box.classList.toggle("mst-slow", seconds > baselineMinutes * 60 * 3);
+    });
+  }
+
+  // Tampermonkey 메뉴에서 기준 시간(배율 기준) 변경
+  GM_registerMenuCommand(`기준 시간 설정 (현재 ${baselineMinutes}분)`, () => {
+    const input = prompt("퍼센트가 몇 분 기준인지 입력 (기본 20)", baselineMinutes);
+    const value = parseFloat(input);
+    if (value > 0) {
+      baselineMinutes = value;
+      GM_setValue("baselineMinutes", value);
+      process();
+    }
+  });
+
+  let scheduled = false;
+  function schedule() {
+    if (scheduled) return;
+    scheduled = true;
+    requestAnimationFrame(() => {
+      scheduled = false;
+      process();
+    });
+  }
+
+  process();
+  new MutationObserver(schedule).observe(document.body, {
+    childList: true,
+    subtree: true,
+    characterData: true,
+  });
+})();
