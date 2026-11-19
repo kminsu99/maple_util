@@ -53,16 +53,49 @@
         return /익스트림\s*몬스터\s*파[크커]/.test(str(name));
     }
 
-    // 게이지 라벨 줄임말 (원래 이름은 마우스를 올리면 표시)
-    const GAUGE_SHORT = [
-        [/익스트림\s*몬스터\s*파[크커]/, '익몬'],   // [몬스터파크] 익스트림 몬스터파크
-        [/지하\s*수로/, '수로'],                    // [길드] 지하 수로
-        [/무릉\s*도장/, '무릉'],                    // 무릉도장
-    ];
+    // 주간 컨텐츠 줄임말: 게이지 라벨과 항목 목록에 사용 (원래 이름은 마우스를 올리면 표시)
+    //  - 원래 이름이 들어 있으면 해당 (띄어쓰기 무시), 위에서부터 먼저 맞는 것 사용
+    //  - 백업: data/rule.txt
+    const WEEKLY_SHORT = [
+        ['[메이플 유니온] PC방 주간 드래곤 퇴치', '유니온코인(PC)'],   // 일반 드래곤 퇴치보다 먼저
+        ['[메이플 유니온] 주간 드래곤 퇴치', '유니온코인'],
+        ['[길드] 지하 수로', '수로'],
+        ['[길드] 주간 미션 포인트', '주간 미션'],
+        ['[길드] 플래그 레이스', '플래그'],
+        ['에르다 스펙트럼', '여로'],
+        ['배고픈 무토', '츄츄'],
+        ['미드나잇 체이서', '레헬른'],
+        ['스피릿 세이비어', '아르카나'],
+        ['엔하임 디펜스', '모라스'],
+        ['프로텍트 에스페라', '에스페라'],
+        ['[주간 퀘스트] 성실한 조사에 대한 보답', '여로(젬)'],
+        ['[주간 퀘스트] 크리티아스 주간 임무', '반마석'],
+        ['[주간 퀘스트] 타락한 세계수 주간 임무', '앱솔(데)'],
+        ['[주간 퀘스트] 타락한 세계수 정화에 대한 보답', '앱솔(데)'],
+        ['[주간 퀘스트] 헤이븐 주간 임무', '앱솔(스)'],
+        ['[주간 퀘스트] 꾸준한 의뢰에 대한 보답', '앱솔(스)'],
+        ['익스트림 몬스터파크', '익몬'],   // '익스트림 몬스터파커' 표기도 해당
+        ['무릉도장', '무릉'],
+    ].map(([from, to]) => [normName(from), to]);
 
-    function gaugeLabel(name) {
-        const hit = GAUGE_SHORT.find(([re]) => re.test(str(name)));
+    // 비교용: [길드]·[주간 퀘스트] 같은 머리말과 띄어쓰기 제거, '몬스터파커' 표기를 '몬스터파크'로 통일
+    //  → 머리말이 없거나 다르게 와도 같은 항목으로 인식
+    function normName(name) {
+        return str(name).replace(/\[[^\]]*\]/g, '').replace(/\s+/g, '').replace(/몬스터파커/g, '몬스터파크');
+    }
+
+    function shortName(name) {
+        const n = normName(name);
+        const hit = WEEKLY_SHORT.find(([from]) => n.includes(from));
         return hit ? hit[1] : name;
+    }
+
+    // 월드당 1회 항목 (줄임말 기준): 서버에서 한 캐릭터만 하면 완료 → 게이지 0/1 또는 1/1
+    // (익몬은 월드당 2회 → XMPARK_LIMIT)
+    const WORLD_ONCE = ['유니온코인', '유니온코인(PC)', '여로', '츄츄', '레헬른', '아르카나', '모라스', '에스페라'];
+
+    function isWorldOnce(name) {
+        return WORLD_ONCE.includes(shortName(name));
     }
 
     // ── 일일퀘스트 이름 ──
@@ -91,7 +124,7 @@
     window.BoardRules = {
         bossRank, BOSS_DDAY_RED, BOSS_FLAT_MAX,
         MPARK_MAX, isMpark,
-        EPIC_LIMIT, isEpic, XMPARK_LIMIT, isXmpark, gaugeLabel,
+        EPIC_LIMIT, isEpic, XMPARK_LIMIT, isXmpark, shortName, isWorldOnce,
         dailyQuestName,
     };
 })();

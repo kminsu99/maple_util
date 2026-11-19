@@ -12,9 +12,6 @@
 
 /* 페이지 최상단 좌측 구석 고정 */
 .back-link {
-    position: absolute;
-    top: 12px;
-    left: 16px;
     font-size: 0.8rem;
     color: var(--muted);
     text-decoration: none;

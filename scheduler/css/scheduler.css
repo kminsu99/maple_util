@@ -6,24 +6,34 @@
     gap: 20px;
 }
 
-/* 상단 가운데 설정 버튼 (API 키 등록 / 캐릭터 등록) */
+/* 본문 상단 오른쪽 버튼 (캐릭터 등록/해제) */
 .top-actions {
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
+    justify-content: flex-end;
     gap: 8px;
 }
 
-/* 우상단 구석: API 키 버튼, 박스는 버튼 아래로 펼쳐짐 */
-.key-corner {
-    position: absolute;
-    top: 8px;
-    right: 16px;
-    z-index: 10;
+/* 상단 고정 헤더 (sticky): 스크롤해도 화면 맨 위에 붙어 있음
+ * body 여백(위 32px, 좌우 16px)을 음수 margin으로 상쇄해 화면 폭 전체를 덮음 */
+.site-header {
+    position: sticky;
+    top: 0;
+    z-index: 20;
     display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 8px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin: -32px -16px 20px;
+    padding: 8px 16px;
+    background: color-mix(in srgb, var(--bg) 88%, transparent);
+    backdrop-filter: blur(6px);
+    border-bottom: 1px solid var(--border);
+}
+
+/* 오른쪽: 테마·API 키 버튼, API 키 박스는 헤더 높이를 바꾸지 않게 버튼 아래로 떠서 펼쳐짐 */
+.key-corner {
+    position: relative;
 }
 
 .corner-row {
@@ -37,15 +47,11 @@
 }
 
 .key-corner #apiKeyBox {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
     width: min(400px, calc(100vw - 32px));
     box-shadow: 0 8px 24px var(--shadow);
-}
-
-/* 좁은 화면: 위 구석 버튼들과 겹치지 않게 본문을 내림 */
-@media (max-width: 520px) {
-    .container {
-        padding-top: 16px;
-    }
 }
 
 .top-btn {
@@ -66,6 +72,19 @@
 .top-btn:hover,
 .top-btn[aria-expanded="true"] {
     border-color: var(--accent);
+}
+
+/* 강조 버튼 (캐릭터 등록/해제): 강조색 테두리·글자 + 옅은 강조색 배경 */
+.top-btn.is-primary {
+    background: color-mix(in srgb, var(--accent) 14%, var(--surface));
+    border-color: var(--accent);
+    color: var(--accent);
+    font-weight: 700;
+}
+
+.top-btn.is-primary:hover,
+.top-btn.is-primary[aria-expanded="true"] {
+    background: color-mix(in srgb, var(--accent) 24%, var(--surface));
 }
 
 .top-btn:disabled {

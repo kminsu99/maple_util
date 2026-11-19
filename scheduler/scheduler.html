@@ -22,22 +22,23 @@
 </head>
 
 <body>
-    <a class="back-link" href="../index.html">← maple_util</a>
-
-    <!-- 우상단 구석: 테마 전환 + API 키 등록 버튼 + 펼침 박스 -->
-    <div class="key-corner">
-        <div class="corner-row">
-            <button type="button" class="top-btn" id="btnTheme"></button>
-            <button type="button" class="top-btn" id="btnApiKey" aria-controls="apiKeyBox" aria-expanded="false">
-                API 키 등록 <span class="top-btn-state"></span>
-            </button>
+    <!-- 상단 고정 헤더 (sticky): 왼쪽 돌아가기 링크, 오른쪽 테마 전환 + API 키 등록 버튼 + 펼침 박스 -->
+    <header class="site-header">
+        <a class="back-link" href="../index.html">← maple_util</a>
+        <div class="key-corner">
+            <div class="corner-row">
+                <button type="button" class="top-btn" id="btnTheme"></button>
+                <button type="button" class="top-btn" id="btnApiKey" aria-controls="apiKeyBox" aria-expanded="false">
+                    API 키 등록 <span class="top-btn-state"></span>
+                </button>
+            </div>
+            <section id="apiKeyBox" hidden></section>
         </div>
-        <section id="apiKeyBox" hidden></section>
-    </div>
+    </header>
 
     <div class="container">
         <nav class="top-actions" aria-label="캐릭터">
-            <button type="button" class="top-btn" id="btnCharacters" aria-controls="characterPicker">
+            <button type="button" class="top-btn is-primary" id="btnCharacters" aria-controls="characterPicker">
                 캐릭터 등록/해제
             </button>
         </nav>

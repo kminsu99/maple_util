@@ -1,6 +1,6 @@
 /* ── 스케줄 보드 ──
  * 등록된 캐릭터(ocid)의 스케줄러 정보만 API로 불러와 표시
- * 화면 순서: 맨 위 요약 → 툴바 → 주간 컨텐츠 → 보스 → 일일 컨텐츠
+ * 화면 순서: 툴바(조회 기준일·등록 항목 필터·새로고침) → 요약 → 주간 컨텐츠 → 보스 → 일일 컨텐츠
  * 불러오는 시점: 페이지 진입, 등록 캐릭터 변경([완료]), API 키 저장, [새로고침]
  *
  * 각 섹션(board_weekly/boss/daily.js)은 같은 모양:
@@ -114,8 +114,8 @@
             const first = entries.find((e) => e.st.status === 'ok') || entries[0];
             const models = {};
             SECTIONS.forEach((s) => { models[s.key] = sections[s.key].compute(entries); });
-            container.innerHTML = summaryHtml(models)
-                + toolbarHtml(first.st)
+            container.innerHTML = toolbarHtml(first.st)
+                + summaryHtml(models)
                 + SECTIONS.map((s) => sections[s.key].html(models[s.key], entries)).join('');
         }
 

@@ -22,14 +22,18 @@
 
     // 서버별 색 테두리 박스, inner(g): 박스 안 HTML
     // 서버 아이콘은 섹션 위쪽 게이지 박스에만 표시하고 여기서는 이름만
-    function worldBoxes(entries, inner) {
+    // opts.actions(g): 머리 오른쪽 버튼 HTML, opts.editing(g): 편집 중 표시(강조 테두리)
+    function worldBoxes(entries, inner, opts) {
+        const o = opts || {};
         return `<div class="world-boxes">${groupByWorld(entries).map((g) => {
             const color = g.world ? Util.worldColor(g.world) : 'var(--border)';
+            const actions = o.actions ? o.actions(g) : '';
             return `
-                <div class="world-box" style="--world-color:${color}">
+                <div class="world-box${o.editing && o.editing(g) ? ' is-editing' : ''}" style="--world-color:${color}">
                     <div class="world-box-head">
                         <strong>${Util.worldLabel(g.world, g.world ? '' : '월드 확인 중', { noIcon: true })}</strong>
                         <span>${g.entries.length}명</span>
+                        ${actions ? `<div class="world-box-actions">${actions}</div>` : ''}
                     </div>
                     ${inner(g)}
                 </div>`;
