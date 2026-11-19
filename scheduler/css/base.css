@@ -32,3 +32,51 @@
     margin-right: 0.3em;
     vertical-align: -0.2em;
 }
+
+/* ── 박스 제목·서버 라벨 크기 (em + clamp) ──
+ * 제목 글자 크기만 clamp()로 화면 폭에 맞춰 바뀌고,
+ * 그 안의 아이콘·서버 이름 칸은 em 단위라 같은 비율로 함께 커지고 줄어든다.
+ */
+:root {
+    --title-size: clamp(0.82rem, 0.74rem + 0.25vw, 0.95rem);      /* 요약 카드 제목 */
+    --title-size-sm: clamp(0.78rem, 0.71rem + 0.22vw, 0.9rem);    /* 서버 박스 제목 */
+    --title-size-xs: clamp(0.72rem, 0.66rem + 0.2vw, 0.84rem);    /* 게이지 서버 박스 제목 */
+}
+
+.world-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3em;
+    flex: 0 0 auto;
+    vertical-align: middle;
+}
+
+/* 아이콘 칸: 정사각형 고정, 아이콘 크기가 달라도 같은 칸에 맞춤 (없으면 빈 칸 유지) */
+.world-icon-box {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.25em;
+    height: 1.25em;
+    flex: 0 0 auto;
+}
+
+/* 원본 가로세로 비율 유지: 칸 안에 들어가도록 줄이기만 하고 늘리거나 찌그러뜨리지 않음 */
+.world-icon-box .world-icon {
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 100%;
+    margin: 0;
+    object-fit: contain;
+    vertical-align: 0;
+}
+
+/* 이름 칸: '예티X핑크빈'이 들어가는 고정 너비, 넘치면 … */
+.world-name {
+    display: inline-block;
+    width: 6em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}

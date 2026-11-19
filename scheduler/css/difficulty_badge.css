@@ -51,6 +51,25 @@
     color: #fff;
 }
 
+/* 난이도 이미지 (60×18 원본): 같은 고정 폭 칸 안에 비율 유지, 원본보다 커지지 않음 */
+.dif-badge.dif-img {
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: none;
+    line-height: 0;
+}
+
+.dif-badge.dif-img img {
+    display: block;
+    max-width: 100%;
+    max-height: 18px;
+    width: auto;
+    height: auto;
+    margin: 0 auto;
+    object-fit: contain;
+}
+
 /* 난이도 없음: 자리만 차지 */
 .dif-none {
     visibility: hidden;

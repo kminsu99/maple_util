@@ -1,0 +1,5 @@
+﻿[2026-11-19T14:04:22.8434081+09:00] F:\Nexon\Maple\Data.wz
+System.Exception: The file is not a valid wz file.
+   위치: WzComparerR2.WzLib.Wz_Structure.LoadFileCore(String fileName, Wz_Node node, Boolean useBaseWz, Boolean loadWzAsFolder, String fallbackFileName)
+   위치: WzComparerR2.WzLib.Wz_Structure.LoadFile(String fileName, Wz_Node node, Boolean useBaseWz, Boolean loadWzAsFolder, String fallbackFileName, Wz_File imageNameOwner)
+

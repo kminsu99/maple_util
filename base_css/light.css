@@ -33,6 +33,7 @@
 
 /* scheduler: 서버 색 글씨(노랑 등)가 흰 배경에서 흐리지 않게 어둡게 (서버 10색 모두 대비 4.5 이상) */
 :root[data-theme="light"] .world-box-head strong,
-:root[data-theme="light"] .world-shared-label {
+:root[data-theme="light"] .world-shared-label,
+:root[data-theme="light"] .gauge-world-head {
     color: color-mix(in srgb, var(--world-color) 55%, #000);
 }

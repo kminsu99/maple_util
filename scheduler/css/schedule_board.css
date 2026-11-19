@@ -74,36 +74,6 @@
     margin-bottom: 0;
 }
 
-.sb-limit {
-    font-size: 0.8rem;
-    color: var(--text-bright);
-    font-variant-numeric: tabular-nums;
-}
-
-.sb-group+.sb-group {
-    margin-top: 18px;
-    padding-top: 16px;
-    border-top: 1px dashed var(--border);
-}
-
-.sb-group-head {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 8px;
-    margin-bottom: 10px;
-}
-
-.sb-group-head h3 {
-    font-size: 0.9rem;
-    color: var(--text-bright);
-}
-
-.sb-cat > .sb-group:first-child .sb-group-head h3 {
-    font-size: 1rem;
-    color: var(--accent);
-}
-
 .sb-count {
     margin-left: 4px;
     font-size: 0.8rem;
@@ -421,7 +391,7 @@
 }
 
 .world-box-head strong {
-    font-size: 0.85rem;
+    font-size: var(--title-size-sm);
     color: var(--world-color);
 }
 
@@ -456,6 +426,15 @@
     background: var(--surface);
 }
 
+/* 일일 컨텐츠: 캐릭터 목록 맨 위 '일일퀘스트' 제목 (항목 이름의 [일일퀘스트] 대신) */
+.dm-cat-label {
+    margin: 0 0 6px;
+    padding: 0 4px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--world-color);
+}
+
 /* 일일 컨텐츠 표: 캐릭터(왼쪽) × 해당 캐릭터의 일일 컨텐츠(오른쪽) */
 .dm {
     display: grid;
@@ -481,13 +460,7 @@
     padding: 8px 10px;
 }
 
-/* 주간 컨텐츠 (등록 캐릭터 전체) */
-.sb-agg-sub {
-    margin: -6px 0 10px;
-    font-size: 0.72rem;
-    color: var(--muted);
-}
-
+/* 주간 컨텐츠 행 목록 */
 /* 2열 배치 (좁은 화면은 1열) */
 .sb-agg {
     list-style: none;
@@ -677,12 +650,23 @@
 .wk-gauge {
     --gauge-color: var(--accent);
     display: grid;
-    grid-template-columns: 34px 1fr auto;
+    /* 라벨 칸: 4글자(에픽던전)까지 들어가는 고정 너비 → 모든 게이지의 막대 위치·길이가 같음 */
+    grid-template-columns: 52px 1fr auto;
     align-items: center;
     gap: 10px;
 }
 
-.wk-gauge.is-sub {
+/* 주간 컨텐츠: 에픽 던전(계정 공유) · 익스트림 몬스터파크(서버) */
+.wk-gauge.is-epic {
+    --gauge-color: var(--gauge-epic, #b28cff);
+}
+
+.wk-gauge.is-xmpark {
+    --gauge-color: var(--gauge-xmpark, #ff7eb3);
+}
+
+/* 일일 컨텐츠 몬스터파크 */
+.wk-gauge.is-mpark {
     --gauge-color: var(--blue);
 }
 
@@ -704,9 +688,12 @@
 }
 
 .wk-gauge-label {
+    display: inline-flex;
+    align-items: center;
     font-size: 0.75rem;
     font-weight: 700;
     color: var(--gauge-color);
+    white-space: nowrap;
 }
 
 .wk-gauge-bar {
@@ -715,10 +702,6 @@
     background: var(--surface2);
     border: 1px solid var(--border);
     overflow: hidden;
-}
-
-.wk-gauge.is-sub .wk-gauge-bar {
-    height: 7px;
 }
 
 .wk-gauge-bar i {
@@ -740,33 +723,7 @@
     font-variant-numeric: tabular-nums;
 }
 
-/* 메인/서브 전환 버튼 (편집 모드) */
-.tag-btn {
-    padding: 1px 8px;
-    border-radius: 4px;
-    border: 1px solid var(--accent);
-    background: transparent;
-    color: var(--accent);
-    font: inherit;
-    font-size: 0.7rem;
-    font-weight: 700;
-    cursor: pointer;
-}
-
-.tag-btn.is-sub {
-    border-color: var(--blue);
-    color: var(--blue);
-}
-
-.tag-btn:hover {
-    filter: brightness(1.2);
-}
-
-.tag-btn b {
-    font-weight: 700;
-}
-
-/* 보스 편집: 펼친 목록의 보스 옆 메인/서브 버튼 */
+/* 편집 안내 문구 */
 .sb-cat.is-editing > .ep-note {
     margin: 0 0 10px;
 }
@@ -890,7 +847,7 @@
 }
 
 .sum-card-head strong {
-    font-size: 0.9rem;
+    font-size: var(--title-size);
     color: var(--text-bright);
 }
 
@@ -934,17 +891,32 @@
     border-color: var(--accent);
 }
 
-.sb-cat.is-folded > :not(.sb-cat-head):not(.wk-gauges) {
+/* 접기 버튼 줄: 게이지 아래, 접히는 본문 바로 위 (점선 + 오른쪽 버튼) */
+.sb-fold-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 10px;
+}
+
+.sb-fold-row::before {
+    content: '';
+    flex: 1;
+    /* 테두리색(--border)은 배경과 너무 비슷해서 흐린 글자색을 섞어 더 잘 보이게 */
+    border-top: 1px dashed color-mix(in srgb, var(--muted) 70%, transparent);
+}
+
+.sb-cat.is-folded > .sb-fold-row {
+    margin-bottom: 0;
+}
+
+.sb-cat.is-folded > :not(.sb-cat-head):not(.wk-gauges):not(.gauge-worlds):not(.sb-fold-row) {
     display: none;
 }
 
 .sb-cat.is-folded .sb-edit,
 .sb-cat.is-folded .sb-settings-reset {
     display: none;
-}
-
-.sb-cat.is-folded > .wk-gauges {
-    margin-bottom: 0;
 }
 
 /* 초기화까지 남은 일수 D-n
@@ -982,4 +954,94 @@
 /* 일일보스: D-day 자리만 확보 */
 .dday.is-empty {
     visibility: hidden;
+}
+
+/* 일일 컨텐츠 편집: 몬스터파크 목표 횟수 입력 */
+.mp-target {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-left: auto;
+    font-size: 0.72rem;
+    color: var(--muted);
+}
+
+.mp-target-input {
+    width: 3.6em;
+    padding: 2px 4px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text-bright);
+    font: inherit;
+    font-size: 0.78rem;
+    text-align: center;
+}
+
+.mp-target-input:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+
+/* ── 게이지 서버별 박스 (주간 컨텐츠 · 보스 · 일일 컨텐츠 · 맨 위 요약) ── */
+.gauge-worlds {
+    display: grid;
+    gap: 8px;
+    margin: 0 0 12px;
+}
+
+.gauge-world {
+    padding: 8px 10px;
+    border: 1px solid var(--world-color);
+    border-left-width: 3px;
+    border-radius: 8px;
+}
+
+.gauge-world-head {
+    display: flex;
+    align-items: center;
+    margin-bottom: 6px;
+    font-size: var(--title-size-xs);
+    font-weight: 700;
+    color: var(--world-color);
+}
+
+.gauge-world .wk-gauges {
+    margin: 0;
+}
+
+.sum-card .gauge-worlds {
+    margin: 0;
+}
+
+/* 계정 공유 게이지 박스 (에픽 던전) */
+.gauge-world.is-account {
+    border-style: dashed;
+}
+
+:root[data-theme="light"] {
+    --gauge-epic: #7a4fd6;
+    --gauge-xmpark: #d63f7f;
+}
+
+/* 막대 길이를 다른 게이지(에픽던전 등)와 같게: 라벨 칸 너비 동일, 긴 이름은 … (전체 이름은 마우스 올리면 표시) */
+.wk-gauge.is-item {
+    grid-template-columns: 52px 1fr auto;
+}
+
+.wk-gauge.is-item .wk-gauge-label {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.wk-gauge.is-item:not(.is-complete) .wk-gauge-label {
+    color: var(--text);
+    font-weight: 500;
+}
+
+/* 일일·월간 보스 2개 이하: 게이지·펼치기 없이 목록만 (구분선·위 여백 없음) */
+.bm-cell.is-flat .bm-list {
+    padding-top: 0;
+    border-top: 0;
 }
