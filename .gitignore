@@ -1,5 +1,6 @@
 .git/
 .env
+.venv/
 
 #test용
 test/
@@ -13,5 +14,6 @@ gitcmd
 maple_util/
 
 *.zip
-
+*.py
 tools/
+prompt/
