@@ -1,0 +1,812 @@
+/* font */
+@import url("https://www.inven.co.kr/common/lib/style/webfont/NotoSans.css?v=190213a");
+
+/* reset */
+.commonpart div, .commonpart ul, .commonpart li, .commonpart h3, .commonpart h4 {display: block; float: none;}
+.commonpart button {font-family: "Malgun Gothic","맑은 고딕",helvetica,"Apple SD Gothic Neo",sans-serif; padding: 0; border: 0; background: transparent; font-size: 12px; outline: 0; cursor: pointer; box-sizing: border-box !important;}
+.commonpart p {margin: 0; padding: 0; border: 0; outline: 0; font-size: 100%; vertical-align: baseline; background: transparent;}
+
+/* common */
+.commonpart {width: 100%; margin-bottom: 10px; border: 1px solid #dfdddd; border-top: 4px solid #d4581b; box-sizing: border-box;}
+.commonpart.blue {border-top-color: #95a3ff;}
+
+.commonpart .common_header {position: relative; height: 47px; padding-left: 9px; border-bottom: 1px solid #dfdddd; overflow: hidden;}
+.commonpart .common_header::after {content: ''; display: table; clear: both;}
+
+/* common : 텍스트 타이틀 공용 */
+.commonpart .common_header .common_title {float: left; height: 25px; margin: 11px 0; background-image: url('//static.inven.co.kr/image_2011/common/module/commonpart/sp_common_title.png?v=200916a'); background-repeat: no-repeat; background-position-x: 0; position: relative;}
+
+.commonpart .common_header h3.common_title {height: 25px; line-height: 25px; font-size: 14px; font-family: 'Noto Sans', 'sans-serif'; letter-spacing: 0.025em; font-weight: bold; box-sizing: border-box;}
+.commonpart .common_header .common_title a {display: block; height: 25px; padding-left: 32px; line-height: 25px; font-size: 14px; font-family: 'Noto Sans', 'sans-serif'; letter-spacing: 0.025em; font-weight: bold; position: relative;}
+.commonpart .common_header .common_title a:hover {text-decoration: none;}
+
+/* common : 타입별 타이틀 css */
+.commonpart .common_header .common_title.common_title01 {min-width: 75px; color:#000; padding-left: 32px; background:none; text-transform: capitalize;}
+.commonpart .common_header .common_title span {font-family: 'Noto Sans', 'sans-serif';}
+.commonpart .common_title.common_title01::before {content:''; display: block; width:24px; height:24px; background-image: url('//static.inven.co.kr/image_2011/common/module/commonpart/sp_common_title.png?v=200916a'); background-repeat: no-repeat; background-position-x: 0; background-position-y: 0; position: absolute; top:0; left:0;}
+
+.commonpart .common_title.common_title02 {min-width: 238px; background:none;}
+.commonpart .common_title.common_title02::before {content:''; display: block; width:24px; height:24px; background-image: url('//static.inven.co.kr/image_2011/common/module/commonpart/sp_common_title.png?v=200916a'); background-repeat: no-repeat; background-position-x: 0; background-position-y: -25px; position: absolute; top:0; left:0;}
+.commonpart .common_title.common_title02 span {color:#cb1f26;}
+
+.commonpart .common_header .common_title.common_title03 {min-width: 86px; color:#000; padding-left: 32px; background:none; text-transform: capitalize;}
+.commonpart .common_title.common_title03::before {content:''; display: block; width:24px; height:24px; background-image: url('//static.inven.co.kr/image_2011/common/module/commonpart/sp_common_title.png?v=200916a'); background-repeat: no-repeat; background-position-x: 0; background-position-y: -50px; position: absolute; top:0; left:0;}
+
+.commonpart .common_header .common_title.common_title04 {min-width:125px; color:#000; background:none; text-transform: capitalize;}
+.commonpart .common_title.common_title04 a::before {content:''; display: block; width:24px; height:24px; background-image: url('//static.inven.co.kr/image_2011/common/module/commonpart/sp_common_title.png?v=200916a'); background-repeat: no-repeat; background-position-x: 0; background-position-y: -75px; position: absolute; top:0; left:0;}
+
+.commonpart .common_header .common_title.common_title05 {min-width:175px; color:#000; background:none; text-transform: capitalize;}
+.commonpart .common_title.common_title05 a::before {content:''; display: block; width:24px; height:24px; background-image: url('//static.inven.co.kr/image_2011/common/module/commonpart/sp_common_title.png?v=200916a'); background-repeat: no-repeat; background-position-x: 0; background-position-y: -100px; position: absolute; top:0; left:0;}
+
+.commonpart .category_tab {float: right;}
+.commonpart .category_tab::after {display: block; content: ''; clear: both;}
+.commonpart .category_tab li {float: left; margin-right: 18px;}
+.commonpart .category_tab .btn,
+.commonpart .category_tab .link {display: block; height: 47px; color: #909090; font-weight: bold; line-height: 47px!important; letter-spacing: -1px;}
+.commonpart .category_tab .btn:hover,
+.commonpart .category_tab .btn.active,
+.commonpart .category_tab .link:hover {color: #5349e1;}
+.commonpart .item_list::after {display: block; content: ''; clear: both;}
+.commonpart .item_list>li {float: left; width: 178px; margin: 0 calc((100% - 180px * 4)/8); border: 1px solid #e7e7e7;}
+.commonpart .item_list .thumb {width: 151px; height: 149px;}
+.commonpart .item_list .thumb img {width: 100%; height: 100%;}
+.commonpart .item_list .text {padding: 13px 8px;}
+.commonpart .item_list .text .item_tit01 {display: block; height: 14px; overflow: hidden;}
+.commonpart .item_list .text .item_tit02 {display: block; max-height: 32px; line-height: 16px; overflow: hidden;}
+.commonpart .item_list .text .sub {display: block; color: #646464; padding-top: 3px; letter-spacing: -1px; text-overflow: ellipsis; white-space: nowrap; overflow: hidden;}
+.commonpart_right {float: right!important;}
+
+/* brand */
+.section_brand {margin-top: 10px; border:none; border-bottom: 1px solid #dfdddd; border-top: 4px solid #d4581b;}
+.section_brand > * {border-left:1px solid #dfdddd; border-right:1px solid #dfdddd;}
+.section_brand .commonpart_left {float:left; margin-left:10px;}
+.section_brand .commonpart_left .info {line-height: 48px; font-size:12px; font-weight: 400; color: #727272; font-family: 'Noto Sans', 'sans-serif';}
+
+.section_brand .category_list {font-size:0; text-align: left; padding:0 16px; box-sizing: border-box;}
+.section_brand .category_list::after {content:''; display:table; clear:both;}
+.section_brand .category_list li {width: calc((100% - 99px) / 8); min-width:60px; height:22px; line-height:22px; display:inline-block; vertical-align: middle; margin: 10px 14px 0 0; box-sizing: border-box;}
+.section_brand .category_list li:nth-child(8n) {margin:10px 0 0 0;}
+.section_brand .category_list li.on .btn {border-color: #D4581B;}
+
+.section_brand .category_list li .img {width:100%; display:inline-block;}
+.section_brand .category_list li .img img {max-width: 100%; max-height: 18px; vertical-align: top;}
+.section_brand .category_list li .txt {font-size:11px; color:#d4581b; font-weight:600; text-align: center; letter-spacing:-0.05em; display:none;}
+
+.section_brand .category_list li:hover .btn, .section_brand .category_list li:hover .btn:focus, .section_brand .category_list li:hover .btn:active {padding:0 3px;}
+.section_brand .category_list li:hover .img {display:none;}
+.section_brand .category_list li:hover .txt {width:100%; max-width:70px; line-height: 20px; text-align: center; white-space: nowrap; display:block; text-overflow:ellipsis; overflow:hidden;}
+
+.section_brand .category_list li .btn {width: 100%; height:100%; padding: 0 8px; display:block; border:1px solid transparent;}
+.section_brand .category_list li .btn span {position: relative;}
+.section_brand .category_list li .btn:focus, .section_brand .category_list li .btn:active {padding: 0 8px;}
+
+/* brand_list : common */
+.section_brand .brand_list {padding:15px 16px; display:none;}
+.section_brand .brand_list.on {display:block;}
+.section_brand .brand_list.type1 + .brand_list.type2 {padding:15px 16px 15px 16px;}
+.section_brand .brand_list::after {content: ''; display: table; clear: both;}
+.section_brand .brand_list div {box-sizing: border-box;}
+.section_brand .brand_list ul::after {content:''; display:table; clear:both;}
+.section_brand .brand_list li::after {content:''; display:table; clear:both;}
+.section_brand .brand_list li a {height:auto; display:block;}
+.section_brand .brand_list li a::after {content:''; display:table; clear:both;}
+.section_brand .brand_list .board_title {height:40px; line-height:1.3; padding-top: 11px; text-align: center; overflow: hidden; box-sizing:border-box; font-size: 12px; color: #000;  word-break: break-word; white-space: normal; word-wrap: break-word; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; text-overflow:ellipsis;}
+
+.section_brand .brand_list .category {width:37px; height:13px; line-height:13px; text-indent:-9999px; float:left; margin-right:5px;background:url('//static.inven.co.kr/image_2011/common/module/commonpart/brand_list_category_v2.png') 0 0 no-repeat;}
+.section_brand .brand_list .category.news {background-position: 0 0;}
+.section_brand .brand_list .category.event {background-position: 0 -16px;}
+.section_brand .brand_list .category.review {background-position: 0 -32px;}
+.section_brand .brand_list .comment {font-size:11px; float:right; color:#0077FA;}
+
+/* powerbbsHead brand_list : header remove */
+#powerbbsHead .section_brand {width:710px !important; margin:10px; border:1px solid #dfdddd;}
+#powerbbsHead .section_brand .common_header {display:none;}
+.indieBody #powerbbsHead .section_brand * {box-sizing: border-box;}
+
+/* brand_list : type1 */
+.section_brand .brand_list.type1 .video_wrap {width:calc(50% - 7px); height:195px; float:left; margin-right:7px; border:1px solid #E7E7E7;}
+.section_brand .brand_list.type1 .video_wrap iframe {width:100%; height:100%;}
+.section_brand .brand_list.type1 .video_wrap .btn {width:100%; height:100%; display:block; overflow:hidden; position: relative; background: #000;}
+.section_brand .brand_list.type1 .video_wrap .btn .play {width: 55px; height: 55px; font-size:0; text-indent:-9999px; position: absolute; top: 50%; left: 50%; transform:translate(-50%,-50%) scale(1); background: url('//static.inven.co.kr/image_2011/ibuilder/module/video/play.png') no-repeat 0 0; transition: transform 0.5s; z-index: 10;}
+.section_brand .brand_list.type1 .video_wrap .btn:hover .play {transform:translate(-50%,-50%) scale(1.1); transition: transform 0.3s;}
+.section_brand .brand_list.type1 .video_wrap .btn:focus,.section_brand .brand_list.type1 .video_wrap .btn:active {padding:0;}
+.section_brand .brand_list.type1 .video_wrap .btn img {max-width:100%; height:auto; position: absolute; top:50%; left:50%; transform:translate(-50%, -50%); opacity: 0.8;}
+@media screen and (-ms-high-contrast: active) and (min-width: 1200px), screen and (-ms-high-contrast: none) {
+    .section_brand .brand_list.type1 .video_wrap .btn .play {transform:translate(-50%,-50%);}
+    .section_brand .brand_list.type1 .video_wrap .btn:hover .play {transform:translate(-50%,-50%);}
+}
+@supports (-ms-ime-align:auto) {
+    .section_brand .brand_list.type1 .video_wrap .btn .play {transform:translate(-50%,-50%);}
+    .section_brand .brand_list.type1 .video_wrap .btn:hover .play {transform:translate(-50%,-50%);}
+}
+
+.section_brand .brand_list.type1 .news_list_wrap {width:calc(50% - 7px); height:195px; float:left; margin-left:7px;}
+.section_brand .brand_list.type1 .news_list_wrap .news_list {border-bottom:1px dotted #C3C3C3; padding-bottom:13px;}
+.section_brand .brand_list.type1 .news_list_wrap .news_list li {width:calc((99.9% - 14px) / 2); float:left; margin-left:14px;}
+.section_brand .brand_list.type1 .news_list_wrap .news_list li:first-of-type {margin-left:0;}
+.section_brand .brand_list.type1 .news_list_wrap .news_list .thumb {height:85px; overflow:hidden; position: relative; border:1px solid #E7E7E7; background:#eee;}
+.section_brand .brand_list.type1 .news_list_wrap .news_list img {width: 100%; height: auto; position: absolute; top: 50%; left: 0; transform: translateY(-50%);}
+.section_brand .brand_list.type1 .news_list_wrap .news_list .board_title {padding-top:10px;}
+
+.section_brand .brand_list.type1 .board_list {padding:13px 0 7px 0;}
+.section_brand .brand_list.type1 .board_list .board_title.one {width:calc(100% - 43px); height:13px; line-height: 1; text-align: left; float:left; white-space:nowrap; padding-top:0; -webkit-line-clamp: none; display: block;}
+.section_brand .brand_list.type1 .board_list li {margin-top:9px;}
+.section_brand .brand_list.type1 .board_list li:first-of-type {margin-top:0;}
+.section_brand .brand_list.type1 .board_list li a {width:100%; max-width: 88%; float: left; padding-left:12px; position: relative;}
+.section_brand .brand_list.type1 .board_list li a::before {content:''; display:inline-block; width:2px; height:2px; background:#B8B8B7; position:absolute; top:0; left:0; bottom:0; margin:auto 0;}
+.section_brand .brand_list.type1 .board_list li:hover .board_title.one {color:#d4581b;}
+
+/* brand_list : type2 */
+.section_brand .brand_list.type2 li {width:calc((99.9% - 42px) / 4); float: left; margin-left:14px;}
+.section_brand .brand_list.type2 li:first-of-type {margin-left:0;}
+.section_brand .brand_list.type2 .thumb {width: 100%; height: 157px; border: 1px solid #E7E7E7;}
+.section_brand .brand_list.type2 .thumb img {width: 100%; height: 100%;}
+.section_brand .brand_list.type2 .board_title {height:38px; line-height:1.17;}
+
+#comBrandpageMovie {
+    width: 800px;
+    display: none;
+    position: absolute;
+    z-index: 997;
+}
+
+#comBrandpageMovie .backdrop{
+    float: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background: rgba(0,0,0,0.6);
+    z-index: 1;
+}
+#comBrandpageMovie .content {
+    float: none;
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+    width: 858px;
+    min-height: 482px;
+    position: absolute;
+    top: 190px;
+    left: 50%;
+    margin-left: -430px;
+}
+#comBrandpageMovie .movie_close { position: absolute; width: 20px; height: 19px; background: url('//static.inven.co.kr/image_2011/common/module/navigation/quicklink_201704/btn_close.png') no-repeat left top; border: none; top: 0px; right: -32px; cursor: pointer;}
+
+#comBrandpageMovie .movie_close .blind {position: absolute; top:0; left:0; font-size:0; color:transparent; text-indent: -9999px;}
+
+@media screen and (max-width:860px) {
+    #comBrandpageMovie .backdrop {
+        overflow-x: scroll;
+    }
+    #comBrandpageMovie .content {
+        left: 0;
+        margin-left: 0;
+    }
+}
+/* gamerzone */
+.section_gamerzone .gamerzone_wrap {margin-right: -1px; padding: 15px 15px 3px 15px;}
+.section_gamerzone .gamerzone_wrap::after {display: block; content: ''; clear: both;}
+.section_gamerzone .item_list {margin: 0 calc((-100% - -177px * 4)/8);}
+.section_gamerzone .item_list>li {position: relative; width: 180px; height: 182px; margin-bottom: 12px; box-sizing: border-box;}
+.section_gamerzone .item_list>li.type02 .thumb {height: 100%;}
+.section_gamerzone .item_list>li.type02 .text {position: absolute; right: 0; bottom: 0; left: 0; height: 60px; background: rgba(0,0,0,0.5);}
+.section_gamerzone .item_list>li.type02 .text .item_tit02 {color: #fff;}
+.section_gamerzone .item_list>li.type02 .text .sub {color: #fff;}
+.section_gamerzone .item_list>li.type02 .item_tit02 {overflow: hidden; text-overflow: ellipsis; white-space: nowrap;}
+.section_gamerzone .item_list>li.type03 .text {height: 100%; box-sizing: border-box;}
+.section_gamerzone .item_list>li.type03 .desc {display: block; max-height: 62px; padding-top: 7px; color: #2c2c2c; line-height: 16px; overflow: hidden;}
+.section_gamerzone .item_list .thumb {width:100%; height: 104px; overflow:hidden;}
+.section_gamerzone .item_list .thumb img {position: relative; top: 50%; left: 0; transform: translatey(-50%); width:100%; height:100%; object-fit: cover;}
+.section_gamerzone .item_list .text {font-size:12px; position: relative; height: 78px; box-sizing: border-box;}
+.section_gamerzone .item_list .text .sub {position: absolute; bottom: 12px; left: 8px; width: 135px;}
+.section_gamerzone .item_list .category {width: calc(50% - (100% - 180px * 4)/4); padding: 20px 15px 18px 15px; border: 0; background: #f2f4f7;}
+.section_gamerzone .item_list .category .txt {text-align: center; margin-bottom: 9px; padding-bottom: 20px; border-bottom: 1px solid #dbdbdb; font-size: 13px; letter-spacing: -0.075em; font-weight: 400;}
+.section_gamerzone .item_list .category .list {padding: 0 0 0 34px;}
+.section_gamerzone .item_list .category .list::after {display: block; content: ''; clear: both;}
+.section_gamerzone .item_list .category .list li {width:calc(99.9% / 4); line-height: 1.1; font-size: 12px; float: left; padding-top: 11px;}
+.section_gamerzone .item_list .category .list li a {font-size:12px; color: #8f8f8f; letter-spacing: -1px;}
+
+/* openissue */
+.section_openissue .openissue_list {padding: 18px 15px 10px 15px; min-height: 198px;}
+.section_openissue .openissue_list::after {display: block; content: ''; clear: both;}
+.section_openissue .openissue_list li {float: left; width: 50%; margin-bottom: 8px; overflow:hidden;}
+.section_openissue .openissue_list li > a {font-size:12px; float:left;}
+.section_openissue .openissue_list .thumb {width: 94px; height: 56px; border: 1px solid #e8e8e8;}
+.section_openissue .openissue_list .thumb img {width: 100%; height: 100%;}
+.section_openissue .openissue_list .text {width: calc(100% - 106px); font-size:12px; float: left; padding: 4px 0 3px 11px; box-sizing: border-box;}
+.section_openissue .openissue_list .text a {display:block;}
+.section_openissue .openissue_list .text .title {display: block; height: 32px; line-height: 16px; overflow: hidden;}
+.section_openissue .openissue_list .text .category {line-height:1; display: block; padding-top: 5px; color: #646464; text-overflow: ellipsis; white-space: nowrap; overflow: hidden;}
+
+/* gamenews */
+.section_gamenews .btn_more {position: absolute; top: 20px; right: 18px; width: 31px; height: 5px; background: url('//static.inven.co.kr/image_2011/common/module/commonpart/btn_more.png') no-repeat 0 0; color: transparent; font-size: 0;}
+
+.section_gamenews .gamenews_list {display: flex; flex-flow: row wrap; padding: 3px 16px 14px 16px;}
+
+.section_gamenews .gamenews_list li {width:calc(99.9% / 2); padding-top: 11px;}
+
+.section_gamenews .gamenews_list li a {display: block; position: relative; padding-left: 12px; font-size: 0; overflow: hidden;}
+.section_gamenews .gamenews_list li a::before {display: block; content: ''; position: absolute; top: 5px; left: 0; width: 3px; height: 3px; background: #000;}
+
+.section_gamenews .gamenews_list li a span {font-size: 12px;}
+.section_gamenews .gamenews_list li a .subject {display: inline-block; max-width: 300px; height: 14px; line-height: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; vertical-align: top;}
+.section_gamenews .gamenews_list li a .comment {display: inline-block; line-height: 1; color: #ff8d1e; margin-left: 4px;}
+
+/* limit_banner */
+.section_limit_banner { margin-top: 5px; }
+
+/* marker-inven 모듈 : common */
+.section_invenpc, .section_market, .section_gamepc {padding-top:0; border-top:0; border-left:0; border-right:0;}
+.section_invenpc > div, .section_market > div, .section_gamepc > div {border-left:1px solid #dfdddd; border-right:1px solid #dfdddd;}
+/*.section_invenpc .common_header, .section_market .common_header, .section_gamepc .common_header {border-top:4px solid #cb1f26;}*/
+.section_invenpc .common_header .common_title, .section_market .common_header .common_title, .section_gamepc .common_header .common_title {width:100%;}
+
+/* marker-inven 모듈 : 인벤PC, 금주의 마켓 추천상품, 게임별 조립 PC common */
+.marekt_inven_con {position: relative; padding:17px 15px 14px 15px;}
+.marekt_inven_con::before {content:''; display:table; clear:both;}
+
+/* _marker-inven : title (ex. 인벤PC 타이틀, 게임별 조립 타이틀) */
+.marekt_inven_con::after {content:''; display:table; clear:both;}
+.marekt_inven_con .title_box {height:30px; margin-bottom: 10px;}
+.marekt_inven_con .title_box::after {content:''; display:table; clear:both;}
+.marekt_inven_con h3 a {display:block;}
+.marekt_inven_con h3 a::after {content:''; display:table; clear:both;}
+.marekt_inven_con .market_common_main_slogan {width:50%; height:100%; text-align: left; font-family: 'Noto Sans', 'sans-serif'; margin-left:10px; box-sizing: border-box; overflow:hidden;}
+
+/* _marker-inven : title - 더보기 */
+.marekt_inven_con .market_link_more {width: 21%; height: 30px; text-align:right; position: absolute; right: 15px; line-height: 30px; top: 17px;}
+.market_link_more span {width: 100%; height: auto; font-size: 13px; font-family: 'Noto Sans', 'sans-serif'; font-weight: 600; letter-spacing: -0.025em; position: absolute; bottom:2px; right: 0; line-height: 1;}
+.marekt_inven_con .market_link_more span::after {content:'>'; display:inline-block; margin-left:4px;}
+
+/* _marker-inven : table형 list type (ex. 인벤PC 컨텐츠 리스트, 게임별 조립 pc 리스트) */
+.marekt_inven_con .body-group .inven-main-img a img.main_img{float: left; width: 157px; height: 117px; border: 1px solid #e7e7e7; box-sizing: border-box;}
+.marekt_inven_con .body-group div[class*="-item-list"] {height: 135px; font-size: 0; vertical-align: top; box-sizing: border-box;}
+.marekt_inven_con .body-group div[class*="-item-list"] .item {display: inline-block; width: 50%; height: auto; border: 1px solid #e7e7e7; background-color: #fff; vertical-align: middle; box-sizing: border-box !important;}
+.marekt_inven_con .body-group div[class*="-item-list"] .item:last-of-type {border-left:0;}
+.marekt_inven_con .body-group div[class*="-item-list"] .item:first-of-type {border-left:1px solid #e7e7e7;}
+.marekt_inven_con .body-group div[class*="-item-list"] .item a {display: inline-block; position: relative; color: #000;}
+.marekt_inven_con .body-group div[class*="-item-list"] .item .item_badge {position: absolute; z-index: 1;}
+.marekt_inven_con .body-group div[class*="-item-list"] .item img.img_off, .marekt_inven_con .body-group div[class*="-item-list"] .item img.img_on {width: 100%; padding:6px; box-sizing: border-box; top: 0; left:0; bottom: 0; margin: auto 0;}
+.marekt_inven_con .body-group div[class*="-item-list"] .item .item_img_group {width: 120px; height: 100%; position: relative; float: left; border-right: 1px solid #e7e7e7; box-sizing: border-box;}
+.marekt_inven_con .body-group div[class*="-item-list"] .item .item_detail {display: inline-block; float: right; width: 100%; vertical-align: top;}
+.marekt_inven_con .body-group div[class*="-item-list"] .item .item_detail::after {content:''; display:table; clear:both;}
+.marekt_inven_con .body-group div[class*="-item-list"] .item .item_detail ul {float: right; width: calc(100% - 120px); margin: 0; padding: 0 0 7px 0;}
+.marekt_inven_con .body-group div[class*="-item-list"] .item .item_detail ul li {display: inline-block; width: 100%; margin-top: 6px; text-align: right; overflow: hidden;}
+.marekt_inven_con .body-group div[class*="-item-list"] .item .item_detail .nickname {display: -webkit-box; font-size: 12px; text-align: left; overflow: hidden;}
+.marekt_inven_con .body-group div[class*="-item-list"] .item .item_detail .item_name {display: -webkit-box; max-height: 2.6em; font-size: 13px; line-height:1.3em; text-align: left; overflow: hidden;}
+
+.marekt_inven_con .body-group div[class*="-item-list"] .item .item_detail .sort {min-height:77px; margin: 0; color: #999; overflow: hidden; border-bottom: 1px solid #E7E7E7; box-sizing: border-box;}
+.marekt_inven_con .body-group div[class*="-item-list"] .item .item_detail .sort .table {width: 100%; border-spacing: 0; table-layout: fixed; padding:1px 1px 0 1px;}
+.marekt_inven_con .body-group div[class*="-item-list"] .item .item_detail .sort .table caption {text-indent:-100000px; font-size:0;}
+.marekt_inven_con .body-group div[class*="-item-list"] .item .item_detail .sort .table th, .marekt_inven_con .body-group div[class*="-item-list"] .item .item_detail .sort .table td {height:19px; font-size:11px; color:#909090; border-bottom:1px solid #fff; padding:0 4px;}
+.marekt_inven_con .body-group div[class*="-item-list"] .item .item_detail .sort .table th {font-family: "Malgun Gothic","맑은 고딕",helvetica,"Apple SD Gothic Neo",sans-serif; overflow:hidden; text-overflow:ellipsis; text-align: center; background:#EFEFEF;}
+.marekt_inven_con .body-group div[class*="-item-list"] .item .item_detail .sort .table td {font-family: "Malgun Gothic","맑은 고딕",helvetica,"Apple SD Gothic Neo",sans-serif; text-align: left; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+.marekt_inven_con .body-group div[class*="-item-list"] .item .item_detail .sort span {text-overflow: ellipsis;white-space: nowrap;overflow: hidden;display: block;}
+.marekt_inven_con .body-group div[class*="-item-list"] .item .item_detail .sale_price {position: absolute; top: 57px; left: 84px; width: 140px; color: #999; font-size: 11px; font-weight: 300;}
+
+.marekt_inven_con .body-group div[class*="-item-list"] .item .item_detail .btn {font-size:0; text-align: left; padding:0 7px; box-sizing: border-box;}
+.marekt_inven_con .body-group div[class*="-item-list"] .item .item_detail .btn .badge {width:calc((99.9% - 16px) / 3); height:20px; line-height:18px; display:inline-block; font-family: "Malgun Gothic","맑은 고딕",helvetica,"Apple SD Gothic Neo",sans-serif; font-size: 12px; text-align: center; margin-left:8px; padding:0 3px; text-overflow: ellipsis; white-space:nowrap; overflow:hidden; box-sizing: border-box;}
+.marekt_inven_con .body-group div[class*="-item-list"] .item .item_detail .btn .badge:first-of-type {margin-left:0;}
+
+.marekt_inven_con .body-group div[class*="-item-list"] .item .item_detail .sale {line-height: 1.1em; font-family: "Malgun Gothic","맑은 고딕",helvetica,"Apple SD Gothic Neo",sans-serif; font-size: 13px; font-weight: bold; margin-top: 9px; padding:0 7px; box-sizing: border-box;}
+.marekt_inven_con .body-group div[class*="-item-list"] .item .item_detail .sale .rate {line-height:1.1em; display: inline-block; float: left; color: #f00; font-size: 13px; letter-spacing: -0.025em;}
+.marekt_inven_con .body-group div[class*="-item-list"] .item .item_detail .sale .text {display: inline-block; float: left; color: #df2b36; font-size: 13px;}
+.marekt_inven_con .body-group div[class*="-item-list"] .item .item_detail .sale .rate span {padding-left: 1px; font-size: 12px;}
+.marekt_inven_con .body-group div[class*="-item-list"] .item img {position: absolute;}
+.marekt_inven_con .body-group div[class*="-item-list"] .item .img_on {opacity: 0; transition: opacity 1s;}
+.marekt_inven_con .body-group div[class*="-item-list"] a:hover .img_on {opacity: 1;}
+.marekt_inven_con .body-group div[class*="-item-list"] .item .item_detail .sale .price {float: right; letter-spacing: -0.025em;}
+.marekt_inven_con .body-group .inven-detail-group {width: 100%;}
+.marekt_inven_con .title-group .title-img {position: relative; width: 100%; font-size: 0;}
+.marekt_inven_con .title-group .title-img .img_01 {width: 42px;}
+.marekt_inven_con .title-group .title-img .img_02 {width: 94px;}
+.marekt_inven_con .title-group .title-img .img_03 {width: calc(100% - 295px); height: 40px;}
+.marekt_inven_con .title-group .title-img .img_04 {width: 159px;}
+.marekt_inven_con .title-group .title-img a.recommend {position: absolute; top: 50%; right: 0; width: 100px; height: 20px; margin-top: -10px; margin-right: 17px; cursor: pointer;}
+
+/* market */
+#powerbbsBody .section_invenpc  {margin-top: 10px;}
+#powerbbsBody .commonpart {margin-bottom: 0;}
+
+.section_market .market_common_main_title {min-width: 155px; height:18px; line-height:18px; font-size: 18px; color: #000; font-family: 'Noto Sans', 'sans-serif'; letter-spacing: -0.025em; font-weight: bold; float: left;}
+.section_market .market_common_main_title span {font-family: 'Noto Sans', 'sans-serif'; display: inline-block; color:#02ab99;}
+
+.section_market .market_common_main_slogan {line-height:24px; font-size: 12px; font-weight: 400; color: #727272; float:left;}
+
+.section_market .title_box {height:20px;}
+
+.section_market .market_wrap {margin-top:10px;}
+
+.section_market .link_more {width: 37px; height: 20px; font-size: 0; position: absolute; top: 17px; right: 16px;}
+.section_market .link_more span {width: 100%; height: 100%; background:url('//static.inven.co.kr/image_2011/webzine/common/btn_more_green.png') center bottom 3px no-repeat; display: inline-block;}
+
+.section_market .item_list * {box-sizing: border-box;}
+.section_market .item_list >li {width:calc((100% - 24px) /4); margin:0; margin-left:8px; border:1px solid #DFDDDD;}
+.section_market .item_list >li:first-of-type {margin-left:0;}
+.section_market .item_list>li>a {display:block; position: relative;}
+.section_market .item_list a:hover, .section_market a:active {text-decoration: none;}
+.section_market .item_list a:hover .text, .section_market a:active .text {text-decoration: underline;}
+
+.section_market .item_list .thumb {width:100%; height:117px; text-align: center; border-bottom:1px solid #DFDDDD;}
+.section_market .item_list .thumb img {max-width:100%; width:auto; padding:5px 0;}
+
+.section_market .item_list .txt_box {display:block; height:106px; padding:9px 11px 7px 11px; background:#FAFAFA;}
+.section_market .item_list .text {font-family: "Malgun Gothic","맑은 고딕",helvetica,"Apple SD Gothic Neo",sans-serif; font-size:12px; height: 29px; overflow:hidden; padding:0; margin-bottom:7px;}
+.section_market .item_list .text .item_tit01 {height:100%; line-height: 14px; font-weight:normal; overflow:hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;}
+
+.section_market .item_list .price_wrap {min-height:30px;}
+.section_market .item_list .price_wrap::after {content:''; display:table; clear:both;}
+.section_market .item_list .price_wrap .percent {line-height: 1; font-size:16px; font-weight: 600; color:#df2b36; float:left;}
+.section_market .item_list .price_wrap .sub {width: calc(100% - 40px); float:right; text-align:right;}
+.section_market .item_list .price_wrap .sub, .section_market .item_list .price_wrap font {font-size:16px; font-weight: 600; color:#2d2d2d; display:block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
+.section_market .item_list .price_wrap font {line-height:1;}
+.section_market .item_list .price_wrap .sub strike {line-height:1; font-size:12px; font-weight: normal; color:#989898; display:block; margin-top:2px;}
+
+.section_market .item_list .badge_wrap {font-size:0; margin-top:5px;}
+.section_market .item_list .badge_wrap .badge {width: calc((99.9% - 14px) / 2); height:20px; line-height:18px; display: inline-block; font-family: "Malgun Gothic","맑은 고딕",helvetica,"Apple SD Gothic Neo",sans-serif; font-size: 12px; text-align: center; margin-left: 14px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;}
+.section_market .item_list .badge_wrap .badge:first-of-type {margin-left:0;}
+
+.section_market .item_list>li>a>.free_delivery { position: absolute; z-index: 1; width: 149px; text-align: right;}
+.section_market .item_list>li>a>.free_delivery>img {width: 37px; height: 37px;}
+
+.section_market .market_tab {width:100%; margin-left:1px;}
+.section_market .market_tab::after {display: table; content: ''; clear: both;}
+.section_market .market_tab li {float: left; width: calc((100% + 4.1px) / 5); margin-left: -1px; box-sizing: border-box !important;}
+
+.section_market .market_tab .btn {width:100%; height:31px; line-height:29px; text-align: center; margin-top:-1px; padding:0 5px; border:1px solid #e7e7e7; background:#fff; color:#909090; position: relative; overflow:hidden; text-overflow: ellipsis; white-space: nowrap;}
+.section_market .market_tab .btn.active {color: #02AB99; font-weight: bold; letter-spacing: -0.025em;}
+.section_market .market_tab .btn.active::before {display: block; content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 3px; background: #02AB99;}
+.section_market .market_tab .btn img {margin-right: 5px; vertical-align: middle;}
+
+/* custom pc */
+.section_gamepc {margin-bottom: 0; border-bottom: 0;}
+
+.section_gamepc .market_common_main_title {min-width: 112px; height: 20px; line-height: 20px; font-size: 18px; color: #4f91e2; font-family: 'Noto Sans', 'sans-serif'; letter-spacing: -0.035em; font-weight: bold; float: left; position: relative;}
+
+.section_gamepc .market_common_main_slogan {line-height:24px; font-size: 12px; font-weight: 400; color: #727272; float:left;}
+.section_gamepc .title_box {height:20px;}
+.section_gamepc .gamepc_group {padding-top:22px;}
+.section_gamepc .more_layer {width: calc(100% - 95px); position: absolute; left: 16px; z-index: 20;}
+.section_gamepc .gamepc_title {width: 91px; height: 15px; margin-bottom: 13px; background: url('//static.inven.co.kr/image_2011/common/module/commonpart/sp_common_title.png?v=200717a') no-repeat -82px -4px;}
+.section_gamepc .gamepc_title a {display: block; height: 15px; color: transparent; font-size: 0;}
+.section_gamepc .invenpc_tab .btn_inven_more {width: 68px; height: 31px; margin-top: -1px; border: 1px solid #867dfe; background-color: #584ed3; color: #fff; font-weight: bold; line-height: 29px;}
+
+.section_gamepc .gamepc_tab::after {display: table; content: ''; clear: both;}
+.section_gamepc .gamepc_tab li {float: left; width: calc((100% - 65px) / 4); margin-left: -1px; box-sizing: border-box !important;}
+.section_gamepc #gamepc_tab_list_main li:first-child {margin-left: 0;}
+.section_gamepc #gamepc_tab_list_main li:last-child {width: 68px; float:right;}
+.section_gamepc .gamepc_tab .btn {position: relative; width: 100%; height: 31px; margin-top: -1px; padding-left: 6px; border: 1px solid #e7e7e7; background: #fff; color: #909090; line-height: 29px; text-align: left; overflow: hidden;}
+
+.section_gamepc .gamepc_tab .btn.active {color: #2D2D2D; font-weight: bold; letter-spacing: -0.025em;}
+.gamepc_tab .btn.active::before {display: block; content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 3px; background: #4F91E2; z-index: 1;}
+
+.section_gamepc .gamepc_tab .btn img {margin-right: 5px; margin-bottom: 4px; vertical-align: middle; width:20px;}
+.section_gamepc .gamepc_tab .btn_more {width: 100%; height: 31px; margin-top: -1px; border: 1px solid #2B71C7; background-color: #4F91E2; color: #fff; font-weight: bold; line-height: 29px; letter-spacing: -0.025em;}
+.section_gamepc .gamepc_area {margin-top: 5px;}
+.section_gamepc .market_link_more {height:20px; top:22px;}
+.section_gamepc .market_link_more span {color:#4f91e2;}
+.section_gamepc .more_layer .gamepc_tab li {width: 25%;}
+
+.custom-game-pc {position: relative;}
+.custom-game-pc .title-group {border-top: solid 3px #0091a7;}
+.custom-game-pc .title-group .game-list {position: relative; width: 100%; padding: 5px 10px; border-left: solid 1px #b7b7b7; border-right: solid 1px #b7b7b7; box-sizing: border-box; z-index: 3;}
+.custom-game-pc .title-group .game-list .more_layer {position: absolute; top: 32px; left: 26px; width: calc( 100% - 95px); margin: 0; padding: 0; border: 0; background-color: transparent;}
+.custom-game-pc .title-group .game-menu {float: right; width: 80%; margin: 0; padding: 0; font-size: 0;}
+.custom-game-pc .title-group .game-title {display: inline-block; width: 20%; padding-top: 5px;}
+.custom-game-pc .title-group .game-list ul {float: right; width: 100%; margin: 0; padding: 0; font-size: 0;}
+.custom-game-pc .title-group .game-list ul li {float: left; display: inline-block; width: calc((100% - 60px) / 4); height: 28px; margin: -1px 0 0 -1px; padding-right: 3px; border: 1px solid #b7b7b7; font-size: 11px; font-weight: 700; line-height: 28px; background: url('//static.inven.co.kr/image_2011/common/module/gamepc/game_pc_button_off.png?a=1') repeat-x; cursor: pointer; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; box-sizing: border-box;}
+.custom-game-pc .title-group .game-list ul.more_layer li {width: 20%;}
+.custom-game-pc .title-group .game-list ul li.active, .custom-game-pc .title-group .game-list ul li:hover {background: url('//static.inven.co.kr/image_2011/common/module/gamepc/game_pc_button_on.png') repeat-x;}
+.custom-game-pc .title-group .game-list ul li.game-more {width: 65px; margin: -1px 0 0 -1px; padding: 0; border: 1px solid #0b2f50; background: url(//static.inven.co.kr/image_2011/common/module/gamepc/game_pc_button_more.png) repeat-x; background-size: cover;}
+.custom-game-pc .title-group .game-list ul li.game-more .text {width: calc( 100% - 2px); border: 1px solid #1c5d9b; background: url(//static.inven.co.kr/image_2011/common/module/gamepc/game_pc_button_more.png) repeat-x;}
+.custom-game-pc .title-group .game-list ul li.game-more .text .sub {width: 100%; height: 22px; border: 1px solid #154674; color: #fff; line-height: 22px; text-align: center;}
+.custom-game-pc .title-group .game-list ul li.game-more .text .sub span {padding-left: 5px;}
+.custom-game-pc .title-group .game-list ul li img {width: 16px; height: 16px; margin: 0 5px; vertical-align: middle;}
+.custom-game-pc .group-list {display: inline-block; position: relative; width: 100%;}
+.custom-game-pc .hide {display: none;}
+
+/* inven pc */
+/* inven pc : common */
+.section_invenpc {margin-bottom: 0; border-bottom: 0; border-top:4px solid #cb1f26;}
+.section_invenpc .market_common_main_title{width: 80px; height: 29px; color: transparent; font-size: 0; float: left; background: url('//static.inven.co.kr/image_2011/common/module/commonpart/sp_common_title.png?v=200717a') no-repeat 0 -163px;}
+.section_invenpc .market_common_main_slogan {line-height: 44px; font-size: 12px; font-weight: 400; color: #727272; float:left;}
+.section_invenpc .invenpc_group {padding: 17px 15px 14px 15px;}
+.section_invenpc .invenpc_group::after {content:''; display:table; clear:both;}
+.section_invenpc .invenpc_group + .invenpc_group {padding:0 15px 0 15px;}
+.section_invenpc .market_link_more span {color:#f14a4a;}
+
+.section_invenpc .more_inven_layer {position: absolute; left: 15px; z-index: 20;}
+
+.section_invenpc .invenpc_title .invenpc_sub_title{ display: inline-block; vertical-align: sub; bottom: 0; height: 30px; line-height: 30px; font-size: 12px; font-weight: 600; color: #bebebe; letter-spacing: -0.75px; margin-left: 5px;}
+
+.section_invenpc .invenpc_tab {width:100%; margin-left:1px;}
+.section_invenpc .invenpc_tab::after {display: table; content: ''; clear: both;}
+.section_invenpc .invenpc_tab li {float: left; width: calc((100% + 4.1px) / 5); margin-left: -1px; box-sizing: border-box !important;}
+
+.section_invenpc .invenpc_tab .btn {width:100%; height:31px; line-height:29px; text-align: center; margin-top:-1px; padding:0 5px; border:1px solid #e7e7e7; background:#fff; color:#909090; position: relative; overflow:hidden; text-overflow: ellipsis; white-space: nowrap;}
+/*.section_invenpc .invenpc_tab .btn:hover, .section_invenpc .invenpc_tab .btn.active {background:#F14A4A; color:#fff; border-color:#E43838; font-weight: bold;}*/
+.section_invenpc .invenpc_tab .btn.active {background:#F14A4A; color:#fff; border-color:#E43838; font-weight: bold;}
+.section_invenpc .invenpc_tab .btn img {margin-right: 5px; vertical-align: middle;}
+
+.section_invenpc .invenpc_tab .btn_inven_more {width: 68px; height: 31px; margin-top: -1px; border: 1px solid #867dfe; background-color: #584ed3; color: #fff; font-weight: bold; line-height: 29px;}
+
+.section_invenpc .invenpc_area {margin-top: 5px;}
+
+.section_invenpc .more_inven_layer {width: calc(100% - 94px);}
+.section_invenpc .more_inven_layer .invenpc_tab li {width: 25%;}
+
+/* inven pc : 인벤PC란 모듈 - 마켓PC 구매후기 및 금주의 PC랭킹 리스트 */
+.section_invenpc .market_pc_wrap {width:calc((100% - 9px) / 2); height:227px; float:left; border-bottom:1px solid #E7E7E7; border-top:2px solid #FF4E4E; vertical-align: top; box-sizing: border-box; margin-left:9px; position: relative;}
+.section_invenpc .market_pc_wrap::before {content:''; display:block; height:1px; background:#CA1B1B; position: absolute; top:-3px; left:0; right:0;}
+.section_invenpc .market_pc_wrap:first-of-type {margin-left:0;}
+.section_invenpc .market_pc_wrap > div {border-left:1px solid #E7E7E7; border-right:1px solid #E7E7E7;;}
+
+.section_invenpc .market_pc_wrap .title_wrap {height: 30px; line-height: 30px; border-bottom: 1px solid #E7E7E7; padding: 0 14px; box-sizing: border-box;}
+.section_invenpc .market_pc_wrap .title_wrap p {font-size:12px; font-weight: 600; color:#df2b36;}
+
+.section_invenpc .market_pc_wrap .link_more {width:42px; height:30px; font-size:0; position: absolute; top:0; right:12px;}
+.section_invenpc .market_pc_wrap .link_more span {width: 100%; height: 100%; background: url('//static.inven.co.kr/image_2011/webzine/common/btn_more_red.png') center center no-repeat; display: inline-block;}
+
+.section_invenpc .market_pc_wrap div > .list li {box-sizing: border-box;}
+.section_invenpc .market_pc_wrap div > .list li a {padding:8px 7px; height:100%; font-size:0; display:block; box-sizing: border-box;}
+
+.section_invenpc .market_pc_wrap .img_box {position: relative; overflow: hidden; display: inline-block; vertical-align: middle; box-sizing: border-box;}
+.section_invenpc  .market_pc_wrap .img_box img {height: 100%; position: absolute; top:50%; left: 50%; transform: translate(-50%, -50%);}
+
+.section_invenpc .market_pc_wrap .info_box {display: inline-block; vertical-align: middle;}
+.section_invenpc .market_pc_wrap .info_box::after {content:''; display:table; clear:both;}
+.section_invenpc .market_pc_wrap .info_box .title {line-height:1.2em; font-size:12px; color:#161616; font-weight: 600; white-space: nowrap; text-overflow:ellipsis; overflow:hidden;}
+
+.section_invenpc .market_pc_wrap .info_box .num {width:15px; height:15px; line-height:15px; color:#fff; text-align: center; font-weight:600; background:#525252; display:inline-block; vertical-align: top; margin-right:5px;}
+
+.section_invenpc .market_pc_wrap .info_box dl {font-size:12px; width:100%;}
+.section_invenpc .market_pc_wrap .info_box dl .title {width:100%; line-height:1; margin-bottom:8px;}
+.section_invenpc .market_pc_wrap .info_box dl .info {width:100%; font-size:12px; line-height:1.3; color:#909090; white-space: nowrap; overflow:hidden; text-overflow:ellipsis;}
+.section_invenpc .market_pc_wrap .info_box dl .num {background:#FF4E4E;}
+
+.section_invenpc .market_pc_wrap .info_box > .title {margin-bottom:7px;}
+.section_invenpc .market_pc_wrap .info_box .price_wrap {font-size:0; height: 15px; line-height: 13px; margin-bottom:10px;}
+.section_invenpc .market_pc_wrap .info_box .price_wrap span {line-height:1; display:inline-block;}
+.section_invenpc .market_pc_wrap .info_box .price_wrap .price {font-size:12px; font-weight: 600; color:#161616; vertical-align: middle; margin-right:10px;}
+.section_invenpc .market_pc_wrap .info_box .price_wrap .stars {vertical-align: middle;}
+.section_invenpc .market_pc_wrap .info_box .price_wrap .stars img {margin-left:3px;}
+.section_invenpc .market_pc_wrap .info_box .price_wrap .stars:first-of-type img {margin-left:0;}
+.section_invenpc .market_pc_wrap .info_box .contents {line-height: 1.4em; height: 2.6em; font-size:12px; color:#909090; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;}
+
+.section_invenpc .market_pc_wrap .review .list {height:194px;}
+.section_invenpc .market_pc_wrap .review .list li {height:50%; box-sizing: border-box; border-top:1px solid #E7E7E7;}
+.section_invenpc .market_pc_wrap .review .list li:first-of-type {border-top:0;}
+.section_invenpc .market_pc_wrap .review .info_box {width:calc(100% - 90px); margin-left:10px;}
+.section_invenpc .market_pc_wrap .review .img_box {width: 80px; height: 80px;}
+
+.section_invenpc .market_pc_wrap .ranking {height:100%;}
+.section_invenpc .market_pc_wrap .ranking .list {height:calc(100% - 30px);}
+.section_invenpc .market_pc_wrap .ranking .list li:first-of-type {height:98px; border-bottom:1px solid #E7E7E7;}
+.section_invenpc .market_pc_wrap .ranking .list li:first-of-type a {padding: 4px 0 5px 0;}
+.section_invenpc .market_pc_wrap .ranking .list li:first-of-type .img_box {width: calc(108px - 26px); height:100%; margin: 0 13px;}
+.section_invenpc .market_pc_wrap .ranking .list li:first-of-type .img_box img {height:73px; top: 0; transform: translate(-50%, 0);}
+.section_invenpc .market_pc_wrap .ranking .list li:first-of-type .img_box .price {width:100%; line-height:1; height:1.2em; text-align: center; position: absolute; bottom: -1px; left: 0; font-size: 13px; color: #2d2d2d; font-weight: 600; text-overflow: ellipsis; overflow:hidden; white-space:nowrap;}
+.section_invenpc .market_pc_wrap .ranking .list li:first-of-type .info_box {width:calc(100% - 126px); margin:3px 6px 2px 6px;}
+
+.section_invenpc .market_pc_wrap .ranking .list li:not(:first-of-type) {height:calc((100% - 135px) / 4); line-height:1; margin-top:6px;}
+.section_invenpc .market_pc_wrap .ranking .list li:not(:first-of-type) a {padding: 0 6px;}
+
+.section_invenpc .market_pc_wrap .ranking .list li:not(:first-of-type) .info_box {width:100%;}
+.section_invenpc .market_pc_wrap .ranking .list li:not(:first-of-type) .info_box .title {line-height: 1.1; font-weight:normal; color:#909090; margin-bottom:0;}
+
+.section_invenpc .market_pc_wrap .ranking .list li:nth-of-type(2) {margin-top:10px;}
+
+.custom-inven-pc {position: relative;}
+.custom-inven-pc .title-group {border-top: solid 3px #0091a7;}
+.custom-inven-pc .title-group .inven-list {position: relative; width: 100%; padding: 5px 10px; border-left: solid 1px #b7b7b7; border-right: solid 1px #b7b7b7; box-sizing: border-box; z-index: 3;}
+.custom-inven-pc .title-group .inven-list .more_inven_layer {position: absolute; top: 32px; left: 26px; width: calc( 100% - 95px); margin: 0; padding: 0; border: 0; background-color: transparent;}
+.custom-inven-pc .title-group .inven-menu {float: right; width: 80%; margin: 0; padding: 0; font-size: 0;}
+.custom-inven-pc .title-group .inven-title {display: inline-block; width: 20%; padding-top: 5px;}
+.custom-inven-pc .title-group .inven-list ul {float: right; width: 100%; margin: 0; padding: 0; font-size: 0;}
+.custom-inven-pc .title-group .inven-list ul li {float: left; display: inline-block; width: calc((100% - 60px) / 4); height: 28px; margin: -1px 0 0 -1px; padding-right: 3px; border: 1px solid #b7b7b7; font-size: 11px; font-weight: 700; line-height: 28px; background: url('//static.inven.co.kr/image_2011/common/module/invenpc/inven_pc_button_off.png?a=1') repeat-x; cursor: pointer; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; box-sizing: border-box;}
+.custom-inven-pc .title-group .inven-list ul.more_inven_layer li {width: 20%;}
+.custom-inven-pc .title-group .inven-list ul li.active, .custom-inven-pc .title-group .inven-list ul li:hover {background: url('//static.inven.co.kr/image_2011/common/module/invenpc/inven_pc_button_on.png') repeat-x;}
+.custom-inven-pc .title-group .inven-list ul li.inven-more {width: 65px; margin: -1px 0 0 -1px; padding: 0; border: 1px solid #0b2f50; background: url(//static.inven.co.kr/image_2011/common/module/invenpc/inven_pc_button_more.png) repeat-x; background-size: cover;}
+.custom-inven-pc .title-group .inven-list ul li.inven-more .text {width: calc( 100% - 2px); border: 1px solid #1c5d9b; background: url(//static.inven.co.kr/image_2011/common/module/invenpc/inven_pc_button_more.png) repeat-x;}
+.custom-inven-pc .title-group .inven-list ul li.inven-more .text .sub {width: 100%; height: 22px; border: 1px solid #154674; color: #fff; line-height: 22px; text-align: center;}
+.custom-inven-pc .title-group .inven-list ul li.inven-more .text .sub span {padding-left: 5px;}
+.custom-inven-pc .title-group .inven-list ul li img {width: 16px; height: 16px; margin: 0 5px; vertical-align: middle;}
+.custom-inven-pc .group-list {display: inline-block; position: relative; width: 100%;}
+.custom-inven-pc .hide {display: none;}
+
+/* market-inven 모듈 : 게임보다재미있는 쇼핑, 마켓인벤이 1개씩 출력될때 공용 클래스 .section_market_line (오버라이딩 때문에 위치 밑에 둠) */
+.section_market_line {margin-bottom:10px; border-top: 4px solid #cb1f26; border-bottom:1px solid #dfdddd;}
+.section_market_line  .marekt_inven_con, .section_market_line  .invenpc_group, .section_market_line .recommend_group {padding:15px 15px 14px 15px; margin:0;}
+.section_market_line  .invenpc_group + .invenpc_group {padding: 0 15px 14px 15px;}
+
+.section_market_line .market_link_more {top:15px;}
+.section_market_line .link_more {top:15px;}
+
+/* market-inven 모듈 : indie인벤일 경우 */
+.indieBody #webzineBody .section_market_line {box-sizing: border-box;}
+.indieBody #webzineBody .section_market_line * {box-sizing: border-box;}
+
+/* 모듈 리뉴얼 */
+.module-group.half {
+    display: flex;
+}
+.module-group.half > div {
+    width: 50%;
+}
+
+.module-wrap {
+    border: 1px solid #ddd;
+    border-top: 4px solid #ccc;
+    box-sizing: border-box;
+}
+
+.module-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 14px;
+    height: 48px;
+    border-bottom: 1px solid #ddd;
+    box-sizing: border-box;
+}
+.module-header h3 {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.module-header h3::before {
+    content: "";
+    display: none;
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+
+/* 모듈 헤더 더보기 모음 */
+.module-more {
+    display: block;
+    width: 31px;
+    height: 5px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 132.6 21'%3E%3Cstyle%3E.st0%7Bfill:%23070707%7D%3C/style%3E%3Cpath d='M4.2 4.2V0H0v21h4.2V8.4h4.2V4.2zM8.4 8.4h4.2v4.2H8.4zM16.8 4.2h-4.2v4.2h4.2V21H21V0h-4.2zM25.5 0v21h21V0h-21zm16.8 16.8H29.7V4.2h12.6v12.6zM51.6 0v21h4.2v-8.4h8.4V21h8.4v-4.2h-4.2v-4.2h4.2V0h-21zm16.8 8.4H55.8V4.2h12.6v4.2zM77.1 0v21h21v-4.2H81.3v-4.2h16.8V8.4H81.3V4.2h16.8V0zM124.2 8.4V0H120v8.4h-8.4v4.2h8.4V21h4.2v-8.4h8.4V8.4z' class='st0'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-size: 100%;
+    text-indent: -9999px;
+}
+.module-more.red {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 132.6 21'%3E%3Cstyle%3E.st0%7Bfill:%23f64b4b%7D%3C/style%3E%3Cpath d='M4.2 4.2V0H0v21h4.2V8.4h4.2V4.2zM8.4 8.4h4.2v4.2H8.4zM16.8 4.2h-4.2v4.2h4.2V21H21V0h-4.2zM25.5 0v21h21V0h-21zm16.8 16.8H29.7V4.2h12.6v12.6zM51.6 0v21h4.2v-8.4h8.4V21h8.4v-4.2h-4.2v-4.2h4.2V0h-21zm16.8 8.4H55.8V4.2h12.6v4.2zM77.1 0v21h21v-4.2H81.3v-4.2h16.8V8.4H81.3V4.2h16.8V0zM124.2 8.4V0H120v8.4h-8.4v4.2h8.4V21h4.2v-8.4h8.4V8.4z' class='st0'/%3E%3C/svg%3E");
+}
+
+.module-list {
+    padding: 15px;
+}
+.module-list li {
+    margin-bottom: 7px;
+    height: 20px;
+}
+.module-list li:last-child {
+    margin-bottom: 0;
+}
+.module-list li a {
+    display: flex;
+    overflow: hidden;
+    color: #1f1f1f;
+    box-sizing: border-box;
+}
+.module-list li a .name {
+    margin-right: 5px;
+    width: auto;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    word-wrap: normal;
+}
+.module-list li a .name > div {
+    position: relative;
+    top: 1px;
+    float: left;
+} 
+.module-list li a .name .num {
+    margin-right: 5px;
+    color: #f94b4b;
+    font-size: 12px;
+    font-weight: bold;
+    text-align: center;
+}
+.module-list li a .name .cate {
+    margin-right: 5px;
+    padding: 0 3px;
+    color: #999999;
+    font-size: 12px;
+    text-align: center;
+}
+.module-list li a .comment {
+    margin-right: 3px;
+    color: #f94b4b;
+    font-size: 11px;
+    font-weight: bold;
+    word-break: keep-all;
+}
+
+/* 핫벤 */
+.module-wrap.hotven {
+    border-top-color: #dd0000;
+    border-right: 0;
+}
+.module-wrap.hotven h3 {
+    color: #dd0000;
+}
+.module-wrap.hotven h3::before {
+    display: block;
+    margin-right: 8px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background-color: #dd0000;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' xml:space='preserve' style='enable-background:new 0 0 23 30' viewBox='0 0 23 30'%3E%3Cpath d='m18 5-2 5L9 0 6 12 4 6l-4 8.46V22l7.03 8H11v-8h3.7v8h2.67L23 23.64V14l-5-9zm-7 14.63H7V15h4v4.63z' style='fill:%23fff'/%3E%3C/svg%3E");
+    background-size: 10px 14px;
+}
+
+/* 팟벤 */
+.module-wrap.party {
+    border-top-color: #2b2b2b;
+}
+.module-wrap.party h3 {
+    color: #2b2b2b;
+}
+.module-wrap.party h3::before {
+    display: block;
+    margin-right: 8px;
+    width: 24px;
+    height: 24px;
+    border-radius: 11px;
+    background-color: #222;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' x='0' y='0' viewBox='0 0 15 20'%3E%3Cstyle%3E.st0%7Bfill:%23fff%7D%3C/style%3E%3Cpath d='M9 3H0v17h4v-5h5v-2h3V6H9V3zM4 7h4v4H4V7zM11 0h4v4h-4z' class='st0'/%3E%3C/svg%3E");
+    background-size: 10px 14px;
+}
+
+/* 핫게임 커뮤니티 */
+.group-hotgame {
+    display: flex;
+    flex-wrap: wrap;
+}
+.group-hotgame >.flex-wrap {
+    width: 100%;
+    height: 40px;
+    border-top: 2px solid #639cea;
+    border-bottom: 1px solid #d1d2d4;
+}
+.group-hotgame >.flex-wrap >a {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    padding-right: 7px;
+    width: 37px;
+    height: 100%;
+    color: #a9a9a9;
+    font-size: 10px;
+    letter-spacing: -0.05em;
+}
+.group-hotgame >.flex-wrap >a::after {
+    content: "+";
+    display: flex;
+    position: absolute;
+    top: -1px;
+    right: 1px;
+    height: 100%;
+    align-items: center;
+}
+.group-hotgame .flex-wrap {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 15px;
+}
+.group-hotgame .title {
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.group-hotgame .game-list {
+    width: 50%;
+}
+.group-hotgame .game-list >li {
+    padding: 15px;
+    min-height: 114px;
+}
+.group-hotgame .game-list .flex-wrap {
+    justify-content: flex-start;
+    gap: 10px;
+    padding: 0;
+}
+
+.group-hotgame .img-box {
+    width: 40px;
+    height: 40px;
+}
+.group-hotgame .img-box img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 6px;
+}
+
+.group-hotgame .txt-area {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 40px;
+    letter-spacing: -0.025em;
+}
+
+.group-hotgame .hashtag-box {
+    display: flex;
+    gap: 8px;
+    margin-top: 4px;
+}
+.group-hotgame .hashtag-box .hashtag {
+    color: #518eff;
+    font-size: 12px;
+    line-height: 13px;
+}
+
+.group-hotgame .game-title {
+    margin-bottom: 2px;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 15px;
+}
+.group-hotgame .game-title a {
+    display: inline-block;
+    max-width: 315px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.group-hotgame .party-list {
+    margin-top: 8px;
+    padding: 0;
+    background: transparent;
+}
+.group-hotgame .party-list li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    position: relative;
+    margin: auto;
+    padding-left: 10px;
+    width: auto;
+    color: #6e6e6e;
+    font-size: 13px;
+    line-height: 22px;
+    letter-spacing: -0.035em;
+}
+.group-hotgame .party-list li:last-child {
+    margin-bottom: 0;
+}
+.group-hotgame .party-list li::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 2px;
+    height: 2px;
+    background-color: #a7a7a7;
+}
+.group-hotgame .party-list li a {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+.group-hotgame .party-list li .cmtnum {
+    margin-left: -1px;
+    color: #f72526;
+}
+.group-hotgame .party-list li .cmtnum:empty {
+    display: none;
+}

@@ -1,0 +1,44 @@
+! [메이플 인벤] 커뮤니티 핫이슈 영역 숨김
+maple.inven.co.kr##.inven-community-hot-issue-content
+
+! [메이플 인벤] 로고 이미지가 있는 최상단 헤더(인벤 공통 상단 바) 숨김
+maple.inven.co.kr##header:has(> h1.has-logo-image)
+
+! [메이플 인벤] 오른쪽 사이드바: 달력(일정) 위젯 숨김
+maple.inven.co.kr###right-calendar
+
+! [메이플 인벤] 오른쪽 사이드바: 인벤 게임 소개 위젯 숨김
+maple.inven.co.kr###right-invenGames
+
+! [메이플 인벤] 오른쪽 사이드바: 아이마트(아이템 거래) 혜택 위젯 숨김
+maple.inven.co.kr###right-imart-benefits
+
+! [메이플 인벤] 오른쪽 사이드바: 치지직·SOOP 방송 위젯 숨김
+maple.inven.co.kr###right-chzzk-soop
+
+! [메이플 인벤] 오른쪽 사이드바: 핫딜 목록 위젯 숨김
+maple.inven.co.kr###right-hotdeal-list
+
+! [메이플 인벤] 인벤 포커스(추천 기사·배너) 영역 숨김
+maple.inven.co.kr###invenFocus
+
+! [인벤 전체] 이미 읽은 글의 제목·내용·제목줄 링크를 보라색(#9b59b6)으로 표시 (CSS 주입)
+inven.co.kr#$#a:visited .tit, a:visited .txt, a:visited .subject { color: #9b59b6 !important; }
+
+! [www 인벤 게시판] 로고 이미지가 있는 최상단 헤더 숨김 (/board/ 경로만)
+www.inven.co.kr/board/##header:has(> h1.has-logo-image)
+
+! [목록·글보기] 상단 헤더, 메뉴, 방문 기록 바, 하단 정책·저작권 영역을 왼쪽 20px에 붙임
+[$path=/\/board\/(lists|view)/]gall.dcinside.com#$#.dchead, .gnb, .visit_bookmark, .info_policy, .copyright { margin-left: 20px !important; }
+
+! [목록·글보기] 본문 전체(#container)를 왼쪽 20px에 붙임
+[$path=/\/board\/(lists|view)/]gall.dcinside.com#$##container { margin-left: 20px !important; }
+
+! [전체 페이지] 왼쪽 날개 광고 + 왼쪽 세로 광고 숨김 (세로 광고가 본문을 덮어 클릭을 막음)
+gall.dcinside.com##.ad_left_wing_list_top, .ad_left_wing_right_top, .stickyunit_rail
+
+! [글쓰기] 페이지 폭을 1200px로 줄여 화면 전체를 왼쪽으로 당김 (팝업 위치도 같이 이동)
+[$path=/\/board\/write/]gall.dcinside.com#$#body { position: relative !important; width: 1200px !important; }
+
+! [글쓰기] 글쓰기 상자 안쪽 여백 조정 (기본 좌우 68px → 왼쪽 40px, 오른쪽 20px)
+[$path=/\/board\/write/]gall.dcinside.com#$##write_wrap { padding-left: 40px !important; padding-right: 20px !important; }

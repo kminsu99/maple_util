@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         인벤 상단 메뉴를 메이플 메뉴로 교체
+// @name         메이플 인벤 상단 메뉴를 메이플 메뉴로 교체
 // @namespace    maple_util
 // @version      1.0
 // @description  #common-headmenu-full 내용을 지우고 #commu-nav(메이플 커뮤니티 메뉴)로 대체
