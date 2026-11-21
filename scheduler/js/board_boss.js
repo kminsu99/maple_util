@@ -62,11 +62,19 @@
             const cols = {};
             COLS.forEach((col) => { cols[col] = countOf(entries, col); });
             // 서버별 박스, 서버 안에서 주기별 합산 (보스가 없는 주기는 생략, 위에서부터 월간 → 주간 → 일일)
+            //  - 캐릭터 줄: 그 주기 보스가 있는 캐릭터만
+            //  - D-day는 대분류에만, 캐릭터 줄 막대는 주간보스만
             const gauges = BoardUI.groupByWorld(entries).map((g) => ({
                 world: g.world,
+                kind: 'boss',
                 list: COLS.map((col) => {
                     const [done, total] = countOf(g.entries, col);
-                    return [SchedulerState.bossCycle(col).title.replace('보스', ''), GAUGE_CLASS[col], done, total, ddayHtml(col, done, total)];
+                    const children = g.entries.filter((e) => e.st.status === 'ok').map((e) => {
+                        const [d, t] = countOf([e], col);
+                        const name = e.st.data.character_name;
+                        return t ? [esc(name), GAUGE_CLASS[col], d, t, '', { name, bar: col === 'bossWeekly' }] : null;
+                    }).filter(Boolean);
+                    return [SchedulerState.bossCycle(col).title, GAUGE_CLASS[col], done, total, ddayHtml(col, done, total), { children }];
                 }).filter((x) => x[3] > 0).reverse(),
             }));
             return { cols, gauges };
@@ -78,13 +86,15 @@
         //  - 일일보스: D-day 없이 같은 너비만 비워 둬 게이지·n/n 위치를 통일
         function ddayHtml(col, done, total) {
             const red = R.BOSS_DDAY_RED[col];
-            if (!red) return '<b class="dday is-empty" aria-hidden="true"></b>';
+            // 빈 칸에도 'D00' 글자를 넣고 숨김 → 글자 기준선·높이가 월간보스 D-day와 같아 줄 위치가 어긋나지 않음
+            if (!red) return '<b class="dday is-empty" aria-hidden="true">D00</b>';
             const info = SchedulerState.bossCycle(col);
             const next = Reset.nextReset(info.reset);
             const days = Math.max(1, Math.ceil((next.getTime() - Date.now()) / (24 * 60 * 60 * 1000)));
             const complete = total > 0 && done >= total;
             const cls = complete ? 'is-done' : (days <= red ? 'is-urgent' : 'is-pending');
-            return `<b class="dday ${cls}" title="${esc(info.title)} 초기화 ${Reset.untilText(next)}">D${days}</b>`;
+            // 항상 두 자리 (D9 → D09) → 폭 고정
+            return `<b class="dday ${cls}" title="${esc(info.title)} 초기화 ${Reset.untilText(next)}">D${String(days).padStart(2, '0')}</b>`;
         }
 
         function listHtml(bosses) {
@@ -155,7 +165,7 @@
             return BoardUI.sectionHtml({
                 key: 'boss',
                 title: '보스',
-                actions: '',
+                actions: BoardUI.moreLinkHtml('boss_check.html'),
                 gauges: BoardUI.worldGaugesHtml(model.gauges),
                 body: `
                     <div class="bm-scroll">

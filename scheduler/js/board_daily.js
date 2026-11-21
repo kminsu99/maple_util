@@ -74,25 +74,33 @@
                 const count = (done) => { quest[0] += done ? 1 : 0; quest[1] += 1; };
                 rows.forEach((r) => (r.items || []).forEach((it) => count(it.done)));
                 shared.filter((s) => !s.mpark).forEach((s) => count(s.done));
-                const list = (quest[1] ? [['일퀘', 'is-main', quest[0], quest[1]]] : [])
-                    .concat(shared.filter((s) => s.mpark).map((s) => ['몬파', 'is-mpark', Math.min(s.now, s.target), s.target, '',
-                        { name: `${g.world || ''} 몬스터파크`.trim() }]));
+                // 일퀘 캐릭터 줄: 캐릭터 자신의 일일 컨텐츠만 (월드 공유 항목은 대분류 합계에만 포함)
+                const children = rows.filter((r) => r.items && r.items.length).map((r) => {
+                    const name = r.e.st.data.character_name;
+                    return [esc(name), 'is-main', r.items.filter((it) => it.done).length, r.items.length, '', { name }];
+                });
+                // 게이지 순서: 몬파(항상 맨 위) → 일퀘
+                const list = shared.filter((s) => s.mpark).map((s) => ['몬파', 'is-mpark', Math.min(s.now, s.target), s.target, '',
+                    { name: `${g.world || ''} 몬스터파크`.trim() }])
+                    .concat(quest[1] ? [['일퀘', 'is-main', quest[0], quest[1], '', { children }]] : []);
                 const tagged = rows.some((r) => (r.items || []).some((it) => it.tagged));
                 return { world: g.world, entries: g.entries, shared, rows, tagged, list };
             });
-            return { worlds, gauges: worlds.map(({ world, list }) => ({ world, list })) };
+            return { worlds, gauges: worlds.map(({ world, list }) => ({ world, kind: 'daily', list })) };
         }
 
         // ── 그리기 ──
         function sharedHtml(w) {
             if (!w.shared.length) return '';
-            const items = w.shared.map((s) => {
+            // 몬스터파크는 '몬파'로, 맨 앞에 표시
+            const ordered = w.shared.filter((s) => s.mpark).concat(w.shared.filter((s) => !s.mpark));
+            const items = ordered.map((s) => {
                 const input = s.mpark && editing && w.world
                     ? `<label class="mp-target">목표
                             <input type="number" class="mp-target-input" data-world="${esc(w.world)}" min="1" max="${R.MPARK_MAX}" step="1" value="${s.target}" aria-label="${esc(w.world)} 몬스터파크 목표 횟수">
                        </label>`
                     : '';
-                return BoardUI.itemHtml(s.it.content_name, s.sub, s.done, '', input);
+                return BoardUI.itemHtml(s.mpark ? '몬파' : s.it.content_name, s.sub, s.done, '', input);
             }).join('');
             return `
                 <div class="world-shared">

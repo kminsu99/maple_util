@@ -71,30 +71,43 @@
     }
 
     // ── 게이지 ──
+    // 한 줄 = [라벨 | 완료/전체 D-day | 막대], 세 칸 모두 고정 너비 → 모든 섹션에서 같은 규격
+    // 대분류 줄 아래에 캐릭터 줄(└)을 같은 규격으로 표시
+    //
     // 게이지 하나 = [라벨, 클래스, 완료, 전체, extra, opts]
     //  - label: 이미 이스케이프된 값
-    //  - extra: 숫자 옆 HTML (예: 보스 D-day)
+    //  - extra: 이름 옆 HTML (보스 대분류의 D-day)
+    // 배치: [이름 D-day ........ 완료/전체] (숫자는 오른쪽 끝 = 막대 오른쪽 끝)
     //  - opts.name: 툴팁·접근성용 원래 이름
-    function gaugeHtml(label, cls, done, total, extra, opts) {
+    //  - opts.children: 캐릭터 줄 [게이지...] (대분류 줄에만)
+    //  - opts.bar: 캐릭터 줄에도 막대 표시 (기본은 캐릭터 줄 막대 없음, 주간보스만 예외)
+    function gaugeHtml(label, cls, done, total, extra, opts, child) {
         const o = opts || {};
         const name = esc(o.name || label);
         const pct = total ? Math.round((done / total) * 100) : 0;
+        const bar = !child || o.bar
+            ? `<span class="wk-gauge-bar" role="progressbar" aria-label="${name} 진행도" aria-valuemin="0" aria-valuemax="${total}" aria-valuenow="${done}"><i style="width:${pct}%"></i></span>`
+            : '<span class="wk-gauge-nobar" aria-hidden="true"></span>';
         return `
-            <div class="wk-gauge ${cls}${total && done >= total ? ' is-complete' : ''}"${o.name ? ` title="${name}"` : ''}>
-                <span class="wk-gauge-label">${label}</span>
-                <span class="wk-gauge-bar" role="progressbar" aria-label="${name} 진행도" aria-valuemin="0" aria-valuemax="${total}" aria-valuenow="${done}"><i style="width:${pct}%"></i></span>
-                <span class="wk-gauge-num"><span class="wk-gauge-count">${done}/${total}</span>${extra || ''}</span>
+            <div class="wk-gauge ${cls}${child ? ' is-child' : ''}${total && done >= total ? ' is-complete' : ''}"${o.name ? ` title="${name}"` : ''}>
+                <span class="wk-gauge-label">${child ? '<span class="wk-gauge-tree" aria-hidden="true">└</span>' : ''}<span class="wk-gauge-name">${label}</span>${extra || ''}</span>
+                <span class="wk-gauge-num"><span class="wk-gauge-count">${done}/${total}</span></span>
+                ${bar}
             </div>`;
     }
 
+    // 대분류 한 묶음 = 대분류 줄 + 캐릭터 줄 (보스는 묶음 단위로 배치)
     function gaugesHtml(list) {
-        return list && list.length
-            ? `<div class="wk-gauges">${list.map((g) => gaugeHtml(...g)).join('')}</div>`
-            : '';
+        if (!list || !list.length) return '';
+        return `<div class="wk-gauges">${list.map((g) => {
+            const kids = g[5] && g[5].children ? g[5].children : [];
+            return `<div class="wk-gauge-group ${g[1]}">${gaugeHtml(...g)}${kids.map((c) => gaugeHtml(c[0], c[1], c[2], c[3], c[4], c[5], true)).join('')}</div>`;
+        }).join('')}</div>`;
     }
 
-    // 서버별 게이지 박스: groups = [{ world, account?, list: [게이지...] }] (게이지 없는 서버는 생략)
+    // 서버별 게이지 박스: groups = [{ world, account?, kind, list: [게이지...] }] (게이지 없는 서버는 생략)
     //  - account: 계정 공유 박스 (서버 구분 없음, 점선 테두리)
+    //  - kind: 'weekly' | 'boss' | 'daily' → 섹션별 칸 너비·배치 (CSS gw-*)
     function worldGaugesHtml(groups) {
         const shown = (groups || []).filter((g) => g.list && g.list.length);
         if (!shown.length) return '';
@@ -102,7 +115,7 @@
             const color = g.account ? 'var(--accent)' : (g.world ? Util.worldColor(g.world) : 'var(--border)');
             const head = g.account ? Util.worldLabel('', '계정 공유') : Util.worldLabel(g.world, g.world ? '' : '월드 확인 중');
             return `
-                <div class="gauge-world${g.account ? ' is-account' : ''}" style="--world-color:${color}">
+                <div class="gauge-world${g.account ? ' is-account' : ''}${g.kind ? ' gw-' + g.kind : ''}" style="--world-color:${color}">
                     <div class="gauge-world-head">${head}</div>
                     ${gaugesHtml(g.list)}
                 </div>`;
@@ -112,6 +125,11 @@
     // ── 섹션 머리 버튼 ──
     function resetHtml(kind) {
         return `<span class="sb-reset">초기화 ${Reset.untilText(Reset.nextReset(kind))}</span>`;
+    }
+
+    // [자세히]: 다른 페이지로 이동하는 링크 버튼 (예: 보스 → boss_check.html)
+    function moreLinkHtml(href) {
+        return `<a class="sb-more" href="${esc(href)}">자세히</a>`;
     }
 
     // 편집 중일 때는 [초기화] 버튼을 함께 표시 (해당 섹션 설정만 초기화)
@@ -163,6 +181,6 @@
     window.BoardUI = {
         esc, groupByWorld, worldBoxes, nameCellHtml, statusCellHtml, itemHtml,
         gaugeHtml, gaugesHtml, worldGaugesHtml,
-        resetHtml, editBtnHtml, isFolded, toggleFold, sectionHtml,
+        resetHtml, moreLinkHtml, editBtnHtml, isFolded, toggleFold, sectionHtml,
     };
 })();

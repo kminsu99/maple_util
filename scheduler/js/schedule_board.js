@@ -22,7 +22,7 @@
     // 섹션 순서 = 화면 순서, 맨 위 요약 카드 정보
     const SECTIONS = [
         { key: 'weekly', module: () => BoardWeekly, title: '주간 컨텐츠', reset: 'mon' },
-        { key: 'boss', module: () => BoardBoss, title: '보스', reset: null },
+        { key: 'boss', module: () => BoardBoss, title: '보스', reset: null, more: 'boss_check.html' },
         { key: 'daily', module: () => BoardDaily, title: '일일 컨텐츠', reset: 'daily' },
     ];
 
@@ -94,7 +94,7 @@
                 const gauges = BoardUI.worldGaugesHtml(models[s.key].gauges) || '<p class="sum-empty">표시할 항목 없음</p>';
                 return `
                     <div class="sum-card">
-                        <div class="sum-card-head"><strong>${s.title}</strong>${s.reset ? BoardUI.resetHtml(s.reset) : ''}</div>
+                        <div class="sum-card-head"><strong>${s.title}</strong>${s.reset ? BoardUI.resetHtml(s.reset) : ''}${s.more ? BoardUI.moreLinkHtml(s.more) : ''}</div>
                         ${gauges}
                     </div>`;
             }).join('');
@@ -113,10 +113,13 @@
             }
             const first = entries.find((e) => e.st.status === 'ok') || entries[0];
             const models = {};
+            const sectionHtml = (key) => sections[key].html(models[key], entries);
             SECTIONS.forEach((s) => { models[s.key] = sections[s.key].compute(entries); });
             container.innerHTML = toolbarHtml(first.st)
                 + summaryHtml(models)
-                + SECTIONS.map((s) => sections[s.key].html(models[s.key], entries)).join('');
+                // 주간 컨텐츠 | 일일 컨텐츠는 반씩 같은 줄, 보스는 그 아래 전체 폭
+                + `<div class="sb-pair">${sectionHtml('weekly')}${sectionHtml('daily')}</div>`
+                + sectionHtml('boss');
         }
 
         // ── 이벤트 ──

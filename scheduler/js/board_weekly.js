@@ -180,8 +180,10 @@
                     xmShown = true;
                     return xmGauge(r.name);
                 }
-                const [done, total] = r.shared || r.once ? [isRowDone(r) ? 1 : 0, 1] : [r.cleared.length, r.members.length];
-                return [esc(R.shortName(r.name)), 'is-item', done, total, '', { name: r.name }];
+                // 월드 공유·월드당 1회: 서버 단위라 캐릭터 줄 없음
+                if (r.shared || r.once) return [esc(R.shortName(r.name)), 'is-item', isRowDone(r) ? 1 : 0, 1, '', { name: r.name }];
+                const children = r.members.map((n) => [esc(n), 'is-item', r.cleared.includes(n) ? 1 : 0, 1, '', { name: n }]);
+                return [esc(R.shortName(r.name)), 'is-item', r.cleared.length, r.members.length, '', { name: r.name, children }];
             });
             if (xm !== null && !xmShown) list.push(xmGauge('익스트림 몬스터파크'));
             return list;
@@ -207,9 +209,9 @@
             // 에픽 던전: 계정 공유 → 모든 서버의 클리어한 던전 수 (최대 3)
             const epics = [].concat(...values.map((v) => v.all.filter((r) => r.epic)));
             const epicGauge = epics.length
-                ? [{ account: true, list: [['에픽던전', 'is-epic', Math.min(R.EPIC_LIMIT, epics.filter(isRowDone).length), R.EPIC_LIMIT, '', { name: `에픽 던전 (계정 공유, 전체 서버 주 ${R.EPIC_LIMIT}회)` }]] }]
+                ? [{ account: true, kind: 'weekly', list: [['에픽던전', 'is-epic', Math.min(R.EPIC_LIMIT, epics.filter(isRowDone).length), R.EPIC_LIMIT, '', { name: `에픽 던전 (계정 공유, 전체 서버 주 ${R.EPIC_LIMIT}회)` }]] }]
                 : [];
-            const gauges = epicGauge.concat(Array.from(worlds.entries()).map(([world, v]) => ({ world, list: itemGauges(v) })));
+            const gauges = epicGauge.concat(Array.from(worlds.entries()).map(([world, v]) => ({ world, kind: 'weekly', list: itemGauges(v) })));
 
             return {
                 worlds, settings, counted,
