@@ -688,12 +688,42 @@
 
             const MIN_PARTY = 1;
             const MAX_PARTY = 6;
-            const MIN_RATE = 10;              // 인원 보정 + 10단위 내림 결과가 이 값 미만이면 "불가"
+            const MIN_RATE = 10;              // 배율 × 인원이 이 값 미만이면 "불가"
             const DEFAULT_BASE_MINUTES = 20;  // 배율 100%일 때 걸리는 시간(분), 환산시간.user.js 기본값과 같음
             const REFRESH_MS = 5 * 60 * 1000; // 탭을 다시 볼 때 이 시간이 지났으면 API 다시 조회
 
-            // 보스 스케줄에 보여 줄 API 보스 주기 (월간 → 주간 순)
+            // 보스 스케줄에 보여 줄 API 보스 주기
             const CYCLES = ['bossMonthly', 'bossWeekly'];
+
+            // 보스 스케줄 표시 순서 (data/boss_order.csv의 보스 열, API 보스 이름 기준)
+            //  표에 없는 보스는 맨 뒤, 클리어한 보스는 순서와 관계없이 아래로
+            const BOSS_ORDER = [
+                '유피테르',
+                '찬란한 흉성',
+                '최초의 대적자',
+                '발드릭스',
+                '림보',
+                '벨로나',
+                '카링',
+                '감시자 칼로스',
+                '선택받은 세렌',
+                '검은 마법사',
+                '듄켈',
+                '진 힐라',
+                '루시드',
+                '더스크',
+                '윌',
+                '가디언 엔젤 슬라임',
+                '데미안',
+                '스우',
+                '매그너스',
+                '피에르',
+                '벨룸',
+                '블러디퀸',
+                '반반',
+                '파풀라투스',
+                '자쿰',
+            ];
 
             // 선택 목록에서 제외하는 보스 (CSV 보스 이름이 이 단어로 시작하면 제외)
             const EXCLUDED_BOSS_PREFIXES = ['데스티니', '유챔'];
@@ -1033,15 +1063,10 @@
 
             /* ════════════════ 배율 → 예상시간 ════════════════ */
 
-            // 10의 자리로 내림 (64 → 60, 69 → 60)
-            function floorToTen(value) {
-                return Math.floor(value / 10) * 10;
-            }
-
-            // 계산 순서: 배율 → 인원 보정(× 인원) → 10단위 내림
+            // 적용 배율 = 배율 × 인원
             function adjustedRate(rate, party) {
                 if (rate == null) return null;
-                return floorToTen(rate * party);
+                return rate * party;
             }
 
             // 환산시간.user.js 계산식: 클리어 시간 = 기준 시간 ÷ (배율 ÷ 100)
@@ -1143,13 +1168,21 @@
                 return best;
             }
 
-            // 보스 스케줄 행 목록 (월간 → 주간, 주기 안에서는 인게임 스케줄러 순서)
+            // 보스 순서 (BOSS_ORDER 위치, 없으면 맨 뒤)
+            const bossOrderIndex = (() => {
+                const idx = new Map(BOSS_ORDER.map((n, i) => [nameKey(n), i]));
+                return (name) => (idx.has(nameKey(name)) ? idx.get(nameKey(name)) : BOSS_ORDER.length);
+            })();
+
+            // 보스 스케줄 행 목록: 미클리어 → 클리어, 각각 BOSS_ORDER 순 (같으면 인게임 스케줄러 순서)
             function scheduleRows(profile) {
                 const info = live[profile.name];
                 if (!info || info.status !== 'ok') return [];
+                const done = (b) => (SchedulerState.flag(b.complete_flag) ? 1 : 0);
                 return info.bosses
                     .filter((b) => CYCLES.includes(b.cycle) && SchedulerState.flag(b.registration_flag))
-                    .sort((a, b) => CYCLES.indexOf(a.cycle) - CYCLES.indexOf(b.cycle)
+                    .sort((a, b) => done(a) - done(b)
+                        || bossOrderIndex(a.content_name) - bossOrderIndex(b.content_name)
                         || (Number(a.list_order_no) || 0) - (Number(b.list_order_no) || 0))
                     .map((b) => {
                         const csvKey = csvKeyOf(profile, b);
@@ -1252,7 +1285,7 @@
                 return conf.manualRate != null ? conf.manualRate : csvRateOf(profile, row.csvKey);
             }
 
-            // { adj: 인원 보정 + 내림 배율, seconds: 예상 초 (불가면 null) }
+            // { adj: 배율 × 인원, seconds: 예상 초 (불가면 null) }
             function rowEstimate(profile, row, conf) {
                 const adj = adjustedRate(displayRate(profile, row, conf), conf.party);
                 if (adj == null || adj < MIN_RATE) return { adj, seconds: null };
@@ -1603,7 +1636,7 @@
                             ${detailPopHtml(p, row)}
                         </td>
                         <td class="col-op" aria-hidden="true">=</td>
-                        <td class="col-time">${time}<span class="time-sub">적용 ${est.adj == null ? '-' : est.adj + '%'}</span></td>
+                        <td class="col-time">${time}<span class="time-sub">적용 ${est.adj == null ? '-' : fmtRate(est.adj) + '%'}</span></td>
                         ${buffCellsHtml(conf)}
                     </tr>`;
             }
@@ -1663,8 +1696,6 @@
                     <div class="card-head sub-head">
                         <h2>보스 스케줄</h2>
                         ${msg ? '' : `<span class="counter" title="클리어 / 스케줄 보스">${s.cleared}/${s.count}</span>`}
-                        <span class="grow"></span>
-                        <span class="muted">기준 ${state.settings.baseMinutes}분 · 배율×인원 → 10단위 내림</span>
                     </div>
                     ${stale}
                     ${body}`;
