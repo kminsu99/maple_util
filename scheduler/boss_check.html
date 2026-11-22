@@ -304,8 +304,7 @@
 
         .rate-input:focus,
         .party-input:focus,
-        .champ-input:focus,
-        .champ-select:focus {
+        .champ-input:focus {
             outline: none;
             border-color: var(--accent);
         }
@@ -444,6 +443,13 @@
             font-size: 0.7rem;
         }
 
+        /* 저장된 API 응답을 보여 줄 때 안내 */
+        .stale-note {
+            margin: -4px 0 10px;
+            color: var(--red);
+            font-size: 0.76rem;
+        }
+
         /* ── 도핑 선택: 머리 = 이미지 + 아래 글자, 칸 = 체크박스 / 유챔 선택 ── */
         .col-buff {
             width: 1%;
@@ -469,29 +475,7 @@
             cursor: pointer;
         }
 
-        .champ-box {
-            display: inline-flex;
-            align-items: center;
-            gap: 3px;
-            white-space: nowrap;
-        }
-
-        /* 표 칸 폭(1%)에 눌려 화살표만 남지 않게: 글자 폭만큼 고정 */
-        .champ-box > * {
-            flex: 0 0 auto;
-        }
-
-        .champ-select {
-            min-width: 5.8em;
-        }
-
-        /* 직접입력 중: 화살표만 */
-        .champ-select.is-custom {
-            min-width: 0;
-            width: 2em;
-        }
-
-        .champ-select,
+        /* 유챔: 숫자 직접입력 (5자리까지) */
         .champ-input {
             padding: 3px 4px;
             background: var(--surface2);
@@ -698,6 +682,7 @@
 
             // 저장: scheduler와 같은 Store(js/store.js, 'maple_util_sched_' 접두어) · 압축/암호화 없이 JSON 그대로
             const STORE_NAME = 'boss_check';
+            const API_CACHE_NAME = 'boss_check_api'; // 마지막 API 응답 (백업 파일에는 넣지 않음)
             const LEGACY_LZ_KEY = 'maple_util_boss_check'; // v1 (LZ-string 압축) 저장 키 → 처음 열 때 옮기고 삭제
             const VERSION = 3;
 
@@ -717,7 +702,7 @@
             const DIFFICULTY_ORDER = ['익스트림', '카오스', '하드', '노멀', '노말', '이지'];
 
             // 도핑: 표 머리 = 이미지 + 아래 글자 (열 순서 = 배열 순서)
-            //  - check: 체크박스 / champ: 유챔 선택 (0~5 또는 직접입력 숫자 5자리)
+            //  - check: 체크박스 / champ: 유챔 숫자 입력 (5자리까지)
             const BUFF_DIR = 'img/buff/';
             const BUFFS = [
                 { id: 'spread', kind: 'check', label: '뿌리기', img: '붕뿌_우뿌.png' },
@@ -725,7 +710,6 @@
                 { id: 'collector', kind: 'check', label: '콜렉터', img: '콜렉터.png' },
                 { id: 'seiram', kind: 'check', label: '세이람', img: '세이람.png' },
             ];
-            const CHAMP_OPTIONS = [0, 1, 2, 3, 4, 5];
 
             // API 보스 이름·난이도 → 보스컷 CSV 보스 이름·난이도 매핑표 (data/meso.csv 보스 목록 기준)
             //  [API 이름, API 난이도, CSV 이름, CSV 난이도] / CSV 쪽이 없으면 보스컷 CSV에 없는 보스 (배율 기본값 없음)
@@ -906,16 +890,25 @@
 
             /* ════════════════ 보스 키 ════════════════ */
 
+            const noSpace = (s) => String(s || '').replace(/\s/g, '');
+
             function splitKey(key) {
                 const i = key.lastIndexOf('|');
                 return { name: key.slice(0, i), difficulty: key.slice(i + 1) };
             }
 
-            function normDiff(difficulty) {
-                return difficulty === '노멀' ? '노말' : String(difficulty || '');
+            // 비교용 난이도 키: 한글·영문, 노멀·노말 모두 같은 값 (js/difficulty.js) / 모르는 값은 공백 제거 소문자
+            function diffKey(difficulty) {
+                return Difficulty.key(difficulty) || noSpace(difficulty).toLowerCase();
             }
 
-            const noSpace = (s) => String(s || '').replace(/\s/g, '');
+            // 비교용 보스 이름: 공백 제거 + 앞에 붙은 난이도 글자 제거 (예: "하드 스우" → "스우")
+            function nameKey(name) {
+                const words = String(name || '').trim().split(/\s+/);
+                while (words.length > 1 && Difficulty.key(words[0])) words.shift();
+                return noSpace(words.join(''));
+            }
+
 
             /* ════════════════ 저장 (localStorage, Store 공용) ════════════════ */
             // profile.rows: 보스 스케줄 행마다 사용자가 바꾼 값 { [행 키]: { manualRate, party, buff } }
@@ -949,7 +942,6 @@
                 return {
                     spread: !!b.spread,
                     champ,
-                    champCustom: !!b.champCustom || champ > CHAMP_OPTIONS[CHAMP_OPTIONS.length - 1],
                     collector: !!b.collector,
                     seiram: !!b.seiram,
                 };
@@ -1119,16 +1111,17 @@
             // { 'API이름(공백 제거)|난이도(노멀→노말)': 'CSV보스이름|CSV난이도' 또는 null(CSV에 없는 보스) }
             const bossMap = {};
             BOSS_MAPPING.forEach(([apiName, apiDiff, csvName, csvDiff]) => {
-                bossMap[noSpace(apiName) + '|' + normDiff(apiDiff)] = csvName ? csvName + '|' + csvDiff : null;
+                bossMap[nameKey(apiName) + '|' + diffKey(apiDiff)] = csvName ? csvName + '|' + csvDiff : null;
             });
 
             // API 보스 → CSV 보스 키 (배율 기본값을 가져올 CSV 행)
             //  1) 매핑표: API 이름·난이도로 찾은 CSV 보스가 프로파일 CSV에 있으면 그것
-            //  2) 매핑표에 없으면: 난이도가 같고 API 이름(공백 제거)에 CSV 이름이 들어 있는 것 중 가장 긴 이름
+            //  2) 매핑표에 없으면: 난이도가 같고 API 이름에 CSV 이름이 들어 있는(또는 반대) 것 중 가장 긴 이름
             //     예) API "찬란한 흉성" ↔ CSV "흉성", API "검은 마법사" ↔ CSV "검은마법사"
+            //  난이도는 diffKey(한글/영문·노멀/노말 무시), 이름은 nameKey(공백·앞 난이도 글자 무시)로 비교
             function csvKeyOf(profile, apiBoss) {
-                const apiName = noSpace(apiBoss.content_name);
-                const diff = normDiff(apiBoss.difficulty);
+                const apiName = nameKey(apiBoss.content_name);
+                const diff = diffKey(apiBoss.difficulty);
                 const mapKey = apiName + '|' + diff;
                 if (mapKey in bossMap) {
                     const mapped = bossMap[mapKey];
@@ -1136,16 +1129,16 @@
                     const m = splitKey(mapped);
                     const found = Object.keys(profile.bosses).find((key) => {
                         const k = splitKey(key);
-                        return noSpace(k.name) === noSpace(m.name) && normDiff(k.difficulty) === normDiff(m.difficulty);
+                        return nameKey(k.name) === nameKey(m.name) && diffKey(k.difficulty) === diffKey(m.difficulty);
                     });
                     if (found) return found;
                 }
                 let best = null;
                 for (const key of Object.keys(profile.bosses)) {
                     const k = splitKey(key);
-                    if (normDiff(k.difficulty) !== diff) continue;
-                    const n = noSpace(k.name);
-                    if (n && apiName.includes(n) && (!best || n.length > noSpace(splitKey(best).name).length)) best = key;
+                    if (diffKey(k.difficulty) !== diff) continue;
+                    const n = nameKey(k.name);
+                    if (n && (apiName.includes(n) || n.includes(apiName)) && (!best || n.length > nameKey(splitKey(best).name).length)) best = key;
                 }
                 return best;
             }
@@ -1160,7 +1153,7 @@
                         || (Number(a.list_order_no) || 0) - (Number(b.list_order_no) || 0))
                     .map((b) => {
                         const csvKey = csvKeyOf(profile, b);
-                        const rowKey = csvKey || `api:${noSpace(b.content_name)}|${normDiff(b.difficulty)}`;
+                        const rowKey = csvKey || `api:${nameKey(b.content_name)}|${diffKey(b.difficulty)}`;
                         return {
                             rowKey,
                             csvKey,
@@ -1172,23 +1165,54 @@
                     });
             }
 
+            /* ── API 응답 저장: { [프로파일 이름]: { bosses, level, at } } ── */
+            //  API 키가 없거나 호출이 실패하면 마지막으로 받은 응답으로 보스 스케줄 · 클리어를 보여 줌
+            const apiCache = Store.load(API_CACHE_NAME, {}) || {};
+
+            function saveApiCache() {
+                Store.save(API_CACHE_NAME, apiCache);
+            }
+
+            // 보스 스케줄에 쓰는 필드만 저장
+            function slimBoss(b) {
+                return {
+                    content_name: b.content_name,
+                    difficulty: b.difficulty,
+                    cycle: b.cycle,
+                    registration_flag: b.registration_flag,
+                    complete_flag: b.complete_flag,
+                    list_order_no: b.list_order_no,
+                };
+            }
+
+            // 저장된 응답이 있으면 그것으로 표시 (stale = 실패 이유), 없으면 fail 그대로
+            function useCache(p, fail) {
+                const c = apiCache[p.name];
+                live[p.name] = c && Array.isArray(c.bosses)
+                    ? { status: 'ok', bosses: c.bosses, at: c.at, stale: fail.msg || '' }
+                    : fail;
+            }
+
             async function loadProfile(p, getChars) {
                 live[p.name] = { status: 'loading', bosses: [] };
                 try {
                     if (!p.ocid) {
                         const c = (await getChars()).find((x) => x.character_name === p.name || x.character_name === p.csvName);
                         if (!c) {
-                            live[p.name] = { status: 'error', msg: '계정에서 같은 이름의 캐릭터를 찾지 못했습니다', bosses: [] };
+                            useCache(p, { status: 'error', msg: '계정에서 같은 이름의 캐릭터를 찾지 못했습니다', bosses: [] });
                             return;
                         }
                         p.ocid = c.ocid;
                     }
                     const data = await SchedulerState.fetch(p.ocid);
                     if (Number(data.character_level)) p.level = Number(data.character_level);
-                    live[p.name] = { status: 'ok', bosses: data.boss_contents || [], at: Date.now() };
+                    const bosses = (data.boss_contents || []).map(slimBoss);
+                    live[p.name] = { status: 'ok', bosses, at: Date.now() };
+                    apiCache[p.name] = { bosses, level: p.level, at: Date.now() };
+                    saveApiCache();
                 } catch (e) {
                     if (e.status === 400) p.ocid = null; // 잘못된 ocid → 다음에 다시 찾기
-                    live[p.name] = { status: 'error', msg: e.message, bosses: [] };
+                    useCache(p, { status: 'error', msg: e.message, bosses: [] });
                 }
             }
 
@@ -1198,7 +1222,7 @@
                 const profiles = Object.values(state.profiles);
                 if (loading || !profiles.length) return;
                 if (!ApiKey.has()) {
-                    profiles.forEach((p) => { live[p.name] = { status: 'nokey', bosses: [] }; });
+                    profiles.forEach((p) => useCache(p, { status: 'nokey', msg: 'API 키 없음', bosses: [] }));
                     render();
                     return;
                 }
@@ -1343,6 +1367,11 @@
                 state.profiles = profiles;
                 live[next] = live[old];
                 delete live[old];
+                if (apiCache[old]) {
+                    apiCache[next] = apiCache[old];
+                    delete apiCache[old];
+                    saveApiCache();
+                }
                 if (state.activeProfile === old) state.activeProfile = next;
                 saveState();
                 render();
@@ -1353,6 +1382,10 @@
                 if (!confirm(`'${p.name}' 프로파일을 삭제할까요?\nCSV 배율 · 직접입력 배율 · 인원 · 도핑 설정이 모두 지워지며 되돌릴 수 없습니다.`)) return;
                 delete state.profiles[p.name];
                 delete live[p.name];
+                if (apiCache[p.name]) {
+                    delete apiCache[p.name];
+                    saveApiCache();
+                }
                 if (!state.profiles[state.activeProfile]) state.activeProfile = Object.keys(state.profiles)[0] || null;
                 if (!state.activeProfile) ui.view = 'summary';
                 saveState();
@@ -1427,11 +1460,14 @@
 
             // CSV에서 같은 보스의 난이도 목록 (어려운 순): [{ difficulty, key, rate }]
             function bossDiffs(profile, name) {
-                const n = noSpace(name);
+                const n = nameKey(name);
+                // API 이름이면 매핑표의 CSV 이름으로도 찾음 (예: 선택받은 세렌 → 세렌)
+                const mappedKey = Object.keys(bossMap).find((k) => k.startsWith(n + '|') && bossMap[k]);
+                const alt = mappedKey ? nameKey(splitKey(bossMap[mappedKey]).name) : n;
                 const diffs = [];
                 for (const [key, b] of Object.entries(profile.bosses)) {
                     const k = splitKey(key);
-                    if (noSpace(k.name) === n) diffs.push({ difficulty: k.difficulty, key, rate: b.csvRate });
+                    if (nameKey(k.name) === n || nameKey(k.name) === alt) diffs.push({ difficulty: k.difficulty, key, rate: b.csvRate });
                 }
                 return diffs.sort((a, b) => diffRank(a.difficulty) - diffRank(b.difficulty));
             }
@@ -1489,26 +1525,21 @@
                             ${difficultyBadge(d.difficulty)}<span>${esc(d.difficulty || '-')}</span>
                             <span class="pop-rate">${fmtRate(d.rate)}%</span>
                         </li>`).join('')}</ul>`
-                    : '<p class="muted">CSV에 이 보스의 배율이 없습니다</p>';
+                    : '<p class="muted">CSV에서 이 보스를 찾지 못했습니다</p>';
+                const unmatched = row.csvKey ? '' : `<p class="muted">CSV와 연결되지 않음 · API 값: ${esc(row.name)} / ${esc(row.difficulty)}</p>`;
                 return `
                     <div class="rate-pop" hidden>
                         <div class="rate-pop-head">${esc(row.name)} 난이도별 배율</div>
                         ${list}
+                        ${unmatched}
                     </div>`;
             }
 
+            // 유챔: 숫자 직접입력 칸 (숫자만, 5자리까지, 0이면 빈칸)
             function champHtml(conf) {
-                const b = conf.buff;
-                // 직접입력 중: 글자 없는 숨은 항목을 선택해 두어 메뉴에는 화살표만 보이고, 펼치면 '직접입력'이 보임
-                const options = (b.champCustom ? '<option value="custom" selected hidden></option>' : '')
-                    + CHAMP_OPTIONS.map((n) =>
-                        `<option value="${n}" ${!b.champCustom && b.champ === n ? 'selected' : ''}>${n}</option>`
-                    ).join('') + '<option value="custom-pick">직접입력</option>';
-                const input = b.champCustom
-                    ? `<input class="champ-input" type="text" inputmode="numeric" maxlength="${CHAMP_MAX_DIGITS}" data-act="champ-num"
-                        value="${b.champ}" aria-label="유챔 직접입력 (숫자 ${CHAMP_MAX_DIGITS}자리까지)">`
-                    : '';
-                return `<span class="champ-box"><select class="champ-select${b.champCustom ? ' is-custom' : ''}" data-act="champ" aria-label="유챔">${options}</select>${input}</span>`;
+                const n = conf.buff.champ;
+                return `<input class="champ-input" type="text" inputmode="numeric" maxlength="${CHAMP_MAX_DIGITS}" data-act="champ-num"
+                    value="${n ? n : ''}" placeholder="0" aria-label="유챔 (숫자 ${CHAMP_MAX_DIGITS}자리까지)">`;
             }
 
             function buffCellsHtml(conf) {
@@ -1586,6 +1617,10 @@
                 return '';
             }
 
+            function fmtDateTime(ms) {
+                return ms ? new Date(ms).toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' }) : '-';
+            }
+
             function scheduleHtml(p) {
                 const s = profileStats(p);
                 const rows = scheduleRows(p);
@@ -1620,6 +1655,10 @@
                         ${s.impossible ? `<p class="muted" style="margin-top:8px">※ '불가' 보스 ${s.impossible}개는 합계에서 제외</p>` : ''}`
                     : '<div class="empty">인게임 스케줄러에 등록된 주간 · 월간 보스가 없습니다.</div>';
 
+                const info = live[p.name];
+                const stale = info && info.stale !== undefined
+                    ? `<p class="stale-note">API를 불러오지 못해 저장된 응답(${fmtDateTime(info.at)})을 표시합니다${info.stale ? ` · ${esc(info.stale)}` : ''}</p>`
+                    : '';
                 return `
                     <div class="card-head sub-head">
                         <h2>보스 스케줄</h2>
@@ -1627,6 +1666,7 @@
                         <span class="grow"></span>
                         <span class="muted">기준 ${state.settings.baseMinutes}분 · 배율×인원 → 10단위 내림</span>
                     </div>
+                    ${stale}
                     ${body}`;
             }
 
@@ -1872,29 +1912,13 @@
                     conf.buff[el.dataset.buff] = el.checked;
                     return commit();
                 }
-                if (act === 'champ') {
-                    // 직접입력: 입력칸을 보여 주고 바로 입력할 수 있게 포커스
-                    if (el.value === 'custom' || el.value === 'custom-pick') {
-                        conf.buff.champCustom = true;
-                        commit();
-                        const input = $view.querySelector(`tr[data-row="${CSS.escape(tr.dataset.row)}"] .champ-input`);
-                        if (input) {
-                            input.focus();
-                            input.select();
-                        }
-                        return;
-                    }
-                    conf.buff.champCustom = false;
-                    conf.buff.champ = clampChamp(el.value);
-                    return commit();
-                }
                 if (act === 'champ-num') {
                     conf.buff.champ = clampChamp(el.value);
                     return commit();
                 }
             });
 
-            // 유챔 직접입력: 숫자만, 5자리까지
+            // 유챔 입력: 숫자만, 5자리까지
             $view.addEventListener('input', (e) => {
                 const el = e.target;
                 if (el.dataset.act !== 'champ-num') return;
