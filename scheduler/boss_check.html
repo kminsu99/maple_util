@@ -1,0 +1,1874 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>보스 체크</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="../base_css/base.css">
+    <link rel="stylesheet" href="../base_css/dark.css">
+    <link rel="stylesheet" href="../base_css/light.css">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/difficulty_badge.css">
+    <link rel="stylesheet" href="css/api_key_box.css">
+    <!-- 상단 고정 헤더 · 버튼 모양은 scheduler.html과 공용 -->
+    <link rel="stylesheet" href="css/scheduler.css">
+    <!-- 저장된 테마를 그리기 전에 적용 (깜빡임 방지) -->
+    <script src="../base_js/theme.js"></script>
+    <style>
+        /* ── 보스 체크 전용 스타일 (색상 변수는 base_css/dark.css · light.css) ── */
+        .bc-wrap {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        /* ── 상단 메뉴: [전체 요약] [프로파일 탭들] ······ [CSV 불러오기] [백업] [설정] ── */
+        .bc-menu {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 18px;
+        }
+
+        .bc-menu .menu-sep {
+            flex: 1 1 auto;
+        }
+
+        .bc-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        /* 지금 보고 있는 화면 버튼 */
+        .top-btn.is-active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: var(--on-accent);
+        }
+
+        .btn {
+            padding: 6px 12px;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font: inherit;
+            font-size: 0.82rem;
+            font-weight: 700;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .btn:hover {
+            border-color: var(--accent);
+            color: var(--text-bright);
+        }
+
+        .btn.is-primary {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .btn.is-danger:hover {
+            border-color: var(--red);
+            color: var(--red);
+        }
+
+        .btn-sm {
+            padding: 3px 8px;
+            font-size: 0.74rem;
+        }
+
+        /* ── 카드 ── */
+        .bc-card {
+            margin-bottom: 18px;
+            padding: 16px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            box-shadow: 0 4px 16px var(--shadow);
+        }
+
+        .card-head {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .card-head h2 {
+            font-size: 1rem;
+            font-weight: 800;
+            color: var(--text-bright);
+        }
+
+        .card-head .grow {
+            flex: 1 1 auto;
+        }
+
+        .counter {
+            padding: 2px 10px;
+            border-radius: 999px;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .muted {
+            color: var(--muted);
+            font-size: 0.8rem;
+        }
+
+        .empty {
+            padding: 24px 8px;
+            text-align: center;
+            color: var(--muted);
+            font-size: 0.85rem;
+            line-height: 1.7;
+        }
+
+        /* ── 프로파일 머리 (캐릭 정보 + 버튼) ── */
+        .ph {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .bc-card .ph + .sub-head {
+            margin-top: 14px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border);
+        }
+
+        .ph-info {
+            display: flex;
+            align-items: baseline;
+            gap: 10px;
+            flex: 1 1 auto;
+        }
+
+        .ph-level {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .ph-name {
+            font-size: 1.35rem;
+            font-weight: 900;
+            color: var(--text-bright);
+        }
+
+        .ph-job {
+            font-size: 0.9rem;
+            color: var(--muted);
+        }
+
+        .ph-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        /* ── 보스 스케줄 표 ── */
+        .table-scroll {
+            overflow-x: auto;
+        }
+
+        .boss-table {
+            width: 100%;
+            min-width: 860px;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+
+        .boss-table th {
+            padding: 6px 8px;
+            border-bottom: 1px solid var(--border);
+            color: var(--muted);
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: bottom;
+        }
+
+        .boss-table td {
+            padding: 6px 8px;
+            border-bottom: 1px solid var(--border);
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .boss-table tfoot td {
+            border-bottom: 0;
+            padding-top: 10px;
+            font-weight: 700;
+            color: var(--text-bright);
+        }
+
+        /* 클리어 행: 취소선 + 흐리게 (클리어 체크칸은 그대로) */
+        .boss-table tbody tr.is-cleared td {
+            opacity: 0.55;
+        }
+
+        .boss-table tbody tr.is-cleared td.col-clear {
+            opacity: 1;
+        }
+
+        .boss-table tbody tr.is-cleared .boss-name,
+        .boss-table tbody tr.is-cleared .time-main {
+            text-decoration: line-through;
+            text-decoration-thickness: 2px;
+        }
+
+        /* 클리어 체크칸: API 값만 표시 (직접 선택 불가) */
+        .clear-check {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--green);
+            pointer-events: none;
+        }
+
+        .clear-check:disabled {
+            opacity: 1;
+        }
+
+        .col-dif {
+            width: 1%;
+        }
+
+        .col-boss {
+            text-align: left !important;
+        }
+
+        .boss-name {
+            font-weight: 700;
+            color: var(--text-bright);
+            white-space: nowrap;
+        }
+
+        .tag-monthly {
+            margin-left: 6px;
+            padding: 0 6px;
+            border-radius: 6px;
+            border: 1px solid var(--gauge-monthly);
+            color: var(--gauge-monthly);
+            font-size: 0.66rem;
+            font-weight: 700;
+            line-height: 16px;
+            white-space: nowrap;
+        }
+
+        /* 배율 입력 (직접입력 값은 파란색 + ✎) + [상세] */
+        .col-rate {
+            position: relative;
+        }
+
+        .rate-box {
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .rate-input {
+            width: 72px;
+            padding: 4px 6px;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text);
+            font: inherit;
+            font-size: 0.82rem;
+            text-align: right;
+        }
+
+        .rate-input:focus,
+        .party-input:focus,
+        .champ-input:focus,
+        .champ-select:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .rate-box.is-manual .rate-input {
+            border-color: var(--blue);
+            color: var(--blue);
+            font-weight: 700;
+        }
+
+        .manual-mark {
+            color: var(--blue);
+            font-size: 0.8rem;
+            cursor: help;
+        }
+
+        .unit {
+            color: var(--muted);
+            font-size: 0.75rem;
+        }
+
+        .detail-btn {
+            margin-left: 4px;
+        }
+
+        /* [상세] 팝업: 난이도별 csv 배율, 바깥을 누르면 닫힘 */
+        .rate-pop {
+            position: absolute;
+            top: calc(100% - 2px);
+            left: 50%;
+            z-index: 30;
+            min-width: 170px;
+            padding: 8px 10px;
+            transform: translateX(-50%);
+            background: var(--surface);
+            border: 1px solid var(--accent);
+            border-radius: 8px;
+            box-shadow: 0 8px 24px var(--shadow);
+            text-align: left;
+        }
+
+        .rate-pop-head {
+            margin-bottom: 6px;
+            color: var(--text-bright);
+            font-size: 0.78rem;
+            font-weight: 800;
+            white-space: nowrap;
+        }
+
+        .rate-pop ul {
+            list-style: none;
+            display: grid;
+            gap: 4px;
+        }
+
+        .rate-pop li {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.8rem;
+        }
+
+        .rate-pop li.is-current {
+            color: var(--accent);
+            font-weight: 800;
+        }
+
+        .rate-pop .pop-rate {
+            margin-left: auto;
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* 인원 입력 + ▲▼ */
+        .party-box {
+            display: inline-flex;
+            align-items: center;
+            gap: 2px;
+        }
+
+        .party-input {
+            width: 38px;
+            padding: 4px 2px;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text);
+            font: inherit;
+            font-size: 0.82rem;
+            text-align: center;
+        }
+
+        .party-arrows {
+            display: inline-flex;
+            flex-direction: column;
+            gap: 1px;
+        }
+
+        .party-arrows button {
+            width: 20px;
+            height: 13px;
+            padding: 0;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 3px;
+            color: var(--muted);
+            font-size: 0.5rem;
+            line-height: 1;
+            cursor: pointer;
+        }
+
+        .party-arrows button:hover:not(:disabled) {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .party-arrows button:disabled {
+            opacity: 0.35;
+            cursor: not-allowed;
+        }
+
+        .time-main {
+            font-weight: 700;
+            color: var(--text-bright);
+            white-space: nowrap;
+        }
+
+        .time-impossible {
+            font-weight: 700;
+            color: var(--red);
+        }
+
+        .time-sub {
+            display: block;
+            margin-top: 2px;
+            color: var(--muted);
+            font-size: 0.7rem;
+        }
+
+        /* ── 도핑 선택: 머리 = 이미지 + 아래 글자, 칸 = 체크박스 / 유챔 선택 ── */
+        .col-buff {
+            width: 1%;
+        }
+
+        .buff-head {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+        }
+
+        .buff-head img {
+            width: 32px;
+            height: 32px;
+            object-fit: contain;
+        }
+
+        .buff-check {
+            width: 17px;
+            height: 17px;
+            accent-color: var(--accent);
+            cursor: pointer;
+        }
+
+        .champ-box {
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .champ-select,
+        .champ-input {
+            padding: 3px 4px;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text);
+            font: inherit;
+            font-size: 0.78rem;
+        }
+
+        .champ-input {
+            width: 5.2em;
+            text-align: right;
+        }
+
+        /* ── 전체 요약 카드 ── */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 12px;
+        }
+
+        .summary-card {
+            padding: 14px;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            text-align: left;
+            font: inherit;
+            color: var(--text);
+            cursor: pointer;
+        }
+
+        .summary-card:hover {
+            border-color: var(--accent);
+        }
+
+        .sc-head {
+            display: flex;
+            align-items: baseline;
+            gap: 6px;
+            margin-bottom: 4px;
+        }
+
+        .sc-level {
+            color: var(--accent);
+            font-size: 0.78rem;
+            font-weight: 700;
+        }
+
+        .sc-name {
+            color: var(--text-bright);
+            font-size: 1.05rem;
+            font-weight: 900;
+        }
+
+        .sc-job {
+            color: var(--muted);
+            font-size: 0.78rem;
+        }
+
+        .sc-row {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 6px;
+            font-size: 0.8rem;
+        }
+
+        .sc-row strong {
+            color: var(--text-bright);
+        }
+
+        .progress {
+            height: 6px;
+            margin-top: 8px;
+            border-radius: 999px;
+            background: var(--surface);
+            overflow: hidden;
+        }
+
+        .progress span {
+            display: block;
+            height: 100%;
+            background: var(--green);
+        }
+
+        /* ── 설정 · 백업 ── */
+        .set-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.85rem;
+        }
+
+        .set-row:last-child {
+            border-bottom: 0;
+        }
+
+        .set-row label {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 700;
+        }
+
+        .set-input {
+            width: 4.5em;
+            padding: 3px 6px;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text);
+            font: inherit;
+            text-align: center;
+        }
+
+        .set-desc {
+            width: 100%;
+            color: var(--muted);
+            font-size: 0.76rem;
+            line-height: 1.6;
+        }
+
+        /* ── 파일 드롭 안내 · 알림 ── */
+        .drop-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 50;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.55);
+            color: #fff;
+            font-size: 1.2rem;
+            font-weight: 900;
+            border: 3px dashed var(--accent);
+            pointer-events: none;
+        }
+
+        .toast {
+            position: fixed;
+            left: 50%;
+            bottom: 24px;
+            z-index: 60;
+            max-width: 90vw;
+            padding: 10px 16px;
+            transform: translateX(-50%);
+            background: var(--surface);
+            border: 1px solid var(--accent);
+            border-radius: 10px;
+            box-shadow: 0 6px 20px var(--shadow);
+            color: var(--text-bright);
+            font-size: 0.85rem;
+            white-space: pre-line;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 상단 고정 헤더 (scheduler.html과 같은 형식): 왼쪽 돌아가기, 오른쪽 테마 + API 키 등록 + 펼침 박스 -->
+    <header class="site-header">
+        <a class="back-link" href="scheduler.html">← 스케줄러</a>
+        <div class="key-corner">
+            <div class="corner-row">
+                <button type="button" class="top-btn" id="btnTheme"></button>
+                <button type="button" class="top-btn" id="btnApiKey" aria-controls="apiKeyBox" aria-expanded="false">
+                    API 키 등록 <span class="top-btn-state"></span>
+                </button>
+            </div>
+            <section id="apiKeyBox" hidden></section>
+        </div>
+    </header>
+
+    <div class="bc-wrap">
+        <!-- 상단 메뉴: [전체 요약] [프로파일 탭들] ······ [CSV 불러오기] [백업] [설정] -->
+        <nav class="bc-menu" id="menu" aria-label="메뉴"></nav>
+
+        <main id="view"></main>
+    </div>
+
+    <input type="file" id="csvInput" multiple accept=".csv" hidden>
+    <input type="file" id="backupInput" accept=".json,application/json" hidden>
+    <div class="drop-overlay" id="dropOverlay" hidden>CSV 파일을 여기에 놓으세요</div>
+    <div class="toast" id="toast" role="status" hidden></div>
+
+    <!-- 순서 중요: 공통 → 저장 → API → UI -->
+    <script src="js/util.js"></script>
+    <script src="js/store.js"></script>
+    <script src="js/api_key.js"></script>
+    <script src="js/nexon_api.js"></script>
+    <script src="js/scheduler_state.js"></script>
+    <script src="js/api_key_box.js"></script>
+    <!-- 이전 버전(LZ 압축 저장) 데이터를 한 번 옮길 때만 사용 -->
+    <script src="js/lz-string.js"></script>
+    <script>
+        (function () {
+            'use strict';
+
+            /* ════════════════ 상수 ════════════════ */
+
+            // 저장: scheduler와 같은 Store(js/store.js, 'maple_util_sched_' 접두어) · 압축/암호화 없이 JSON 그대로
+            const STORE_NAME = 'boss_check';
+            const LEGACY_LZ_KEY = 'maple_util_boss_check'; // v1 (LZ-string 압축) 저장 키 → 처음 열 때 옮기고 삭제
+            const VERSION = 3;
+
+            const MIN_PARTY = 1;
+            const MAX_PARTY = 6;
+            const MIN_RATE = 10;              // 인원 보정 + 10단위 내림 결과가 이 값 미만이면 "불가"
+            const DEFAULT_BASE_MINUTES = 20;  // 배율 100%일 때 걸리는 시간(분), 환산시간.user.js 기본값과 같음
+            const REFRESH_MS = 5 * 60 * 1000; // 탭을 다시 볼 때 이 시간이 지났으면 API 다시 조회
+
+            // 보스 스케줄에 보여 줄 API 보스 주기 (월간 → 주간 순)
+            const CYCLES = ['bossMonthly', 'bossWeekly'];
+
+            // 선택 목록에서 제외하는 보스 (CSV 보스 이름이 이 단어로 시작하면 제외)
+            const EXCLUDED_BOSS_PREFIXES = ['데스티니', '유챔'];
+
+            // 난이도명 → img/difficulty 파일명
+            const DIFFICULTY_IMAGES = {
+                '익스트림': 'EXTREME.png',
+                '카오스': 'CHAOS.png',
+                '하드': 'HARD.png',
+                '노멀': 'NORMAL.png',
+                '노말': 'NORMAL.png',
+                '이지': 'EASY.png',
+            };
+            const DIFFICULTY_DIR = 'img/difficulty/';
+
+            // 어려운 순서 ([상세] 팝업 정렬)
+            const DIFFICULTY_ORDER = ['익스트림', '카오스', '하드', '노멀', '노말', '이지'];
+
+            // 도핑: 표 머리 = 이미지 + 아래 글자 (열 순서 = 배열 순서)
+            //  - check: 체크박스 / champ: 유챔 선택 (0~5 또는 직접입력 숫자 5자리)
+            const BUFF_DIR = 'img/buff/';
+            const BUFFS = [
+                { id: 'spread', kind: 'check', label: '뿌리기', img: '붕뿌_우뿌.png' },
+                { id: 'champ', kind: 'champ', label: '유챔', img: '유챔.png' },
+                { id: 'collector', kind: 'check', label: '콜렉터', img: '콜렉터.png' },
+                { id: 'seiram', kind: 'check', label: '세이람', img: '세이람.png' },
+            ];
+            const CHAMP_OPTIONS = [0, 1, 2, 3, 4, 5];
+            const CHAMP_MAX_DIGITS = 5;
+
+            const esc = Util.esc;
+
+            /* ════════════════ CSV 읽기 ════════════════ */
+
+            // UTF-8 우선, 한글이 깨지면(디코딩 실패 또는 � 포함) EUC-KR(CP949)로 다시 읽음. BOM 제거.
+            function decodeCsv(buffer) {
+                let text = null;
+                try {
+                    text = new TextDecoder('utf-8', { fatal: true }).decode(buffer);
+                } catch (e) {
+                    text = null;
+                }
+                if (text === null || text.includes('�')) {
+                    try {
+                        text = new TextDecoder('euc-kr').decode(buffer);
+                    } catch (e) {
+                        text = new TextDecoder('utf-8').decode(buffer);
+                    }
+                }
+                return text.replace(/^﻿/, '');
+            }
+
+            // 따옴표 안의 쉼표 · 줄바꿈 · "" 이스케이프를 처리하는 CSV 파서
+            function parseCsv(text) {
+                const rows = [];
+                let row = [];
+                let field = '';
+                let inQuotes = false;
+                for (let i = 0; i < text.length; i++) {
+                    const ch = text[i];
+                    if (inQuotes) {
+                        if (ch === '"') {
+                            if (text[i + 1] === '"') {
+                                field += '"';
+                                i++;
+                            } else {
+                                inQuotes = false;
+                            }
+                        } else {
+                            field += ch;
+                        }
+                    } else if (ch === '"') {
+                        inQuotes = true;
+                    } else if (ch === ',') {
+                        row.push(field);
+                        field = '';
+                    } else if (ch === '\n' || ch === '\r') {
+                        if (ch === '\r' && text[i + 1] === '\n') i++;
+                        row.push(field);
+                        rows.push(row);
+                        row = [];
+                        field = '';
+                    } else {
+                        field += ch;
+                    }
+                }
+                if (field !== '' || row.length) {
+                    row.push(field);
+                    rows.push(row);
+                }
+                return rows.filter((r) => r.some((c) => c.trim() !== ''));
+            }
+
+            // "33.13%" → 33.13, 빈 값 → null
+            function parseRate(value) {
+                const n = parseFloat(String(value || '').replace(/[,%\s]/g, ''));
+                return Number.isFinite(n) ? n : null;
+            }
+
+            // "데스티니 하드 카링" → { excluded: true, difficulty: '하드', name: '카링', key: '카링|하드' }
+            function parseBossLabel(label) {
+                const words = String(label || '').trim().split(/\s+/).filter(Boolean);
+                const excluded = words.length > 0 && EXCLUDED_BOSS_PREFIXES.includes(words[0]);
+                if (excluded) words.shift();
+                let difficulty = '';
+                if (words.length > 1 && DIFFICULTY_IMAGES[words[0]]) difficulty = words.shift();
+                const name = words.join(' ');
+                return { excluded, difficulty, name, key: name + '|' + difficulty };
+            }
+
+            // 입력 CSV 형식 (test/*_보스컷.csv): 보스,보스배율,예상시간
+            //  - 예상시간 열은 쓰지 않고 배율로 다시 계산
+            //  - 같은 보스|난이도가 여러 번 나오면 뒤의 값을 사용
+            function parseBossCsv(text) {
+                const rows = parseCsv(text);
+                if (!rows.length) throw new Error('빈 파일');
+                const header = rows[0].map((h) => h.trim());
+                let bossCol = header.indexOf('보스');
+                let rateCol = header.indexOf('보스배율');
+                const hasHeader = bossCol >= 0 || rateCol >= 0;
+                if (bossCol < 0) bossCol = 0;
+                if (rateCol < 0) rateCol = 1;
+
+                const bosses = {};
+                for (const row of hasHeader ? rows.slice(1) : rows) {
+                    const info = parseBossLabel(row[bossCol]);
+                    if (!info.name || info.excluded) continue;
+                    bosses[info.key] = { csvRate: parseRate(row[rateCol]) };
+                }
+                if (!Object.keys(bosses).length) throw new Error('보스 행이 없음');
+                return bosses;
+            }
+
+            // 파일명 규칙: 레벨_이름_직업_무시_무시.csv
+            //  ex) 285_샤사린_보우마스터_전체_보스컷.csv → 285 / 샤사린 / 보우마스터
+            function parseFileName(fileName) {
+                const base = fileName.replace(/\.csv$/i, '');
+                const parts = base.split('_');
+                if (parts.length >= 3 && /^\d+$/.test(parts[0]) && parts[1]) {
+                    return { level: Number(parts[0]), name: parts[1], job: parts[2] || '' };
+                }
+                return { level: null, name: base, job: '' };
+            }
+
+            /* ════════════════ 보스 키 ════════════════ */
+
+            function splitKey(key) {
+                const i = key.lastIndexOf('|');
+                return { name: key.slice(0, i), difficulty: key.slice(i + 1) };
+            }
+
+            function normDiff(difficulty) {
+                return difficulty === '노멀' ? '노말' : String(difficulty || '');
+            }
+
+            const noSpace = (s) => String(s || '').replace(/\s/g, '');
+
+            /* ════════════════ 저장 (localStorage, Store 공용) ════════════════ */
+            // profile.rows: 보스 스케줄 행마다 사용자가 바꾼 값 { [행 키]: { manualRate, party, buff } }
+            //  - 행 키 = CSV 보스 키(이름|난이도), CSV에 없는 보스는 'api:' + API 이름|난이도
+            //  - 클리어 여부는 저장하지 않음 (매번 API에서 가져옴)
+
+            function defaultState() {
+                return {
+                    version: VERSION,
+                    settings: { baseMinutes: DEFAULT_BASE_MINUTES },
+                    activeProfile: null,
+                    profiles: {},
+                };
+            }
+
+            function clampParty(value) {
+                const n = parseInt(value, 10);
+                if (!Number.isFinite(n)) return MIN_PARTY;
+                return Math.min(MAX_PARTY, Math.max(MIN_PARTY, n));
+            }
+
+            // 유챔: 0 이상 정수, 최대 5자리
+            function clampChamp(value) {
+                const n = parseInt(String(value).replace(/\D/g, '').slice(0, CHAMP_MAX_DIGITS), 10);
+                return Number.isFinite(n) ? n : 0;
+            }
+
+            function normalizeBuff(b) {
+                b = b && typeof b === 'object' ? b : {};
+                const champ = clampChamp(b.champ || 0);
+                return {
+                    spread: !!b.spread,
+                    champ,
+                    champCustom: !!b.champCustom || champ > CHAMP_OPTIONS[CHAMP_OPTIONS.length - 1],
+                    collector: !!b.collector,
+                    seiram: !!b.seiram,
+                };
+            }
+
+            function normalizeRow(r) {
+                r = r && typeof r === 'object' ? r : {};
+                return {
+                    manualRate: Number.isFinite(r.manualRate) ? r.manualRate : null,
+                    party: clampParty(r.party),
+                    buff: normalizeBuff(r.buff),
+                };
+            }
+
+            // 저장 데이터 · 백업 파일을 현재 구조로 맞춤 (version 올릴 때 이곳에 변환 추가)
+            //  - v1/v2 → v3: selected[] (직접 고른 보스)의 직접입력 배율 · 인원을 rows로 옮김, 클리어 비트는 버림 (API로 판단)
+            function normalizeState(data) {
+                const base = defaultState();
+                if (!data || typeof data !== 'object') return base;
+
+                const state = {
+                    version: VERSION,
+                    settings: { baseMinutes: DEFAULT_BASE_MINUTES },
+                    activeProfile: data.activeProfile || null,
+                    profiles: {},
+                };
+                const minutes = parseFloat(data.settings && data.settings.baseMinutes);
+                if (minutes > 0) state.settings.baseMinutes = minutes;
+
+                const profiles = data.profiles && typeof data.profiles === 'object' ? data.profiles : {};
+                for (const [key, p] of Object.entries(profiles)) {
+                    if (!p || typeof p !== 'object') continue;
+                    const bosses = {};
+                    for (const [bk, b] of Object.entries(p.bosses || {})) {
+                        bosses[bk] = { csvRate: b && Number.isFinite(b.csvRate) ? b.csvRate : null };
+                    }
+                    const rows = {};
+                    for (const s of Array.isArray(p.selected) ? p.selected : []) {
+                        if (s && s.key) rows[s.key] = normalizeRow(s);
+                    }
+                    for (const [rk, r] of Object.entries(p.rows || {})) rows[rk] = normalizeRow(r);
+                    state.profiles[key] = {
+                        level: Number.isFinite(p.level) ? p.level : null,
+                        name: key,
+                        job: p.job || '',
+                        csvName: p.csvName || key,
+                        ocid: typeof p.ocid === 'string' && p.ocid ? p.ocid : null,
+                        bosses,
+                        rows,
+                    };
+                }
+                if (!state.profiles[state.activeProfile]) {
+                    state.activeProfile = Object.keys(state.profiles)[0] || null;
+                }
+                return state;
+            }
+
+            // v1(LZ 압축) 저장값 읽기: 없거나 읽지 못하면 null
+            function loadLegacy() {
+                try {
+                    const raw = localStorage.getItem(LEGACY_LZ_KEY);
+                    if (!raw || !window.LZString) return null;
+                    return JSON.parse(LZString.decompressFromUTF16(raw));
+                } catch (e) {
+                    console.warn('[보스 체크] 이전 저장 데이터 읽기 실패', e);
+                    return null;
+                }
+            }
+
+            function loadState() {
+                const saved = Store.load(STORE_NAME, null);
+                if (saved) return normalizeState(saved);
+                const legacy = loadLegacy();
+                if (!legacy) return defaultState();
+                // 이전 데이터를 새 저장소로 옮긴 뒤 이전 키 삭제
+                const migrated = normalizeState(legacy);
+                if (Store.save(STORE_NAME, migrated)) {
+                    try { localStorage.removeItem(LEGACY_LZ_KEY); } catch (e) { }
+                }
+                return migrated;
+            }
+
+            // 원본 CSV는 저장하지 않고 파싱 결과(state)만 저장
+            function saveState() {
+                if (!Store.save(STORE_NAME, state)) {
+                    toast('저장에 실패했습니다 (저장 공간 부족 또는 사생활 보호 모드)');
+                }
+            }
+
+            /* ════════════════ 배율 → 예상시간 ════════════════ */
+
+            // 10의 자리로 내림 (64 → 60, 69 → 60)
+            function floorToTen(value) {
+                return Math.floor(value / 10) * 10;
+            }
+
+            // 계산 순서: 배율 → 인원 보정(× 인원) → 10단위 내림
+            function adjustedRate(rate, party) {
+                if (rate == null) return null;
+                return floorToTen(rate * party);
+            }
+
+            // 환산시간.user.js 계산식: 클리어 시간 = 기준 시간 ÷ (배율 ÷ 100)
+            function estimateSeconds(rate, baseMinutes) {
+                return (baseMinutes * 60) / (rate / 100);
+            }
+
+            // 환산시간.user.js와 같은 표기: "1시간 40분" / "55분 33초"
+            function formatTime(totalSeconds) {
+                const s = Math.round(totalSeconds);
+                const h = Math.floor(s / 3600);
+                const m = Math.floor((s % 3600) / 60);
+                const sec = s % 60;
+                if (h > 0) return `${h}시간 ${m}분`;
+                return `${m}분 ${String(sec).padStart(2, '0')}초`;
+            }
+
+            function fmtRate(value) {
+                if (value == null) return '-';
+                return String(Math.round(value * 100) / 100);
+            }
+
+            /* ════════════════ 상태 ════════════════ */
+
+            let state = loadState();
+
+            const ui = {
+                view: state.activeProfile ? 'profile' : 'summary', // summary | profile | backup | settings
+            };
+
+            // API 조회 결과 (저장하지 않음): { [프로파일 이름]: { status, msg, bosses, at } }
+            //  - status: loading | ok | error | nokey
+            const live = {};
+            let lastLoad = 0;
+
+            function activeProfile() {
+                return state.profiles[state.activeProfile] || null;
+            }
+
+            // 버튼 · 입력칸이 속한 프로파일 (data-profile 박스 기준)
+            function profileOf(el) {
+                const box = el.closest('[data-profile]');
+                return box ? state.profiles[box.dataset.profile] || null : null;
+            }
+
+            // 행 설정 (없으면 기본값으로 만들어 둠)
+            function rowConf(profile, rowKey) {
+                if (!profile.rows[rowKey]) profile.rows[rowKey] = normalizeRow(null);
+                return profile.rows[rowKey];
+            }
+
+            /* ════════════════ 넥슨 API: 보스 스케줄 · 클리어 ════════════════ */
+            // API 키 · 호출은 scheduler.html과 공용 (js/api_key.js, js/nexon_api.js, js/scheduler_state.js)
+            //  - 캐릭 찾기: 계정 캐릭터 목록에서 프로파일 이름(또는 처음 불러온 이름)과 같은 캐릭 → ocid 저장
+            //  - 인게임 스케줄러에 등록된 월간 · 주간 보스 = 보스 스케줄, complete_flag = 클리어
+
+            async function fetchCharacterList() {
+                const body = await NexonApi.get('/maplestory/v1/character/list');
+                const list = [];
+                ((body && body.account_list) || []).forEach((acc) => {
+                    (acc.character_list || []).forEach((c) => list.push(c));
+                });
+                return list;
+            }
+
+            // API 보스 → CSV 보스 키: 난이도가 같고 API 이름(공백 제거)에 CSV 이름이 들어 있는 것 중 가장 긴 이름
+            //  예) API "찬란한 흉성" ↔ CSV "흉성", API "검은 마법사" ↔ CSV "검은마법사"
+            function csvKeyOf(profile, apiBoss) {
+                const apiName = noSpace(apiBoss.content_name);
+                const diff = normDiff(apiBoss.difficulty);
+                let best = null;
+                for (const key of Object.keys(profile.bosses)) {
+                    const k = splitKey(key);
+                    if (normDiff(k.difficulty) !== diff) continue;
+                    const n = noSpace(k.name);
+                    if (n && apiName.includes(n) && (!best || n.length > noSpace(splitKey(best).name).length)) best = key;
+                }
+                return best;
+            }
+
+            // 보스 스케줄 행 목록 (월간 → 주간, 주기 안에서는 인게임 스케줄러 순서)
+            function scheduleRows(profile) {
+                const info = live[profile.name];
+                if (!info || info.status !== 'ok') return [];
+                return info.bosses
+                    .filter((b) => CYCLES.includes(b.cycle) && SchedulerState.flag(b.registration_flag))
+                    .sort((a, b) => CYCLES.indexOf(a.cycle) - CYCLES.indexOf(b.cycle)
+                        || (Number(a.list_order_no) || 0) - (Number(b.list_order_no) || 0))
+                    .map((b) => {
+                        const csvKey = csvKeyOf(profile, b);
+                        const rowKey = csvKey || `api:${noSpace(b.content_name)}|${normDiff(b.difficulty)}`;
+                        return {
+                            rowKey,
+                            csvKey,
+                            name: b.content_name,
+                            difficulty: b.difficulty,
+                            monthly: b.cycle === 'bossMonthly',
+                            done: SchedulerState.flag(b.complete_flag),
+                        };
+                    });
+            }
+
+            async function loadProfile(p, getChars) {
+                live[p.name] = { status: 'loading', bosses: [] };
+                try {
+                    if (!p.ocid) {
+                        const c = (await getChars()).find((x) => x.character_name === p.name || x.character_name === p.csvName);
+                        if (!c) {
+                            live[p.name] = { status: 'error', msg: '계정에서 같은 이름의 캐릭터를 찾지 못했습니다', bosses: [] };
+                            return;
+                        }
+                        p.ocid = c.ocid;
+                    }
+                    const data = await SchedulerState.fetch(p.ocid);
+                    if (Number(data.character_level)) p.level = Number(data.character_level);
+                    live[p.name] = { status: 'ok', bosses: data.boss_contents || [], at: Date.now() };
+                } catch (e) {
+                    if (e.status === 400) p.ocid = null; // 잘못된 ocid → 다음에 다시 찾기
+                    live[p.name] = { status: 'error', msg: e.message, bosses: [] };
+                }
+            }
+
+            // 모든 프로파일 조회 (순서대로, 끝날 때마다 화면 갱신)
+            let loading = false;
+            async function loadAll() {
+                const profiles = Object.values(state.profiles);
+                if (loading || !profiles.length) return;
+                if (!ApiKey.has()) {
+                    profiles.forEach((p) => { live[p.name] = { status: 'nokey', bosses: [] }; });
+                    render();
+                    return;
+                }
+                loading = true;
+                lastLoad = Date.now();
+                profiles.forEach((p) => { live[p.name] = { status: 'loading', bosses: [] }; });
+                render();
+                let chars = null;
+                const getChars = async () => (chars = chars || await fetchCharacterList());
+                for (const p of profiles) {
+                    await loadProfile(p, getChars);
+                    render();
+                }
+                loading = false;
+                saveState(); // ocid · 레벨 저장
+            }
+
+            /* ════════════════ 행 계산 ════════════════ */
+
+            function csvRateOf(profile, key) {
+                const b = key && profile.bosses[key];
+                return b ? b.csvRate : null;
+            }
+
+            // 표시 배율 = 직접입력 ?? csv
+            function displayRate(profile, row, conf) {
+                return conf.manualRate != null ? conf.manualRate : csvRateOf(profile, row.csvKey);
+            }
+
+            // { adj: 인원 보정 + 내림 배율, seconds: 예상 초 (불가면 null) }
+            function rowEstimate(profile, row, conf) {
+                const adj = adjustedRate(displayRate(profile, row, conf), conf.party);
+                if (adj == null || adj < MIN_RATE) return { adj, seconds: null };
+                return { adj, seconds: estimateSeconds(adj, state.settings.baseMinutes) };
+            }
+
+            function profileStats(profile) {
+                let cleared = 0;
+                let total = 0;
+                let remain = 0;
+                let impossible = 0;
+                const rows = scheduleRows(profile);
+                for (const row of rows) {
+                    if (row.done) cleared++;
+                    const { seconds } = rowEstimate(profile, row, profile.rows[row.rowKey] || normalizeRow(null));
+                    if (seconds == null) {
+                        impossible++;
+                        continue;
+                    }
+                    total += seconds;
+                    if (!row.done) remain += seconds;
+                }
+                return { cleared, count: rows.length, total, remain, impossible };
+            }
+
+            /* ════════════════ CSV 불러오기 (병합) ════════════════ */
+
+            // 같은 캐릭: 프로파일 키 또는 처음 불러온 이름(csvName)이 같으면 같은 캐릭으로 봄 (이름 변경 후에도 병합)
+            function findProfileKey(name) {
+                if (state.profiles[name]) return name;
+                return Object.keys(state.profiles).find((k) => state.profiles[k].csvName === name) || null;
+            }
+
+            async function importCsvFiles(fileList) {
+                const files = [...fileList].filter((f) => /\.csv$/i.test(f.name));
+                if (!files.length) {
+                    toast('CSV 파일만 불러올 수 있습니다');
+                    return;
+                }
+                let added = 0;
+                let merged = 0;
+                const failed = [];
+                let last = null;
+
+                for (const file of files) {
+                    try {
+                        const bosses = parseBossCsv(decodeCsv(await file.arrayBuffer()));
+                        const info = parseFileName(file.name);
+                        const key = findProfileKey(info.name);
+                        if (key) {
+                            // 병합: csv 배율 · 레벨만 갱신 (직접입력 배율 · 인원 · 도핑 유지)
+                            const p = state.profiles[key];
+                            if (info.level != null) p.level = info.level;
+                            for (const [bk, b] of Object.entries(bosses)) {
+                                p.bosses[bk] = Object.assign({}, p.bosses[bk], { csvRate: b.csvRate });
+                            }
+                            merged++;
+                            last = key;
+                        } else {
+                            state.profiles[info.name] = {
+                                level: info.level,
+                                name: info.name,
+                                job: info.job,
+                                csvName: info.name,
+                                ocid: null,
+                                bosses,
+                                rows: {},
+                            };
+                            added++;
+                            last = info.name;
+                        }
+                    } catch (e) {
+                        failed.push(`${file.name} (${e.message})`);
+                    }
+                }
+
+                if (last) {
+                    state.activeProfile = last;
+                    ui.view = 'profile';
+                    saveState();
+                    render();
+                    if (added) loadAll(); // 새 프로파일의 보스 스케줄 가져오기
+                }
+                const lines = [`CSV 불러오기: 새 프로파일 ${added}개, 병합 ${merged}개`];
+                if (failed.length) lines.push('실패: ' + failed.join(', '));
+                toast(lines.join('\n'));
+            }
+
+            /* ════════════════ 프로파일 관리 ════════════════ */
+
+            function renameProfile(p) {
+                if (!p) return;
+                const input = prompt('새 프로파일 이름', p.name);
+                if (input == null) return;
+                const next = input.trim();
+                if (!next || next === p.name) return;
+                if (state.profiles[next]) {
+                    alert(`'${next}' 프로파일이 이미 있습니다.`);
+                    return;
+                }
+                // 탭 순서를 유지하며 키 변경
+                const old = p.name;
+                const profiles = {};
+                for (const [k, v] of Object.entries(state.profiles)) {
+                    if (k === old) {
+                        v.name = next;
+                        profiles[next] = v;
+                    } else {
+                        profiles[k] = v;
+                    }
+                }
+                state.profiles = profiles;
+                live[next] = live[old];
+                delete live[old];
+                if (state.activeProfile === old) state.activeProfile = next;
+                saveState();
+                render();
+            }
+
+            function deleteProfile(p) {
+                if (!p) return;
+                if (!confirm(`'${p.name}' 프로파일을 삭제할까요?\nCSV 배율 · 직접입력 배율 · 인원 · 도핑 설정이 모두 지워지며 되돌릴 수 없습니다.`)) return;
+                delete state.profiles[p.name];
+                delete live[p.name];
+                if (!state.profiles[state.activeProfile]) state.activeProfile = Object.keys(state.profiles)[0] || null;
+                if (!state.activeProfile) ui.view = 'summary';
+                saveState();
+                render();
+            }
+
+            /* ════════════════ 백업 ════════════════ */
+
+            function downloadFile(fileName, text, type) {
+                const url = URL.createObjectURL(new Blob([text], { type }));
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = fileName;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                setTimeout(() => URL.revokeObjectURL(url), 1000);
+            }
+
+            function exportBackup() {
+                const d = new Date();
+                const stamp = `${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, '0')}${String(d.getDate()).padStart(2, '0')}`;
+                downloadFile(`boss_check_backup_${stamp}.json`, JSON.stringify(state, null, 2), 'application/json');
+            }
+
+            async function importBackup(file) {
+                let data;
+                try {
+                    data = JSON.parse((await file.text()).replace(/^﻿/, ''));
+                } catch (e) {
+                    alert('JSON 파일을 읽지 못했습니다.');
+                    return;
+                }
+                if (!data || typeof data !== 'object' || typeof data.profiles !== 'object') {
+                    alert('보스 체크 백업 파일이 아닙니다.');
+                    return;
+                }
+                const count = Object.keys(data.profiles || {}).length;
+                if (!confirm(`백업 데이터(프로파일 ${count}개)로 현재 데이터를 덮어씁니다.\n현재 데이터는 사라집니다. 계속할까요?`)) return;
+                state = normalizeState(data);
+                Object.keys(live).forEach((k) => delete live[k]);
+                ui.view = state.activeProfile ? 'profile' : 'summary';
+                saveState();
+                render();
+                toast('백업을 불러왔습니다');
+                loadAll();
+            }
+
+            /* ════════════════ 화면: 공통 ════════════════ */
+
+            const $menu = document.getElementById('menu');
+            const $view = document.getElementById('view');
+            const $toast = document.getElementById('toast');
+            let toastTimer = null;
+
+            function toast(message) {
+                $toast.textContent = message;
+                $toast.hidden = false;
+                clearTimeout(toastTimer);
+                toastTimer = setTimeout(() => { $toast.hidden = true; }, 3500);
+            }
+
+            // 난이도 이미지 (매핑 없거나 로딩 실패 시 난이도 글자로 대체)
+            function difficultyBadge(difficulty) {
+                if (!difficulty) return '';
+                const file = DIFFICULTY_IMAGES[difficulty];
+                if (!file) return `<span class="dif-badge" title="${esc(difficulty)}">${esc(difficulty)}</span>`;
+                const cls = 'dif-' + file.replace(/\.\w+$/, '').toLowerCase();
+                return `<span class="dif-badge dif-img ${cls}" title="${esc(difficulty)}">`
+                    + `<img src="${DIFFICULTY_DIR}${file}" alt="${esc(difficulty)}" `
+                    + `onerror="this.parentNode.classList.remove('dif-img');this.replaceWith(this.alt)">`
+                    + `</span>`;
+            }
+
+            function diffRank(difficulty) {
+                const i = DIFFICULTY_ORDER.indexOf(difficulty);
+                return i < 0 ? DIFFICULTY_ORDER.length : i;
+            }
+
+            // CSV에서 같은 보스의 난이도 목록 (어려운 순): [{ difficulty, key, rate }]
+            function bossDiffs(profile, name) {
+                const n = noSpace(name);
+                const diffs = [];
+                for (const [key, b] of Object.entries(profile.bosses)) {
+                    const k = splitKey(key);
+                    if (noSpace(k.name) === n) diffs.push({ difficulty: k.difficulty, key, rate: b.csvRate });
+                }
+                return diffs.sort((a, b) => diffRank(a.difficulty) - diffRank(b.difficulty));
+            }
+
+            function render() {
+                renderMenu();
+                if (ui.view === 'profile' && activeProfile()) renderProfile();
+                else if (ui.view === 'backup') renderBackup();
+                else if (ui.view === 'settings') renderSettings();
+                else {
+                    ui.view = 'summary';
+                    renderSummary();
+                }
+            }
+
+            function renderMenu() {
+                const btn = (active, attrs, text, extra) =>
+                    `<button type="button" class="top-btn${extra || ''}${active ? ' is-active' : ''}" ${attrs}>${text}</button>`;
+                const tabs = Object.keys(state.profiles).map((name) =>
+                    btn(ui.view === 'profile' && name === state.activeProfile, `data-act="tab" data-name="${esc(name)}"`, esc(name))
+                ).join('');
+                $menu.innerHTML = btn(ui.view === 'summary', 'data-act="view" data-view="summary"', '전체 요약')
+                    + `<div class="bc-tabs">${tabs}</div>`
+                    + '<span class="menu-sep"></span>'
+                    + btn(false, 'data-act="csv"', 'CSV 불러오기', ' is-primary')
+                    + btn(ui.view === 'backup', 'data-act="view" data-view="backup"', '백업')
+                    + btn(ui.view === 'settings', 'data-act="view" data-view="settings"', '설정');
+            }
+
+            /* ── 프로파일 머리 (캐릭 정보 + 이름 변경 · 삭제) ── */
+
+            function profileHeadHtml(p) {
+                return `
+                    <div class="ph">
+                        <div class="ph-info">
+                            ${p.level != null ? `<span class="ph-level">Lv.${p.level}</span>` : ''}
+                            <span class="ph-name">${esc(p.name)}</span>
+                            <span class="ph-job">${esc(p.job)}</span>
+                        </div>
+                        <div class="ph-actions">
+                            <button type="button" class="btn btn-sm" data-act="rename">이름 변경</button>
+                            <button type="button" class="btn btn-sm is-danger" data-act="delete">삭제</button>
+                        </div>
+                    </div>`;
+            }
+
+            /* ── 보스 스케줄 (제목 + 표) : 프로파일 화면 · 전체 요약 공용 ── */
+            // (클리어) | 난이도 | 보스 | 인원 | 배율 [상세] | 예상시간 | 뿌리기 | 유챔 | 콜렉터 | 세이람
+
+            function detailPopHtml(p, row) {
+                const diffs = bossDiffs(p, row.csvKey ? splitKey(row.csvKey).name : row.name);
+                const list = diffs.length
+                    ? `<ul>${diffs.map((d) => `
+                        <li class="${d.key === row.csvKey ? 'is-current' : ''}">
+                            ${difficultyBadge(d.difficulty)}<span>${esc(d.difficulty || '-')}</span>
+                            <span class="pop-rate">${fmtRate(d.rate)}%</span>
+                        </li>`).join('')}</ul>`
+                    : '<p class="muted">CSV에 이 보스의 배율이 없습니다</p>';
+                return `
+                    <div class="rate-pop" hidden>
+                        <div class="rate-pop-head">${esc(row.name)} 난이도별 배율</div>
+                        ${list}
+                    </div>`;
+            }
+
+            function champHtml(conf) {
+                const b = conf.buff;
+                const options = CHAMP_OPTIONS.map((n) =>
+                    `<option value="${n}" ${!b.champCustom && b.champ === n ? 'selected' : ''}>${n}</option>`
+                ).join('') + `<option value="custom" ${b.champCustom ? 'selected' : ''}>직접입력</option>`;
+                const input = b.champCustom
+                    ? `<input class="champ-input" type="text" inputmode="numeric" maxlength="${CHAMP_MAX_DIGITS}" data-act="champ-num"
+                        value="${b.champ}" aria-label="유챔 직접입력 (숫자 ${CHAMP_MAX_DIGITS}자리까지)">`
+                    : '';
+                return `<span class="champ-box"><select class="champ-select" data-act="champ" aria-label="유챔">${options}</select>${input}</span>`;
+            }
+
+            function buffCellsHtml(conf) {
+                return BUFFS.map((f) => f.kind === 'champ'
+                    ? `<td class="col-buff">${champHtml(conf)}</td>`
+                    : `<td class="col-buff"><input class="buff-check" type="checkbox" data-act="buff" data-buff="${f.id}"
+                        ${conf.buff[f.id] ? 'checked' : ''} aria-label="${esc(f.label)}"></td>`
+                ).join('');
+            }
+
+            function buffHeadHtml() {
+                return BUFFS.map((f) => `
+                    <th class="col-buff">
+                        <span class="buff-head">
+                            <img src="${BUFF_DIR}${esc(f.img)}" alt="" onerror="this.remove()">
+                            <span>${esc(f.label)}</span>
+                        </span>
+                    </th>`).join('');
+            }
+
+            function scheduleRowHtml(p, row) {
+                const conf = p.rows[row.rowKey] || normalizeRow(null);
+                const csvRate = csvRateOf(p, row.csvKey);
+                const manual = conf.manualRate != null;
+                const rate = displayRate(p, row, conf);
+                const est = rowEstimate(p, row, conf);
+                const time = est.seconds == null
+                    ? '<span class="time-impossible">불가</span>'
+                    : `<span class="time-main">${formatTime(est.seconds)}</span>`;
+                const manualMark = manual
+                    ? `<span class="manual-mark" title="직접입력 값 (비우면 csv 값 ${fmtRate(csvRate)}%로 복귀)">✎</span>`
+                    : '';
+                return `
+                    <tr data-row="${esc(row.rowKey)}" class="${row.done ? 'is-cleared' : ''}">
+                        <td class="col-clear">
+                            <input class="clear-check" type="checkbox" ${row.done ? 'checked' : ''} disabled tabindex="-1"
+                                aria-label="클리어 (API)" title="${row.done ? '클리어' : '미클리어'} (인게임 스케줄러 기준)">
+                        </td>
+                        <td class="col-dif">${difficultyBadge(row.difficulty)}</td>
+                        <td class="col-boss">
+                            <span class="boss-name">${esc(row.name)}</span>${row.monthly ? '<span class="tag-monthly" title="매월 1일 초기화">월간</span>' : ''}
+                        </td>
+                        <td class="col-party">
+                            <span class="party-box">
+                                <input class="party-input" type="number" min="${MIN_PARTY}" max="${MAX_PARTY}" step="1" data-act="party" value="${conf.party}" aria-label="인원">
+                                <span class="party-arrows">
+                                    <button type="button" data-act="party-up" title="인원 +1" ${conf.party >= MAX_PARTY ? 'disabled' : ''}>▲</button>
+                                    <button type="button" data-act="party-down" title="인원 -1" ${conf.party <= MIN_PARTY ? 'disabled' : ''}>▼</button>
+                                </span>
+                            </span>
+                        </td>
+                        <td class="col-rate">
+                            <span class="rate-box${manual ? ' is-manual' : ''}">
+                                <input class="rate-input" type="text" inputmode="decimal" data-act="rate" aria-label="배율"
+                                    value="${rate == null ? '' : fmtRate(rate)}" placeholder="${fmtRate(csvRate)}"
+                                    title="csv 배율 ${fmtRate(csvRate)}%">
+                                <span class="unit">%</span>${manualMark}
+                            </span>
+                            <button type="button" class="btn btn-sm detail-btn" data-act="detail" aria-expanded="false">상세</button>
+                            ${detailPopHtml(p, row)}
+                        </td>
+                        <td class="col-time">${time}<span class="time-sub">적용 ${est.adj == null ? '-' : est.adj + '%'}</span></td>
+                        ${buffCellsHtml(conf)}
+                    </tr>`;
+            }
+
+            // API 상태별 안내 문구 (표 대신 표시)
+            function liveMessage(p) {
+                const info = live[p.name];
+                if (!info || info.status === 'loading') return 'API에서 보스 스케줄을 불러오는 중…';
+                if (info.status === 'nokey') return '오른쪽 위 [API 키 등록]에서 넥슨 오픈API 키를 등록하세요.';
+                if (info.status === 'error') return `불러오기 실패: ${esc(info.msg || '')}`;
+                return '';
+            }
+
+            function scheduleHtml(p) {
+                const s = profileStats(p);
+                const rows = scheduleRows(p);
+                const msg = liveMessage(p);
+
+                const body = msg
+                    ? `<div class="empty">${msg}</div>`
+                    : rows.length ? `
+                        <div class="table-scroll">
+                            <table class="boss-table">
+                                <thead>
+                                    <tr>
+                                        <th>클리어</th><th>난이도</th><th>보스</th><th>인원</th><th>배율</th><th>예상시간</th>
+                                        ${buffHeadHtml()}
+                                    </tr>
+                                </thead>
+                                <tbody class="boss-rows">${rows.map((row) => scheduleRowHtml(p, row)).join('')}</tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td colspan="5" style="text-align:right">총 예상시간</td>
+                                        <td>${formatTime(s.total)}</td>
+                                        <td colspan="${BUFFS.length}"></td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="5" style="text-align:right">남은 시간 <span class="muted">(미클리어 보스)</span></td>
+                                        <td>${formatTime(s.remain)}</td>
+                                        <td colspan="${BUFFS.length}"></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                        ${s.impossible ? `<p class="muted" style="margin-top:8px">※ '불가' 보스 ${s.impossible}개는 합계에서 제외</p>` : ''}`
+                    : '<div class="empty">인게임 스케줄러에 등록된 주간 · 월간 보스가 없습니다.</div>';
+
+                return `
+                    <div class="card-head sub-head">
+                        <h2>보스 스케줄</h2>
+                        ${msg ? '' : `<span class="counter" title="클리어 / 스케줄 보스">${s.cleared}/${s.count}</span>`}
+                        <span class="grow"></span>
+                        <span class="muted">기준 ${state.settings.baseMinutes}분 · 배율×인원 → 10단위 내림</span>
+                    </div>
+                    ${body}`;
+            }
+
+            /* ════════════════ 화면: 전체 요약 ════════════════ */
+
+            function renderSummary() {
+                const profiles = Object.values(state.profiles);
+                if (!profiles.length) {
+                    $view.innerHTML = `
+                        <section class="bc-card">
+                            <div class="empty">
+                                프로파일이 없습니다.<br>
+                                [CSV 불러오기] 버튼을 누르거나 CSV 파일을 이 화면에 끌어다 놓으세요.<br>
+                                파일명 형식: <b>레벨_이름_직업_…_….csv</b> (예: 285_샤사린_보우마스터_전체_보스컷.csv)
+                            </div>
+                        </section>`;
+                    return;
+                }
+                const cards = profiles.map((p) => {
+                    const s = profileStats(p);
+                    const pct = s.count ? Math.round((s.cleared / s.count) * 100) : 0;
+                    return `
+                        <button type="button" class="summary-card" data-act="tab" data-name="${esc(p.name)}">
+                            <div class="sc-head">
+                                ${p.level != null ? `<span class="sc-level">Lv.${p.level}</span>` : ''}
+                                <span class="sc-name">${esc(p.name)}</span>
+                                <span class="sc-job">${esc(p.job)}</span>
+                            </div>
+                            <div class="sc-row"><span>클리어</span><strong>${s.cleared}/${s.count}</strong></div>
+                            <div class="sc-row"><span>남은 예상시간</span><strong>${s.count ? formatTime(s.remain) : '-'}</strong></div>
+                            <div class="progress"><span style="width:${pct}%"></span></div>
+                        </button>`;
+                }).join('');
+
+                // 요약 카드 아래: 프로파일별 박스 (캐릭 정보 · 버튼 · 보스 스케줄)
+                const boxes = profiles.map((p) => `
+                    <section class="bc-card" data-profile="${esc(p.name)}">
+                        ${profileHeadHtml(p)}
+                        ${scheduleHtml(p)}
+                    </section>`).join('');
+
+                $view.innerHTML = `
+                    <section class="bc-card">
+                        <div class="card-head">
+                            <h2>전체 요약</h2><span class="muted">카드를 누르면 해당 프로파일로 이동</span>
+                        </div>
+                        <div class="summary-grid">${cards}</div>
+                    </section>
+                    ${boxes}`;
+            }
+
+            /* ════════════════ 화면: 프로파일 ════════════════ */
+
+            function renderProfile() {
+                const p = activeProfile();
+                $view.innerHTML = `
+                    <section class="bc-card" data-profile="${esc(p.name)}">
+                        ${profileHeadHtml(p)}
+                        ${scheduleHtml(p)}
+                    </section>`;
+            }
+
+            /* ════════════════ 화면: 백업 · 설정 ════════════════ */
+
+            function renderBackup() {
+                $view.innerHTML = `
+                    <section class="bc-card">
+                        <div class="card-head"><h2>백업</h2></div>
+                        <div class="set-row">
+                            <button type="button" class="btn is-primary" data-act="backup-export">JSON 내보내기</button>
+                            <span class="set-desc">모든 프로파일 · CSV 배율 · 직접입력 배율 · 인원 · 도핑 · 설정을 JSON 파일로 내려받습니다.</span>
+                        </div>
+                        <div class="set-row">
+                            <button type="button" class="btn" data-act="backup-import">JSON 가져오기</button>
+                            <span class="set-desc">백업 JSON 파일로 현재 데이터를 덮어씁니다. 덮어쓰기 전에 확인 창이 뜹니다.</span>
+                        </div>
+                    </section>`;
+            }
+
+            function renderSettings() {
+                $view.innerHTML = `
+                    <section class="bc-card">
+                        <div class="card-head"><h2>설정</h2></div>
+                        <div class="set-row">
+                            <label>기준 시간 <input class="set-input" type="number" min="1" step="1" data-act="base-minutes" value="${state.settings.baseMinutes}"> 분</label>
+                            <span class="set-desc">배율 100%일 때 걸리는 시간입니다. 예상시간 = 기준 시간 ÷ (적용 배율 ÷ 100)</span>
+                        </div>
+                        <div class="set-row">
+                            <span class="set-desc">
+                                보스 스케줄 · 클리어: 오른쪽 위 넥슨 오픈API 키(스케줄러 페이지와 공용)로 프로파일 이름과 같은 캐릭터를 찾아,
+                                인게임 스케줄러에 등록된 월간 · 주간 보스와 클리어 여부를 가져옵니다. 페이지를 열 때마다 새로 가져옵니다.
+                            </span>
+                        </div>
+                    </section>`;
+            }
+
+            /* ════════════════ 상단 헤더: 테마 · API 키 (scheduler.js와 같은 동작) ════════════════ */
+
+            const $keyBox = document.getElementById('apiKeyBox');
+            const $keyBtn = document.getElementById('btnApiKey');
+            const $keyState = $keyBtn.querySelector('.top-btn-state');
+
+            function setKeyBoxOpen(open) {
+                $keyBox.hidden = !open;
+                $keyBtn.setAttribute('aria-expanded', String(open));
+            }
+
+            function renderKeyState() {
+                const has = ApiKey.has();
+                $keyState.textContent = has ? '저장됨' : '미등록';
+                $keyState.classList.toggle('is-set', has);
+            }
+
+            $keyBtn.addEventListener('click', () => setKeyBoxOpen($keyBox.hidden));
+
+            /* ════════════════ 이벤트 ════════════════ */
+
+            const $csvInput = document.getElementById('csvInput');
+            const $backupInput = document.getElementById('backupInput');
+
+            $csvInput.addEventListener('change', () => {
+                if ($csvInput.files.length) importCsvFiles($csvInput.files);
+                $csvInput.value = '';
+            });
+
+            $backupInput.addEventListener('change', () => {
+                if ($backupInput.files[0]) importBackup($backupInput.files[0]);
+                $backupInput.value = '';
+            });
+
+            // 행의 { profile, row 키, 설정 }
+            function rowCtx(el) {
+                const tr = el.closest('tr[data-row]');
+                const p = profileOf(el);
+                if (!tr || !p) return null;
+                return { p, conf: rowConf(p, tr.dataset.row) };
+            }
+
+            function commit() {
+                saveState();
+                render();
+            }
+
+            function closeDetails(except) {
+                $view.querySelectorAll('.rate-pop:not([hidden])').forEach((pop) => {
+                    if (pop === except) return;
+                    pop.hidden = true;
+                    const btn = pop.parentNode.querySelector('[data-act="detail"]');
+                    if (btn) btn.setAttribute('aria-expanded', 'false');
+                });
+            }
+
+            // 메뉴 · 요약 카드 클릭
+            function onMenuClick(e) {
+                const btn = e.target.closest('[data-act]');
+                if (!btn) return;
+                const act = btn.dataset.act;
+                if (act === 'tab') {
+                    state.activeProfile = btn.dataset.name;
+                    ui.view = 'profile';
+                    commit();
+                    window.scrollTo(0, 0);
+                } else if (act === 'view') {
+                    ui.view = btn.dataset.view;
+                    render();
+                } else if (act === 'csv') {
+                    $csvInput.click();
+                }
+            }
+
+            $menu.addEventListener('click', onMenuClick);
+
+            // 바깥 클릭: [상세] 팝업 닫기, (키가 저장된 경우) API 키 박스 닫기
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('.rate-pop, [data-act="detail"]')) closeDetails(null);
+                if (!$keyBox.hidden && ApiKey.has() && !e.target.closest('.key-corner')) setKeyBoxOpen(false);
+            });
+
+            $view.addEventListener('click', (e) => {
+                const el = e.target.closest('[data-act]');
+                if (!el) return;
+                const act = el.dataset.act;
+                const p = profileOf(el);
+
+                if (act === 'tab') return onMenuClick(e);
+                if (act === 'rename') return renameProfile(p);
+                if (act === 'delete') return deleteProfile(p);
+                if (act === 'backup-export') return exportBackup();
+                if (act === 'backup-import') return $backupInput.click();
+                if (act === 'detail') {
+                    const pop = el.parentNode.querySelector('.rate-pop');
+                    closeDetails(pop);
+                    pop.hidden = !pop.hidden;
+                    el.setAttribute('aria-expanded', String(!pop.hidden));
+                    return;
+                }
+                if (act === 'party-up' || act === 'party-down') {
+                    const ctx = rowCtx(el);
+                    if (!ctx) return;
+                    ctx.conf.party = clampParty(ctx.conf.party + (act === 'party-up' ? 1 : -1));
+                    return commit();
+                }
+            });
+
+            $view.addEventListener('change', (e) => {
+                const el = e.target;
+                const act = el.dataset.act;
+
+                if (act === 'base-minutes') {
+                    const n = parseFloat(el.value);
+                    if (n > 0) state.settings.baseMinutes = n;
+                    return commit();
+                }
+
+                const ctx = rowCtx(el);
+                if (!ctx) return;
+                const { p, conf } = ctx;
+                const tr = el.closest('tr[data-row]');
+
+                if (act === 'rate') {
+                    // 비우면 manualRate = null → csv 값으로 복귀
+                    const raw = el.value.trim().replace(/%$/, '');
+                    const row = scheduleRows(p).find((r) => r.rowKey === tr.dataset.row);
+                    const csvRate = row ? csvRateOf(p, row.csvKey) : null;
+                    if (raw === '') {
+                        conf.manualRate = null;
+                    } else {
+                        const n = parseFloat(raw.replace(/,/g, ''));
+                        if (!Number.isFinite(n) || n < 0) {
+                            toast('배율은 0 이상의 숫자로 입력하세요');
+                            return render();
+                        }
+                        conf.manualRate = n === csvRate ? null : n;
+                    }
+                    return commit();
+                }
+                if (act === 'party') {
+                    // 입력 후 blur(change) 시 1~6 범위로 보정
+                    conf.party = clampParty(el.value);
+                    return commit();
+                }
+                if (act === 'buff') {
+                    conf.buff[el.dataset.buff] = el.checked;
+                    return commit();
+                }
+                if (act === 'champ') {
+                    // 직접입력: 입력칸을 보여 주고 바로 입력할 수 있게 포커스
+                    if (el.value === 'custom') {
+                        conf.buff.champCustom = true;
+                        commit();
+                        const input = $view.querySelector(`tr[data-row="${CSS.escape(tr.dataset.row)}"] .champ-input`);
+                        if (input) {
+                            input.focus();
+                            input.select();
+                        }
+                        return;
+                    }
+                    conf.buff.champCustom = false;
+                    conf.buff.champ = clampChamp(el.value);
+                    return commit();
+                }
+                if (act === 'champ-num') {
+                    conf.buff.champ = clampChamp(el.value);
+                    return commit();
+                }
+            });
+
+            // 유챔 직접입력: 숫자만, 5자리까지
+            $view.addEventListener('input', (e) => {
+                const el = e.target;
+                if (el.dataset.act !== 'champ-num') return;
+                const digits = el.value.replace(/\D/g, '').slice(0, CHAMP_MAX_DIGITS);
+                if (digits !== el.value) el.value = digits;
+            });
+
+            // 엔터 키로 입력 확정
+            $view.addEventListener('keydown', (e) => {
+                const act = e.target.dataset.act;
+                if (e.key === 'Enter' && (act === 'rate' || act === 'party' || act === 'champ-num' || act === 'base-minutes')) {
+                    e.target.blur();
+                }
+            });
+
+            /* ── CSV 파일 드래그앤드롭 (화면 어디든) ── */
+
+            const $drop = document.getElementById('dropOverlay');
+            let dropDepth = 0;
+            const hasFiles = (e) => e.dataTransfer && [...e.dataTransfer.types].includes('Files');
+
+            document.addEventListener('dragenter', (e) => {
+                if (!hasFiles(e)) return;
+                e.preventDefault();
+                dropDepth++;
+                $drop.hidden = false;
+            });
+
+            document.addEventListener('dragleave', (e) => {
+                if (!hasFiles(e)) return;
+                dropDepth = Math.max(0, dropDepth - 1);
+                if (!dropDepth) $drop.hidden = true;
+            });
+
+            document.addEventListener('dragover', (e) => {
+                if (hasFiles(e)) e.preventDefault();
+            });
+
+            document.addEventListener('drop', (e) => {
+                if (!hasFiles(e)) return;
+                e.preventDefault();
+                dropDepth = 0;
+                $drop.hidden = true;
+                importCsvFiles(e.dataTransfer.files);
+            });
+
+            /* ════════════════ 시작 ════════════════ */
+
+            Theme.mount(document.getElementById('btnTheme'));
+            ApiKeyBox.mount($keyBox);
+
+            // 키 저장 시 박스 닫고 다시 조회, 삭제 시 박스 열기
+            ApiKey.onChange(() => {
+                renderKeyState();
+                setKeyBoxOpen(!ApiKey.has());
+                loadAll();
+            });
+
+            renderKeyState();
+            setKeyBoxOpen(!ApiKey.has()); // 처음 방문(키 없음)이면 열어 둔다
+            render();
+            loadAll();
+
+            // 탭을 오래 열어 둔 뒤 다시 볼 때 클리어 다시 조회
+            document.addEventListener('visibilitychange', () => {
+                if (document.visibilityState === 'visible' && Date.now() - lastLoad > REFRESH_MS) loadAll();
+            });
+        })();
+    </script>
+</body>
+
+</html>
