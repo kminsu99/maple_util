@@ -485,6 +485,12 @@
             min-width: 5.8em;
         }
 
+        /* 직접입력 중: 화살표만 */
+        .champ-select.is-custom {
+            min-width: 0;
+            width: 2em;
+        }
+
         .champ-select,
         .champ-input {
             padding: 3px 4px;
@@ -721,9 +727,67 @@
             ];
             const CHAMP_OPTIONS = [0, 1, 2, 3, 4, 5];
 
-            // API 보스 이름·난이도 → 보스컷 CSV 보스 이름·난이도 매핑표 (data/meso.csv 기준으로 만든 파일)
-            //  열: API보스이름,API난이도,CSV보스이름,CSV난이도 (CSV 칸이 비면 보스컷 CSV에 없는 보스)
-            const BOSS_MAPPING_URL = 'data/API_CSV_boss_mapping.csv';
+            // API 보스 이름·난이도 → 보스컷 CSV 보스 이름·난이도 매핑표 (data/meso.csv 보스 목록 기준)
+            //  [API 이름, API 난이도, CSV 이름, CSV 난이도] / CSV 쪽이 없으면 보스컷 CSV에 없는 보스 (배율 기본값 없음)
+            //  새 보스는 이 표에 한 줄 추가
+            const BOSS_MAPPING = [
+                ['자쿰', '카오스'],
+                ['블러디퀸', '카오스'],
+                ['반반', '카오스'],
+                ['피에르', '카오스'],
+                ['매그너스', '하드'],
+                ['벨룸', '카오스'],
+                ['파풀라투스', '카오스'],
+                ['스우', '노멀', '스우', '노말'],
+                ['데미안', '노멀', '데미안', '노말'],
+                ['가디언 엔젤 슬라임', '노멀', '슬라임', '노말'],
+                ['루시드', '이지', '루시드', '이지'],
+                ['윌', '이지', '윌', '이지'],
+                ['루시드', '노멀', '루시드', '노말'],
+                ['윌', '노멀', '윌', '노말'],
+                ['더스크', '노멀', '더스크', '노말'],
+                ['듄켈', '노멀', '듄켈', '노말'],
+                ['데미안', '하드', '데미안', '하드'],
+                ['스우', '하드', '스우', '하드'],
+                ['루시드', '하드', '루시드', '하드'],
+                ['더스크', '카오스', '더스크', '카오스'],
+                ['진 힐라', '노멀', '진힐라', '노말'],
+                ['가디언 엔젤 슬라임', '카오스', '슬라임', '카오스'],
+                ['윌', '하드', '윌', '하드'],
+                ['듄켈', '하드', '듄켈', '하드'],
+                ['진 힐라', '하드', '진힐라', '하드'],
+                ['선택받은 세렌', '노멀', '세렌', '노말'],
+                ['감시자 칼로스', '이지', '칼로스', '이지'],
+                ['최초의 대적자', '이지', '대적자', '이지'],
+                ['선택받은 세렌', '하드', '세렌', '하드'],
+                ['카링', '이지', '카링', '이지'],
+                ['벨로나', '이지', '벨로나', '이지'],
+                ['감시자 칼로스', '노멀', '칼로스', '노말'],
+                ['최초의 대적자', '노멀', '대적자', '노말'],
+                ['스우', '익스트림', '스우', '익스트림'],
+                ['찬란한 흉성', '노멀', '흉성', '노말'],
+                ['카링', '노멀', '카링', '노말'],
+                ['벨로나', '노멀', '벨로나', '노말'],
+                ['림보', '노멀', '림보', '노말'],
+                ['감시자 칼로스', '카오스', '칼로스', '카오스'],
+                ['발드릭스', '노멀', '발드릭스', '노말'],
+                ['최초의 대적자', '하드', '대적자', '하드'],
+                ['유피테르', '노멀', '유피테르', '노말'],
+                ['카링', '하드', '카링', '하드'],
+                ['선택받은 세렌', '익스트림', '세렌', '익스트림'],
+                ['림보', '하드', '림보', '하드'],
+                ['찬란한 흉성', '하드', '흉성', '하드'],
+                ['벨로나', '하드', '벨로나', '하드'],
+                ['발드릭스', '하드', '발드릭스', '하드'],
+                ['감시자 칼로스', '익스트림', '칼로스', '익스트림'],
+                ['최초의 대적자', '익스트림', '대적자', '익스트림'],
+                ['카링', '익스트림', '카링', '익스트림'],
+                ['유피테르', '하드', '유피테르', '하드'],
+                ['림보', '익스트림', '림보', '익스트림'],
+                ['발드릭스', '익스트림', '발드릭스', '익스트림'],
+                ['검은 마법사', '하드', '검은마법사', '하드'],
+                ['검은 마법사', '익스트림', '검은마법사', '익스트림'],
+            ];
             const CHAMP_MAX_DIGITS = 5;
 
             const esc = Util.esc;
@@ -1051,28 +1115,12 @@
                 return list;
             }
 
-            /* ── API ↔ CSV 보스 매핑표 ── */
+            /* ── API ↔ CSV 보스 매핑 ── */
             // { 'API이름(공백 제거)|난이도(노멀→노말)': 'CSV보스이름|CSV난이도' 또는 null(CSV에 없는 보스) }
-            let bossMap = null;
-
-            async function loadBossMap() {
-                try {
-                    const res = await fetch(BOSS_MAPPING_URL, { cache: 'no-cache' });
-                    if (!res.ok) throw new Error('HTTP ' + res.status);
-                    const map = {};
-                    parseCsv(decodeCsv(await res.arrayBuffer())).slice(1).forEach(([apiName, apiDiff, csvName, csvDiff]) => {
-                        if (!apiName) return;
-                        map[noSpace(apiName) + '|' + normDiff(apiDiff.trim())] = csvName && csvName.trim()
-                            ? csvName.trim() + '|' + csvDiff.trim()
-                            : null;
-                    });
-                    bossMap = map;
-                } catch (e) {
-                    // 파일을 못 읽으면(예: file:// 로 열기) 아래 이름 포함 비교로만 찾음
-                    console.warn('[보스 체크] 보스 매핑표 읽기 실패', e);
-                    bossMap = {};
-                }
-            }
+            const bossMap = {};
+            BOSS_MAPPING.forEach(([apiName, apiDiff, csvName, csvDiff]) => {
+                bossMap[noSpace(apiName) + '|' + normDiff(apiDiff)] = csvName ? csvName + '|' + csvDiff : null;
+            });
 
             // API 보스 → CSV 보스 키 (배율 기본값을 가져올 CSV 행)
             //  1) 매핑표: API 이름·난이도로 찾은 CSV 보스가 프로파일 CSV에 있으면 그것
@@ -1082,7 +1130,7 @@
                 const apiName = noSpace(apiBoss.content_name);
                 const diff = normDiff(apiBoss.difficulty);
                 const mapKey = apiName + '|' + diff;
-                if (bossMap && mapKey in bossMap) {
+                if (mapKey in bossMap) {
                     const mapped = bossMap[mapKey];
                     if (!mapped) return null;
                     const m = splitKey(mapped);
@@ -1451,14 +1499,16 @@
 
             function champHtml(conf) {
                 const b = conf.buff;
-                const options = CHAMP_OPTIONS.map((n) =>
-                    `<option value="${n}" ${!b.champCustom && b.champ === n ? 'selected' : ''}>${n}</option>`
-                ).join('') + `<option value="custom" ${b.champCustom ? 'selected' : ''}>직접입력</option>`;
+                // 직접입력 중: 글자 없는 숨은 항목을 선택해 두어 메뉴에는 화살표만 보이고, 펼치면 '직접입력'이 보임
+                const options = (b.champCustom ? '<option value="custom" selected hidden></option>' : '')
+                    + CHAMP_OPTIONS.map((n) =>
+                        `<option value="${n}" ${!b.champCustom && b.champ === n ? 'selected' : ''}>${n}</option>`
+                    ).join('') + '<option value="custom-pick">직접입력</option>';
                 const input = b.champCustom
                     ? `<input class="champ-input" type="text" inputmode="numeric" maxlength="${CHAMP_MAX_DIGITS}" data-act="champ-num"
                         value="${b.champ}" aria-label="유챔 직접입력 (숫자 ${CHAMP_MAX_DIGITS}자리까지)">`
                     : '';
-                return `<span class="champ-box"><select class="champ-select" data-act="champ" aria-label="유챔">${options}</select>${input}</span>`;
+                return `<span class="champ-box"><select class="champ-select${b.champCustom ? ' is-custom' : ''}" data-act="champ" aria-label="유챔">${options}</select>${input}</span>`;
             }
 
             function buffCellsHtml(conf) {
@@ -1824,7 +1874,7 @@
                 }
                 if (act === 'champ') {
                     // 직접입력: 입력칸을 보여 주고 바로 입력할 수 있게 포커스
-                    if (el.value === 'custom') {
+                    if (el.value === 'custom' || el.value === 'custom-pick') {
                         conf.buff.champCustom = true;
                         commit();
                         const input = $view.querySelector(`tr[data-row="${CSS.escape(tr.dataset.row)}"] .champ-input`);
@@ -1906,8 +1956,7 @@
             renderKeyState();
             setKeyBoxOpen(!ApiKey.has()); // 처음 방문(키 없음)이면 열어 둔다
             render();
-            // 매핑표를 먼저 읽고 조회 (배율 기본값을 CSV에서 찾을 때 사용)
-            loadBossMap().then(loadAll);
+            loadAll();
 
             // 탭을 오래 열어 둔 뒤 다시 볼 때 클리어 다시 조회
             document.addEventListener('visibilitychange', () => {
