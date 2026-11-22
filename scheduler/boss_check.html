@@ -720,6 +720,10 @@
                 { id: 'seiram', kind: 'check', label: '세이람', img: '세이람.png' },
             ];
             const CHAMP_OPTIONS = [0, 1, 2, 3, 4, 5];
+
+            // API 보스 이름·난이도 → 보스컷 CSV 보스 이름·난이도 매핑표 (data/meso.csv 기준으로 만든 파일)
+            //  열: API보스이름,API난이도,CSV보스이름,CSV난이도 (CSV 칸이 비면 보스컷 CSV에 없는 보스)
+            const BOSS_MAPPING_URL = 'data/API_CSV_boss_mapping.csv';
             const CHAMP_MAX_DIGITS = 5;
 
             const esc = Util.esc;
@@ -1047,11 +1051,47 @@
                 return list;
             }
 
-            // API 보스 → CSV 보스 키: 난이도가 같고 API 이름(공백 제거)에 CSV 이름이 들어 있는 것 중 가장 긴 이름
-            //  예) API "찬란한 흉성" ↔ CSV "흉성", API "검은 마법사" ↔ CSV "검은마법사"
+            /* ── API ↔ CSV 보스 매핑표 ── */
+            // { 'API이름(공백 제거)|난이도(노멀→노말)': 'CSV보스이름|CSV난이도' 또는 null(CSV에 없는 보스) }
+            let bossMap = null;
+
+            async function loadBossMap() {
+                try {
+                    const res = await fetch(BOSS_MAPPING_URL, { cache: 'no-cache' });
+                    if (!res.ok) throw new Error('HTTP ' + res.status);
+                    const map = {};
+                    parseCsv(decodeCsv(await res.arrayBuffer())).slice(1).forEach(([apiName, apiDiff, csvName, csvDiff]) => {
+                        if (!apiName) return;
+                        map[noSpace(apiName) + '|' + normDiff(apiDiff.trim())] = csvName && csvName.trim()
+                            ? csvName.trim() + '|' + csvDiff.trim()
+                            : null;
+                    });
+                    bossMap = map;
+                } catch (e) {
+                    // 파일을 못 읽으면(예: file:// 로 열기) 아래 이름 포함 비교로만 찾음
+                    console.warn('[보스 체크] 보스 매핑표 읽기 실패', e);
+                    bossMap = {};
+                }
+            }
+
+            // API 보스 → CSV 보스 키 (배율 기본값을 가져올 CSV 행)
+            //  1) 매핑표: API 이름·난이도로 찾은 CSV 보스가 프로파일 CSV에 있으면 그것
+            //  2) 매핑표에 없으면: 난이도가 같고 API 이름(공백 제거)에 CSV 이름이 들어 있는 것 중 가장 긴 이름
+            //     예) API "찬란한 흉성" ↔ CSV "흉성", API "검은 마법사" ↔ CSV "검은마법사"
             function csvKeyOf(profile, apiBoss) {
                 const apiName = noSpace(apiBoss.content_name);
                 const diff = normDiff(apiBoss.difficulty);
+                const mapKey = apiName + '|' + diff;
+                if (bossMap && mapKey in bossMap) {
+                    const mapped = bossMap[mapKey];
+                    if (!mapped) return null;
+                    const m = splitKey(mapped);
+                    const found = Object.keys(profile.bosses).find((key) => {
+                        const k = splitKey(key);
+                        return noSpace(k.name) === noSpace(m.name) && normDiff(k.difficulty) === normDiff(m.difficulty);
+                    });
+                    if (found) return found;
+                }
                 let best = null;
                 for (const key of Object.keys(profile.bosses)) {
                     const k = splitKey(key);
@@ -1866,7 +1906,8 @@
             renderKeyState();
             setKeyBoxOpen(!ApiKey.has()); // 처음 방문(키 없음)이면 열어 둔다
             render();
-            loadAll();
+            // 매핑표를 먼저 읽고 조회 (배율 기본값을 CSV에서 찾을 때 사용)
+            loadBossMap().then(loadAll);
 
             // 탭을 오래 열어 둔 뒤 다시 볼 때 클리어 다시 조회
             document.addEventListener('visibilitychange', () => {
