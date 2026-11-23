@@ -152,7 +152,9 @@
         }
 
         // 익몬 진행 횟수: API가 서버 내 모든 캐릭터에 같은 값을 보내므로 서버의 최대값 사용
-        //  - quest: quest_state 0 → 0회, 1 → 1회, 2 → 2회 / 횟수형: now_count
+        //  - quest: quest_state는 횟수가 아니라 주간 퀘스트 상태 (0 미진행, 1 진행 중, 2 완료)
+        //    1회 클리어 후 클리어한 캐릭터로 접속하면 2로 바뀜 (2026-11-24 확인) → 2면 1회, 2회째는 구분 불가
+        //  - 횟수형: now_count
         // 익몬 항목이 없으면 null
         function xmparkCount(worldEntries) {
             let found = false;
@@ -161,7 +163,7 @@
                 if (st.status !== 'ok') return;
                 (st.data.weekly_contents || []).filter((it) => R.isXmpark(it.content_name)).forEach((it) => {
                     found = true;
-                    const v = it.type === 'quest' ? Number(it.quest_state) || 0 : Number(it.now_count) || 0;
+                    const v = it.type === 'quest' ? (Number(it.quest_state) === 2 ? 1 : 0) : Number(it.now_count) || 0;
                     n = Math.max(n, v);
                 });
             });
