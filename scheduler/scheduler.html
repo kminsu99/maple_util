@@ -41,6 +41,11 @@
             <button type="button" class="top-btn is-primary" id="btnCharacters" aria-controls="characterPicker">
                 캐릭터 등록/해제
             </button>
+            <!-- [갱신]: 이 버튼을 눌렀을 때만 스케줄러 API 호출, 아래에 마지막 호출 시각 -->
+            <div class="refresh-box">
+                <button type="button" class="top-btn" id="btnRefresh">갱신</button>
+                <small class="refresh-at" id="refreshAt"></small>
+            </div>
         </nav>
 
         <section id="characterPicker" hidden></section>

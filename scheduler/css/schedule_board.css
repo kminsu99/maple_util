@@ -38,20 +38,6 @@
     accent-color: var(--accent);
 }
 
-.sb-refresh {
-    padding: 5px 11px;
-    background: transparent;
-    color: var(--text);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    font: inherit;
-    cursor: pointer;
-}
-
-.sb-refresh:hover {
-    border-color: var(--accent);
-}
-
 .sb-error {
     font-size: 0.85rem;
     color: var(--red);

@@ -45,7 +45,7 @@
         const d = st.data;
         return `
             <div class="bm-name">
-                <strong>${d ? esc(d.character_name) : (st.status === 'error' ? '불러오기 실패' : '불러오는 중…')}</strong>
+                <strong>${d ? esc(d.character_name) : (st.status === 'error' ? '불러오기 실패' : st.status === 'empty' ? '정보 없음' : '불러오는 중…')}</strong>
                 ${d ? `<span>Lv.${esc(d.character_level)}</span>` : ''}
             </div>`;
     }
@@ -53,7 +53,9 @@
     function statusCellHtml(st, cls) {
         const msg = st.status === 'error'
             ? `<span class="sb-error">${esc(st.error)}</span>`
-            : '<span class="bm-none">불러오는 중…</span>';
+            : st.status === 'empty'
+                ? '<span class="bm-none">위쪽 [갱신]을 누르면 불러옵니다.</span>'
+                : '<span class="bm-none">불러오는 중…</span>';
         return `<div class="bm-cell ${cls}">${msg}</div>`;
     }
 

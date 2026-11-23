@@ -11,7 +11,26 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: flex-end;
+    align-items: flex-start;
     gap: 8px;
+}
+
+/* [갱신] 버튼 + 아래 마지막 API 호출 시각 */
+.refresh-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+}
+
+.refresh-at {
+    font-size: 0.7rem;
+    color: var(--muted);
+    white-space: nowrap;
+}
+
+.refresh-at.is-error {
+    color: var(--red);
 }
 
 /* 상단 고정 헤더 (sticky): 스크롤해도 화면 맨 위에 붙어 있음
