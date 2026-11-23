@@ -101,14 +101,15 @@
     }
   });
 
+  // requestAnimationFrame은 백그라운드 탭에서 멈추므로 setTimeout 사용
   let scheduled = false;
   function schedule() {
     if (scheduled) return;
     scheduled = true;
-    requestAnimationFrame(() => {
+    setTimeout(() => {
       scheduled = false;
       process();
-    });
+    }, 50);
   }
 
   process();
@@ -117,4 +118,11 @@
     subtree: true,
     characterData: true,
   });
+
+  // 다른 탭에서 돌아왔을 때 다시 확인
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible") process();
+  });
+  window.addEventListener("focus", process);
+  window.addEventListener("pageshow", process);
 })();

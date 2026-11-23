@@ -232,16 +232,24 @@
     panel.insertAdjacentElement("beforebegin", btn);
   }
 
+  // requestAnimationFrame은 백그라운드 탭에서 멈추므로 setTimeout 사용
   let scheduled = false;
   function schedule() {
     if (scheduled) return;
     scheduled = true;
-    requestAnimationFrame(() => {
+    setTimeout(() => {
       scheduled = false;
       ensureButton();
-    });
+    }, 50);
   }
 
   ensureButton();
   new MutationObserver(schedule).observe(document.body, { childList: true, subtree: true });
+
+  // 다른 탭에서 돌아왔을 때 버튼 다시 확인
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible") ensureButton();
+  });
+  window.addEventListener("focus", ensureButton);
+  window.addEventListener("pageshow", ensureButton);
 })();
