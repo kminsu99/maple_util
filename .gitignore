@@ -1,5 +1,7 @@
 .git/
 .env
+
+#가상환경
 .venv/
 
 #test용
@@ -10,9 +12,7 @@ ouput
 memo
 gitcmd
 
-#maple util repo
-maple_util/
-
+#확장자
 *.zip
 *.py
 tools/
