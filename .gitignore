@@ -4,16 +4,16 @@
 #가상환경
 .venv/
 
-#test용
+#확장자
+*.zip
+*.py
+
+#기타
+tools/
+prompt/
 test/
 test
 input
 ouput
 memo
 gitcmd
-
-#확장자
-*.zip
-*.py
-tools/
-prompt/
