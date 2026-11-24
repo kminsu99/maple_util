@@ -76,16 +76,6 @@
         saveOrder(world, next);
     }
 
-    // name을 target 앞(after=false) 또는 뒤(after=true)로 이동
-    function moveItemTo(world, names, name, target, after) {
-        if (name === target) return;
-        const next = names.filter((n) => n !== name);
-        const t = next.indexOf(target);
-        if (t < 0) return;
-        next.splice(after ? t + 1 : t, 0, name);
-        saveOrder(world, next);
-    }
-
     // 서버 편집 초기화: 이 서버의 메뉴 순서·에픽 던전 설정만 지움
     // (이전 버전의 서버 공통 에픽 설정은 다른 서버에 남기고, 이 서버에서는 기본값으로 덮어씀)
     function resetWorld(world) {
@@ -115,7 +105,7 @@
     function create(ctx) {
         const editingWorlds = new Set();   // 편집 중인 서버
         const isEditing = (world) => editingWorlds.has(world);
-        const currentNames = new Map();     // 서버 → 화면의 항목 순서 (이동 버튼·드래그 처리용)
+        const currentNames = new Map();     // 서버 → 화면의 항목 순서 (▲▼ 이동 버튼용)
 
         function rowsOf(entries) {
             const rows = [];
@@ -379,76 +369,38 @@
             return false;
         }
 
-        // ── 끌어 놓기 (편집 모드, ⠿ 손잡이를 잡았을 때만) ──
-        // 마우스 전용: 터치 화면에서는 ▲▼ 버튼 사용
-        let dragName = null;
-        let dragWorld = null;   // 같은 서버 안에서만 옮길 수 있음
+        // ── 끌어 놓기 (편집 모드, ⠿ 손잡이를 잡았을 때만, SortableJS · 터치 지원) ──
+        // 서버 박스(ul)마다 따로 만들어 같은 서버 안에서만 옮길 수 있음
+        // 화면을 다시 그릴 때마다 mountDrag로 다시 연결
+        let sortables = [];
+        let dragging = false;
 
-        function bindDrag(container, render) {
-            const itemOf = (e) => e.target.closest && e.target.closest('li[data-name]');
-
-            const clearDropMarks = () => container.querySelectorAll('.drop-before, .drop-after').forEach((el) => {
-                el.classList.remove('drop-before', 'drop-after');
-            });
-
-            // 2열에서는 좌우 절반, 1열(좁은 화면)에서는 위아래 절반으로 앞/뒤 판단
-            const dropAfter = (li, e) => {
-                const rect = li.getBoundingClientRect();
-                const list = li.parentElement.getBoundingClientRect();
-                const oneColumn = rect.width > list.width * 0.75;
-                return oneColumn ? e.clientY > rect.top + rect.height / 2 : e.clientX > rect.left + rect.width / 2;
-            };
-
-            container.addEventListener('mousedown', (e) => {
-                const handle = e.target.closest('.ord-handle');
-                const li = handle && handle.closest('li[data-name]');
-                if (li) li.draggable = true;
-            });
-
-            container.addEventListener('dragstart', (e) => {
-                const li = itemOf(e);
-                if (!li || !li.draggable) return;
-                dragName = li.dataset.name;
-                dragWorld = li.dataset.world;
-                li.classList.add('is-dragging');
-                e.dataTransfer.effectAllowed = 'move';
-                try { e.dataTransfer.setData('text/plain', dragName); } catch (err) { /* 일부 브라우저 */ }
-            });
-
-            container.addEventListener('dragover', (e) => {
-                const li = dragName && itemOf(e);
-                if (!li || li.dataset.world !== dragWorld) return;
-                e.preventDefault();
-                e.dataTransfer.dropEffect = 'move';
-                clearDropMarks();
-                if (li.dataset.name !== dragName) li.classList.add(dropAfter(li, e) ? 'drop-after' : 'drop-before');
-            });
-
-            container.addEventListener('drop', (e) => {
-                const li = dragName && itemOf(e);
-                if (!li || li.dataset.world !== dragWorld) return;
-                e.preventDefault();
-                const name = dragName;
-                dragName = null;
-                moveItemTo(dragWorld, currentNames.get(dragWorld) || [], name, li.dataset.name, dropAfter(li, e));
-                render();
-            });
-
-            container.addEventListener('dragend', (e) => {
-                dragName = null;
-                dragWorld = null;
-                clearDropMarks();
-                const li = itemOf(e);
-                if (li) {
-                    li.draggable = false;
-                    li.classList.remove('is-dragging');
-                }
+        function mountDrag(container, render) {
+            sortables.forEach((s) => s.destroy());
+            sortables = [];
+            if (typeof Sortable === 'undefined') return;
+            container.querySelectorAll('ul.sb-agg').forEach((ul) => {
+                if (!ul.querySelector('li[data-name]')) return;   // 편집 중이 아닌 서버
+                sortables.push(Sortable.create(ul, {
+                    draggable: 'li[data-name]',
+                    handle: '.ord-handle',
+                    animation: 150,
+                    ghostClass: 'is-dragging',
+                    onStart: () => { dragging = true; },
+                    onEnd: (e) => {
+                        dragging = false;
+                        if (e.oldIndex === e.newIndex) return;
+                        const items = [...ul.querySelectorAll('li[data-name]')];
+                        saveOrder(items[0].dataset.world, items.map((li) => li.dataset.name));
+                        render();
+                    },
+                }));
             });
         }
 
         return {
-            compute, html, onClick, onChange, bindDrag,
-            isDragging: () => !!dragName,
+            compute, html, onClick, onChange, mountDrag,
+            isDragging: () => dragging,
             // 섹션을 접으면 모든 서버의 편집 종료 (편집 시작은 서버 박스의 [편집]에서만)
             get editing() { return editingWorlds.size > 0; },
             set editing(v) { if (!v) editingWorlds.clear(); },

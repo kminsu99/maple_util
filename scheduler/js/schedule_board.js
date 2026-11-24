@@ -160,6 +160,7 @@
                         <h2>스케줄</h2>
                         <p class="empty">위에서 [캐릭터 등록/해제] 후 [완료]를 누르면 스케줄이 표시됩니다.</p>
                     </section>`;
+                sections.weekly.mountDrag(container, render);
                 return;
             }
             const first = entries.find((e) => e.st.status === 'ok') || entries[0];
@@ -171,6 +172,7 @@
                 // 주간 컨텐츠 | 일일 컨텐츠는 반씩 같은 줄, 보스는 그 아래 전체 폭
                 + `<div class="sb-pair">${sectionHtml('weekly')}${sectionHtml('daily')}</div>`
                 + sectionHtml('boss');
+            sections.weekly.mountDrag(container, render);   // 주간 컨텐츠 끌어 놓기 다시 연결
         }
 
         // ── 이벤트 ──
@@ -215,8 +217,6 @@
             }
             if (eachSection((sec) => sec.onChange && sec.onChange(e))) render();
         });
-
-        sections.weekly.bindDrag(container, render);
 
         // API 호출은 [갱신]에서만. 캐릭터 변경은 저장된 응답으로 다시 그림
         if (opts.refreshBtn) opts.refreshBtn.addEventListener('click', loadAll);

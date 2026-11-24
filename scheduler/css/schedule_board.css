@@ -894,16 +894,10 @@
     color: var(--accent);
 }
 
+/* SortableJS 놓일 자리 표시 (ghostClass) */
 .sb-agg-item.is-dragging {
     opacity: 0.4;
-}
-
-.sb-agg-item.drop-before {
-    box-shadow: inset 3px 0 0 var(--accent), 0 -2px 0 var(--accent);
-}
-
-.sb-agg-item.drop-after {
-    box-shadow: inset -3px 0 0 var(--accent), 0 2px 0 var(--accent);
+    box-shadow: inset 0 0 0 2px var(--accent);
 }
 
 .ord-reset {
