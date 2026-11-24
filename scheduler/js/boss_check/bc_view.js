@@ -110,7 +110,7 @@
                 </td>
                 <td class="col-dif">${badge(row.difficulty)}</td>
                 <td class="col-boss">
-                    <span class="boss-name">${esc(row.name)}</span>${row.monthly ? '<span class="tag-monthly" title="매월 1일 초기화">월간</span>' : ''}
+                    <span class="drag-icon${row.monthly ? ' is-fixed' : ''}" aria-hidden="true"></span><span class="boss-name">${esc(row.name)}</span>${row.monthly ? '<span class="tag-monthly" title="매월 1일 초기화">월간</span>' : ''}
                 </td>
                 <td class="col-my">
                     <button type="button" class="my-btn${picked ? ' is-picked' : ''}" data-act="detail" aria-expanded="false"
@@ -190,7 +190,7 @@
                                 <th colspan="${BUFFS.length}" class="dop-head">도핑메모</th>
                             </tr>
                             <tr>
-                                <th>클리어</th><th>난이도</th><th>보스</th><th>내 배율</th><th class="col-op"></th><th>인원 × 배율</th><th class="col-op"></th><th>예상시간</th>
+                                <th class="col-clear">클리어</th><th>난이도</th><th>보스</th><th>내 배율</th><th class="col-op"></th><th>인원 × 배율</th><th class="col-op"></th><th>예상시간</th>
                                 ${buffHeadHtml()}
                             </tr>
                         </thead>

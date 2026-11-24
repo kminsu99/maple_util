@@ -230,7 +230,35 @@
 /* 순서초기화 버튼: 표 맨 윗줄, 클리어 칸 위 */
 .boss-table .group-row .order-reset-cell {
     padding-left: 0;
+    padding-right: 0;
     text-align: left;
+}
+
+.order-reset-cell .btn-sm {
+    padding: 3px 4px;
+}
+
+/* 클리어 칸: 좌우 여백 최소화 */
+.boss-table th.col-clear,
+.boss-table td.col-clear {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+/* 보스 이름 왼쪽 끌기 아이콘 (img/drag.svg 모양, 테마 색) / 월간(고정)은 자리만 차지 */
+.drag-icon {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    margin-right: 6px;
+    vertical-align: -1px;
+    background: var(--muted);
+    -webkit-mask: url(../img/drag.svg) center / contain no-repeat;
+    mask: url(../img/drag.svg) center / contain no-repeat;
+}
+
+.drag-icon.is-fixed {
+    visibility: hidden;
 }
 
 /* 보스 순서: 행을 끌어서 변경 (월간 행 제외) */
