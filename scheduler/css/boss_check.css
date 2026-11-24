@@ -227,15 +227,18 @@
     text-align: center;
 }
 
-/* 순서초기화 버튼: 표 맨 윗줄, 클리어 칸 위 */
-.boss-table .group-row .order-reset-cell {
-    padding-left: 0;
-    padding-right: 0;
-    text-align: left;
+/* 제목 왼쪽: [보스 스케줄 0/13] 아래 [순서초기화] (클리어 칸 위) */
+.sched-head-left {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
 }
 
-.order-reset-cell .btn-sm {
-    padding: 3px 4px;
+.sched-head-line {
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
 /* 클리어 칸: 좌우 여백 최소화 */

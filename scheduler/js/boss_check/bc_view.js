@@ -156,10 +156,16 @@
         const rows = ctx.live.rows(p);
         const s = E.stats(p, rows, baseMinutes);
         const msg = liveMessage(info);
-        const title = (extra) => `
+        //  below: 제목 줄 아래 (표가 있을 때 순서초기화 버튼)
+        const title = (extra, below) => `
             <div class="card-head sub-head">
-                <h2>보스 스케줄</h2>
-                ${msg ? '' : `<span class="counter" title="클리어 / 스케줄 보스">${s.cleared}/${s.count}</span>`}
+                <div class="sched-head-left">
+                    <div class="sched-head-line">
+                        <h2>보스 스케줄</h2>
+                        ${msg ? '' : `<span class="counter" title="클리어 / 스케줄 보스">${s.cleared}/${s.count}</span>`}
+                    </div>
+                    ${below || ''}
+                </div>
                 ${extra || ''}
             </div>`;
 
@@ -171,6 +177,7 @@
                     <div class="empty">${msg || '인게임 스케줄러에 등록된 주간 · 월간 보스가 없습니다.'}</div>
                 </div>`;
         }
+        const resetBtn = '<button type="button" class="btn btn-sm" data-act="order-reset" title="보스 순서를 기본 순서(배율 낮은 순)로 되돌림">순서초기화</button>';
         const totals = `
             <span class="grow"></span>
             <span class="sched-total">
@@ -184,10 +191,7 @@
                     <table class="boss-table">
                         <thead>
                             <tr class="group-row">
-                                <th colspan="2" class="order-reset-cell">
-                                    <button type="button" class="btn btn-sm" data-act="order-reset" title="보스 순서를 기본 순서(배율 낮은 순)로 되돌림">순서초기화</button>
-                                </th>
-                                <th colspan="7" class="sched-title">${title(totals)}</th>
+                                <th colspan="9" class="sched-title">${title(totals, resetBtn)}</th>
                                 <th colspan="${BUFFS.length}" class="dop-head">도핑메모</th>
                             </tr>
                             <tr>
