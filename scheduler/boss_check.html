@@ -324,6 +324,18 @@
             font-weight: 700;
         }
 
+        /* 배율 자리 고정: 숫자 "xxxxx.xx"(8ch, 고정폭 숫자) + "%" */
+        .my-rate {
+            white-space: nowrap;
+        }
+
+        .my-num {
+            display: inline-block;
+            width: 8ch;
+            text-align: right;
+            font-variant-numeric: tabular-nums;
+        }
+
         .my-btn .caret {
             color: var(--muted);
             font-size: 0.6rem;
@@ -1622,7 +1634,7 @@
                         <td class="col-my">
                             <button type="button" class="my-btn${picked ? ' is-picked' : ''}" data-act="detail" aria-expanded="false"
                                 title="누르면 난이도별 csv 배율에서 선택">
-                                <span>${myRate == null ? '-' : fmtRate(myRate) + '%'}</span><span class="caret">▼</span>
+                                <span class="my-rate"><span class="my-num">${myRate == null ? '-' : fmtRate(myRate)}</span>%</span><span class="caret">▼</span>
                             </button>
                             ${detailPopHtml(p, row, myKey)}
                         </td>
