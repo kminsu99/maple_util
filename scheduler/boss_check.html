@@ -225,6 +225,15 @@
             opacity: 1;
         }
 
+        /* 내 배율 칸: 팝업까지 흐려지지 않게 칸 대신 버튼만 흐리게 */
+        .boss-table tbody tr.is-cleared td.col-my {
+            opacity: 1;
+        }
+
+        .boss-table tbody tr.is-cleared td.col-my .my-btn {
+            opacity: 0.55;
+        }
+
         .boss-table tbody tr.is-cleared .boss-name,
         .boss-table tbody tr.is-cleared .time-main {
             text-decoration: line-through;
@@ -282,6 +291,11 @@
         /* 내 배율: 누르면 난이도별 csv 배율 목록, 고르면 저장 */
         .col-my {
             position: relative;
+        }
+
+        /* 팝업이 열린 칸은 아래 행(흐린 행 포함)보다 위에 그림 */
+        .col-my:has(.rate-pop:not([hidden])) {
+            z-index: 40;
         }
 
         .my-btn {
@@ -1547,7 +1561,7 @@
                     ? `<ul>${diffs.map((d) => `
                         <li class="${d.key === myKey ? 'is-current' : ''}">
                             <button type="button" data-act="my-pick" data-key="${esc(d.key)}">
-                                ${difficultyBadge(d.difficulty)}<span>${esc(d.difficulty || '-')}</span>
+                                ${difficultyBadge(d.difficulty)}
                                 <span class="pop-rate">${fmtRate(d.rate)}%</span>
                             </button>
                         </li>`).join('')}</ul>`
@@ -1608,7 +1622,7 @@
                         <td class="col-my">
                             <button type="button" class="my-btn${picked ? ' is-picked' : ''}" data-act="detail" aria-expanded="false"
                                 title="누르면 난이도별 csv 배율에서 선택">
-                                ${myKey ? difficultyBadge(splitKey(myKey).difficulty) : ''}<span>${myRate == null ? '-' : fmtRate(myRate) + '%'}</span><span class="caret">▼</span>
+                                <span>${myRate == null ? '-' : fmtRate(myRate) + '%'}</span><span class="caret">▼</span>
                             </button>
                             ${detailPopHtml(p, row, myKey)}
                         </td>
