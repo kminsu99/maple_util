@@ -227,6 +227,21 @@
     text-align: center;
 }
 
+/* 순서초기화 버튼: 표 맨 윗줄, 클리어 칸 위 */
+.boss-table .group-row .order-reset-cell {
+    padding-left: 0;
+    text-align: left;
+}
+
+/* 보스 순서: 행을 끌어서 변경 (월간 행 제외) */
+.boss-table tbody tr.is-sortable {
+    cursor: grab;
+}
+
+.boss-table tbody tr.is-drag-ghost td {
+    background: var(--border);
+}
+
 /* 클리어 행: 취소선 + 흐리게 (클리어 체크칸은 그대로) */
 .boss-table tbody tr.is-cleared td {
     opacity: 0.55;

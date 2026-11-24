@@ -5,6 +5,8 @@
  *  - rows: { [행 키]: { myKey, addParty, addRate, buff } }  보스 스케줄 행마다 사용자가 바꾼 값
  *    · 행 키 = 보스컷 키, 보스컷에 없는 보스는 'api:' + API 이름|난이도
  *    · myKey: 내 배율로 고른 보스컷 키 (null = 행의 보스컷 키), addParty · addRate: 인원 × 배율 (빈칸·0 = null)
+ *  - order: 보스 스케줄 표시 순서 '0x' + 16진수 13자리 (ORDER_SIZE개 필드)
+ *    · 자리마다 기본 순서(BcLive rows 참고)의 번호, 앞자리부터 위에 표시 / 기본값 '0x0123456789abc'
  *  - 클리어 여부는 저장하지 않음 (매번 API에서 가져옴)
  * 의존: store.js, util.js, boss_check/bc_data.js
  */
@@ -15,6 +17,8 @@
     const API_CACHE_NAME = 'boss_check_api';        // 마지막 API 응답 (백업 파일에는 넣지 않음)
     const VERSION = 3;
     const { LIMITS } = BcData;
+    const ORDER_SIZE = 13;                          // 순서 필드 수 (월간 1 + 주간 12)
+    const DEFAULT_ORDER = '0x' + Array.from({ length: ORDER_SIZE }, (_, i) => i.toString(16)).join('');
 
     const isObject = (v) => !!v && typeof v === 'object';
 
@@ -59,6 +63,25 @@
         };
     }
 
+    // 기본 순서 번호 목록 → 순서 문자열 (중복 · 범위 밖 제거, 빠진 번호는 뒤에 오름차순)
+    function orderFrom(indices) {
+        const list = [];
+        indices.forEach((i) => {
+            if (Number.isInteger(i) && i >= 0 && i < ORDER_SIZE && !list.includes(i)) list.push(i);
+        });
+        for (let i = 0; i < ORDER_SIZE; i++) if (!list.includes(i)) list.push(i);
+        return '0x' + list.map((i) => i.toString(16)).join('');
+    }
+
+    // 순서 문자열 → 기본 순서 번호 목록 (잘못된 값이면 기본 순서)
+    function orderIndices(order) {
+        const m = /^0x([0-9a-f]+)$/i.exec(typeof order === 'string' ? order : '');
+        const s = orderFrom(m ? m[1].split('').map((c) => parseInt(c, 16)) : []);
+        return s.slice(2).split('').map((c) => parseInt(c, 16));
+    }
+
+    const normalizeOrder = (order) => orderFrom(orderIndices(order));
+
     const mapValues = (obj, fn) => Object.fromEntries(Object.entries(obj).map(([k, v]) => [k, fn(v)]));
 
     function normalizeProfile(key, p) {
@@ -74,6 +97,7 @@
             ocid: typeof p.ocid === 'string' && p.ocid ? p.ocid : null,
             bosses: mapValues(p.bosses || {}, (b) => ({ csvRate: b && Number.isFinite(b.csvRate) ? b.csvRate : null })),
             rows: Object.assign(Object.fromEntries(legacyRows), mapValues(p.rows || {}, normalizeRow)),
+            order: normalizeOrder(p.order),
         };
     }
 
@@ -112,6 +136,7 @@
 
     window.BcStore = Object.freeze({
         defaultState, normalizeState, normalizeRow, positiveDigits, champDigits,
+        DEFAULT_ORDER, orderFrom, orderIndices,
         load, save, loadApiCache, saveApiCache,
     });
 })();

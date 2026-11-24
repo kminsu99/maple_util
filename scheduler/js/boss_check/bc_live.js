@@ -92,16 +92,15 @@
             }
         }
 
-        // 보스 스케줄 행 목록: 미클리어 → 클리어, 각각 BOSS_ORDER 순 (같으면 인게임 스케줄러 순서)
-        function rows(profile) {
-            const info = live[profile.name];
-            if (!info || info.status !== 'ok') return [];
-            const done = (b) => (SchedulerState.flag(b.complete_flag) ? 1 : 0);
-            return info.bosses
+        // 기본 순서: 월간 → 주간 (보스컷 배율 낮은 순, 배율 없으면 뒤, 같으면 BOSS_ORDER → 인게임 스케줄러 순서)
+        //  idx = 기본 순서 번호 (profile.order의 필드 값)
+        function baseRows(profile, bosses) {
+            const rateOf = (r) => {
+                const b = r.csvKey && profile.bosses[r.csvKey];
+                return b && Number.isFinite(b.csvRate) ? b.csvRate : Infinity;
+            };
+            return bosses
                 .filter((b) => CYCLES.includes(b.cycle) && SchedulerState.flag(b.registration_flag))
-                .sort((a, b) => done(a) - done(b)
-                    || K.orderIndex(a.content_name) - K.orderIndex(b.content_name)
-                    || (Number(a.list_order_no) || 0) - (Number(b.list_order_no) || 0))
                 .map((b) => {
                     const csvKey = K.cutKeyOf(profile.bosses, b);
                     return {
@@ -111,8 +110,26 @@
                         difficulty: b.difficulty,
                         monthly: b.cycle === 'bossMonthly',
                         done: SchedulerState.flag(b.complete_flag),
+                        listNo: Number(b.list_order_no) || 0,
                     };
-                });
+                })
+                .sort((a, b) => Number(b.monthly) - Number(a.monthly)
+                    || (rateOf(a) - rateOf(b) || 0)
+                    || K.orderIndex(a.name) - K.orderIndex(b.name)
+                    || a.listNo - b.listNo)
+                .map((r, idx) => Object.assign(r, { idx }));
+        }
+
+        // 보스 스케줄 행 목록: profile.order 순서, 단 월간은 미클리어면 맨 위 · 클리어면 맨 아래 (고정)
+        function rows(profile) {
+            const info = live[profile.name];
+            if (!info || info.status !== 'ok') return [];
+            const order = BcStore.orderIndices(profile.order);
+            const pos = (r) => (r.idx < order.length ? order.indexOf(r.idx) : r.idx);
+            const list = baseRows(profile, info.bosses).sort((a, b) => pos(a) - pos(b));
+            const top = list.filter((r) => r.monthly && !r.done);
+            const bottom = list.filter((r) => r.monthly && r.done);
+            return top.concat(list.filter((r) => !r.monthly), bottom);
         }
 
         // 프로파일 이름 변경 · 삭제 · 전체 교체(백업 불러오기)에 맞춰 조회 결과 · 저장된 응답 정리

@@ -38,7 +38,9 @@
         if (!BcView.VIEWS[view]) view = 'summary';
         const ctx = { state, view, live };
         $menu.innerHTML = BcView.menuHtml(ctx);
+        destroySortables();
         $view.innerHTML = BcView.VIEWS[view](ctx);
+        mountSortables();
     }
 
     function commit() {
@@ -72,6 +74,46 @@
         const rowKey = tr.dataset.row;
         if (!p.rows[rowKey]) p.rows[rowKey] = BcStore.normalizeRow(null);
         return { p, rowKey, conf: p.rows[rowKey] };
+    }
+
+    /* ════════════════ 보스 순서 (드래그 앤 드롭, SortableJS) ════════════════ */
+
+    let sortables = [];
+
+    function destroySortables() {
+        sortables.forEach((s) => s.destroy());
+        sortables = [];
+    }
+
+    // 놓으면 표의 행 순서(기본 순서 번호)를 profile.order에 저장
+    function saveOrder(tbody) {
+        const p = profileOf(tbody);
+        if (!p) return;
+        const indices = [...tbody.querySelectorAll('tr[data-idx]')].map((tr) => Number(tr.dataset.idx));
+        p.order = BcStore.orderFrom(indices);
+        commit();
+    }
+
+    // 월간 행은 고정 (is-sortable 없음), 입력칸 · 버튼 · 내 배율 목록에서는 끌기 시작 안 함
+    function mountSortables() {
+        if (typeof Sortable === 'undefined') return;
+        $view.querySelectorAll('.boss-rows').forEach((tbody) => {
+            sortables.push(Sortable.create(tbody, {
+                draggable: 'tr.is-sortable',
+                filter: 'input, button, .rate-pop',
+                preventOnFilter: false,
+                animation: 150,
+                ghostClass: 'is-drag-ghost',
+                onEnd: (e) => { if (e.oldIndex !== e.newIndex) saveOrder(tbody); },
+            }));
+        });
+    }
+
+    function resetOrder(el) {
+        const p = profileOf(el);
+        if (!p) return;
+        p.order = BcStore.DEFAULT_ORDER;
+        commit();
     }
 
     /* ════════════════ 붙여넣기 불러오기 (병합) ════════════════ */
@@ -227,6 +269,7 @@
         'paste-import': importPasteInput,
         detail: toggleRatePop,
         'my-pick': pickMyRate,
+        'order-reset': resetOrder,
     };
 
     // 행 입력칸 변경: data-act → (conf, el) => void, 끝나면 commit

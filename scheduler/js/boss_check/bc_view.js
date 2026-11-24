@@ -1,6 +1,6 @@
 /* ── 보스 체크: 화면 HTML (데이터 → HTML 문자열, 계산 · 저장 · 이벤트 없음) ──
  * 화면: 메뉴 · 전체 요약 · 프로파일 · 붙여넣기 · 백업 · 설정
- * 보스 스케줄 표: (클리어) | 난이도 | 보스 | 내 배율 + 인원 × 배율 = 예상시간 | 도핑메모(뿌리기 | 유챔 | 콜렉터 | 세이람)
+ * 보스 스케줄 표: 행을 끌어서 순서 변경 (월간 제외, boss_check.js) / (클리어) | 난이도 | 보스 | 내 배율 + 인원 × 배율 = 예상시간 | 도핑메모(뿌리기 | 유챔 | 콜렉터 | 세이람)
  * 의존: util.js, difficulty.js, boss_check/bc_data.js, bc_boss_key.js, bc_estimate.js
  *
  * ctx = { state, view, live }  (live: BcLive.create 결과)
@@ -102,7 +102,8 @@
             ? '<span class="time-impossible">불가</span>'
             : `<span class="time-main">${E.formatTime(est.seconds)}</span>`;
         return `
-            <tr data-row="${esc(row.rowKey)}" class="${row.done ? 'is-cleared' : ''}">
+            <tr data-row="${esc(row.rowKey)}" data-idx="${row.idx}" class="${row.done ? 'is-cleared' : ''}${row.monthly ? '' : ' is-sortable'}"
+                ${row.monthly ? '' : 'title="끌어서 순서 변경"'}>
                 <td class="col-clear">
                     <input class="clear-check" type="checkbox" ${row.done ? 'checked' : ''} disabled tabindex="-1"
                         aria-label="클리어 (API)" title="${row.done ? '클리어' : '미클리어'} (인게임 스케줄러 기준)">
@@ -182,7 +183,10 @@
                     <table class="boss-table">
                         <thead>
                             <tr class="group-row">
-                                <th colspan="8" class="sched-title">${title(totals)}</th>
+                                <th class="order-reset-cell">
+                                    <button type="button" class="btn btn-sm" data-act="order-reset" title="보스 순서를 기본 순서(배율 낮은 순)로 되돌림">순서초기화</button>
+                                </th>
+                                <th colspan="7" class="sched-title">${title(totals)}</th>
                                 <th colspan="${BUFFS.length}" class="dop-head">도핑메모</th>
                             </tr>
                             <tr>
