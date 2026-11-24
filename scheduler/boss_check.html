@@ -247,7 +247,7 @@
             width: 1%;
         }
 
-        /* 인원 × 배율 = 예상시간 */
+        /* 내 배율 + 인원 × 배율 = 예상시간 */
         .boss-table .col-op {
             width: 1%;
             padding-left: 0;
@@ -279,58 +279,42 @@
             white-space: nowrap;
         }
 
-        /* 배율 입력 (직접입력 값은 파란색 + ✎) + [상세] */
-        .col-rate {
+        /* 내 배율: 누르면 난이도별 csv 배율 목록, 고르면 저장 */
+        .col-my {
             position: relative;
         }
 
-        .rate-box {
+        .my-btn {
             display: inline-flex;
             align-items: center;
-            gap: 3px;
-        }
-
-        .rate-input {
-            width: 72px;
-            padding: 4px 6px;
+            gap: 4px;
+            padding: 3px 8px;
             background: var(--surface2);
             border: 1px solid var(--border);
             border-radius: 6px;
             color: var(--text);
             font: inherit;
             font-size: 0.82rem;
-            text-align: right;
+            cursor: pointer;
+            white-space: nowrap;
         }
 
-        .rate-input:focus,
-        .party-input:focus,
-        .champ-input:focus {
-            outline: none;
+        .my-btn:hover,
+        .my-btn[aria-expanded="true"] {
             border-color: var(--accent);
         }
 
-        .rate-box.is-manual .rate-input {
+        .my-btn.is-picked {
             border-color: var(--blue);
             color: var(--blue);
             font-weight: 700;
         }
 
-        .manual-mark {
-            color: var(--blue);
-            font-size: 0.8rem;
-            cursor: help;
-        }
-
-        .unit {
+        .my-btn .caret {
             color: var(--muted);
-            font-size: 0.75rem;
+            font-size: 0.6rem;
         }
 
-        .detail-btn {
-            margin-left: 4px;
-        }
-
-        /* [상세] 팝업: 난이도별 csv 배율, 바깥을 누르면 닫힘 */
         .rate-pop {
             position: absolute;
             top: calc(100% - 2px);
@@ -357,17 +341,29 @@
         .rate-pop ul {
             list-style: none;
             display: grid;
-            gap: 4px;
+            gap: 2px;
         }
 
-        .rate-pop li {
+        .rate-pop li button {
             display: flex;
             align-items: center;
             gap: 8px;
+            width: 100%;
+            padding: 3px 6px;
+            background: transparent;
+            border: 1px solid transparent;
+            border-radius: 5px;
+            color: var(--text);
+            font: inherit;
             font-size: 0.8rem;
+            cursor: pointer;
         }
 
-        .rate-pop li.is-current {
+        .rate-pop li button:hover {
+            border-color: var(--accent);
+        }
+
+        .rate-pop li.is-current button {
             color: var(--accent);
             font-weight: 800;
         }
@@ -377,15 +373,14 @@
             font-variant-numeric: tabular-nums;
         }
 
-        /* 인원 입력 + ▲▼ */
-        .party-box {
+        /* 인원 × 배율: 빈칸 = 0, 인원 숫자 1자리 · 배율 숫자 3자리 */
+        .add-box {
             display: inline-flex;
             align-items: center;
             gap: 2px;
         }
 
-        .party-input {
-            width: 38px;
+        .add-input {
             padding: 4px 2px;
             background: var(--surface2);
             border: 1px solid var(--border);
@@ -394,35 +389,26 @@
             font: inherit;
             font-size: 0.82rem;
             text-align: center;
+            font-variant-numeric: tabular-nums;
         }
 
-        .party-arrows {
-            display: inline-flex;
-            flex-direction: column;
-            gap: 1px;
+        .add-input.is-party {
+            width: calc(1ch + 14px);
         }
 
-        .party-arrows button {
-            width: 20px;
-            height: 13px;
-            padding: 0;
-            background: var(--surface2);
-            border: 1px solid var(--border);
-            border-radius: 3px;
-            color: var(--muted);
-            font-size: 0.5rem;
-            line-height: 1;
-            cursor: pointer;
+        .add-input.is-rate {
+            width: calc(3ch + 14px);
         }
 
-        .party-arrows button:hover:not(:disabled) {
+        .add-input:focus,
+        .champ-input:focus {
+            outline: none;
             border-color: var(--accent);
-            color: var(--accent);
         }
 
-        .party-arrows button:disabled {
-            opacity: 0.35;
-            cursor: not-allowed;
+        .unit {
+            color: var(--muted);
+            font-size: 0.75rem;
         }
 
         .time-main {
@@ -686,9 +672,9 @@
             const LEGACY_LZ_KEY = 'maple_util_boss_check'; // v1 (LZ-string 압축) 저장 키 → 처음 열 때 옮기고 삭제
             const VERSION = 3;
 
-            const MIN_PARTY = 1;
-            const MAX_PARTY = 6;
-            const MIN_RATE = 10;              // 배율 × 인원이 이 값 미만이면 "불가"
+            const PARTY_DIGITS = 1;           // 인원 입력칸 숫자 자리수
+            const RATE_DIGITS = 3;            // 배율 입력칸 숫자 자리수
+            const MIN_RATE = 10;              // 내 배율 + 인원 × 배율이 이 값 미만이면 "불가"
             const DEFAULT_BASE_MINUTES = 20;  // 배율 100%일 때 걸리는 시간(분), 환산시간.user.js 기본값과 같음
             const REFRESH_MS = 5 * 60 * 1000; // 탭을 다시 볼 때 이 시간이 지났으면 API 다시 조회
 
@@ -941,7 +927,8 @@
 
 
             /* ════════════════ 저장 (localStorage, Store 공용) ════════════════ */
-            // profile.rows: 보스 스케줄 행마다 사용자가 바꾼 값 { [행 키]: { manualRate, party, buff } }
+            // profile.rows: 보스 스케줄 행마다 사용자가 바꾼 값 { [행 키]: { myKey, addParty, addRate, buff } }
+            //  - myKey: 내 배율로 고른 CSV 보스 키 (null = 행의 CSV 키), addParty · addRate: 인원 × 배율 (빈칸·0 = null)
             //  - 행 키 = CSV 보스 키(이름|난이도), CSV에 없는 보스는 'api:' + API 이름|난이도
             //  - 클리어 여부는 저장하지 않음 (매번 API에서 가져옴)
 
@@ -954,10 +941,10 @@
                 };
             }
 
-            function clampParty(value) {
-                const n = parseInt(value, 10);
-                if (!Number.isFinite(n)) return MIN_PARTY;
-                return Math.min(MAX_PARTY, Math.max(MIN_PARTY, n));
+            // 숫자 입력칸 값: 숫자만, digits자리까지, 빈칸·0은 null
+            function clampDigits(value, digits) {
+                const n = parseInt(String(value ?? '').replace(/\D/g, '').slice(0, digits), 10);
+                return Number.isFinite(n) && n > 0 ? n : null;
             }
 
             // 유챔: 0 이상 정수, 최대 5자리
@@ -977,11 +964,13 @@
                 };
             }
 
+            // 이전 값(manualRate · party)은 버림
             function normalizeRow(r) {
                 r = r && typeof r === 'object' ? r : {};
                 return {
-                    manualRate: Number.isFinite(r.manualRate) ? r.manualRate : null,
-                    party: clampParty(r.party),
+                    myKey: typeof r.myKey === 'string' && r.myKey ? r.myKey : null,
+                    addParty: clampDigits(r.addParty, PARTY_DIGITS),
+                    addRate: clampDigits(r.addRate, RATE_DIGITS),
                     buff: normalizeBuff(r.buff),
                 };
             }
@@ -1063,10 +1052,11 @@
 
             /* ════════════════ 배율 → 예상시간 ════════════════ */
 
-            // 적용 배율 = 배율 × 인원
-            function adjustedRate(rate, party) {
-                if (rate == null) return null;
-                return rate * party;
+            // 적용 배율 = 내 배율 + 인원 × 배율 (빈칸은 0, 모두 비면 null)
+            function adjustedRate(myRate, party, rate) {
+                const add = (party || 0) * (rate || 0);
+                if (myRate == null && !add) return null;
+                return (myRate || 0) + add;
             }
 
             // 환산시간.user.js 계산식: 클리어 시간 = 기준 시간 ÷ (배율 ÷ 100)
@@ -1280,14 +1270,14 @@
                 return b ? b.csvRate : null;
             }
 
-            // 표시 배율 = 직접입력 ?? csv 배율 (csv 값은 1인 기준, 인원은 따로 곱함)
-            function displayRate(profile, row, conf) {
-                return conf.manualRate != null ? conf.manualRate : csvRateOf(profile, row.csvKey);
+            // 내 배율 CSV 키 = 고른 난이도 ?? 행의 CSV 키
+            function myKeyOf(profile, row, conf) {
+                return conf.myKey && profile.bosses[conf.myKey] ? conf.myKey : row.csvKey;
             }
 
-            // { adj: 배율 × 인원, seconds: 예상 초 (불가면 null) }
+            // { adj: 내 배율 + 인원 × 배율, seconds: 예상 초 (불가면 null) }
             function rowEstimate(profile, row, conf) {
-                const adj = adjustedRate(displayRate(profile, row, conf), conf.party);
+                const adj = adjustedRate(csvRateOf(profile, myKeyOf(profile, row, conf)), conf.addParty, conf.addRate);
                 if (adj == null || adj < MIN_RATE) return { adj, seconds: null };
                 return { adj, seconds: estimateSeconds(adj, state.settings.baseMinutes) };
             }
@@ -1548,21 +1538,24 @@
             }
 
             /* ── 보스 스케줄 (제목 + 표) : 프로파일 화면 · 전체 요약 공용 ── */
-            // (클리어) | 난이도 | 보스 | 인원 | 배율 [상세] | 예상시간 | 뿌리기 | 유챔 | 콜렉터 | 세이람
+            // (클리어) | 난이도 | 보스 | 내 배율 + 인원 × 배율 = 예상시간 | 뿌리기 | 유챔 | 콜렉터 | 세이람
 
-            function detailPopHtml(p, row) {
+            // 내 배율 목록: 고르면 그 난이도의 csv 배율 사용 (저장)
+            function detailPopHtml(p, row, myKey) {
                 const diffs = bossDiffs(p, row.csvKey ? splitKey(row.csvKey).name : row.name);
                 const list = diffs.length
                     ? `<ul>${diffs.map((d) => `
-                        <li class="${d.key === row.csvKey ? 'is-current' : ''}">
-                            ${difficultyBadge(d.difficulty)}<span>${esc(d.difficulty || '-')}</span>
-                            <span class="pop-rate">${fmtRate(d.rate)}%</span>
+                        <li class="${d.key === myKey ? 'is-current' : ''}">
+                            <button type="button" data-act="my-pick" data-key="${esc(d.key)}">
+                                ${difficultyBadge(d.difficulty)}<span>${esc(d.difficulty || '-')}</span>
+                                <span class="pop-rate">${fmtRate(d.rate)}%</span>
+                            </button>
                         </li>`).join('')}</ul>`
                     : '<p class="muted">CSV에서 이 보스를 찾지 못했습니다</p>';
                 const unmatched = row.csvKey ? '' : `<p class="muted">CSV와 연결되지 않음 · API 값: ${esc(row.name)} / ${esc(row.difficulty)}</p>`;
                 return `
                     <div class="rate-pop" hidden>
-                        <div class="rate-pop-head">${esc(row.name)} 난이도별 배율</div>
+                        <div class="rate-pop-head">${esc(row.name)} 내 배율 선택</div>
                         ${list}
                         ${unmatched}
                     </div>`;
@@ -1595,16 +1588,13 @@
 
             function scheduleRowHtml(p, row) {
                 const conf = p.rows[row.rowKey] || normalizeRow(null);
-                const csvRate = csvRateOf(p, row.csvKey);
-                const manual = conf.manualRate != null;
-                const rate = displayRate(p, row, conf);
+                const myKey = myKeyOf(p, row, conf);
+                const myRate = csvRateOf(p, myKey);
+                const picked = myKey && myKey !== row.csvKey;
                 const est = rowEstimate(p, row, conf);
                 const time = est.seconds == null
                     ? '<span class="time-impossible">불가</span>'
                     : `<span class="time-main">${formatTime(est.seconds)}</span>`;
-                const manualMark = manual
-                    ? `<span class="manual-mark" title="직접입력 값 (비우면 csv 값 ${fmtRate(csvRate)}%로 복귀)">✎</span>`
-                    : '';
                 return `
                     <tr data-row="${esc(row.rowKey)}" class="${row.done ? 'is-cleared' : ''}">
                         <td class="col-clear">
@@ -1615,25 +1605,23 @@
                         <td class="col-boss">
                             <span class="boss-name">${esc(row.name)}</span>${row.monthly ? '<span class="tag-monthly" title="매월 1일 초기화">월간</span>' : ''}
                         </td>
-                        <td class="col-party">
-                            <span class="party-box">
-                                <input class="party-input" type="number" min="${MIN_PARTY}" max="${MAX_PARTY}" step="1" data-act="party" value="${conf.party}" aria-label="인원">
-                                <span class="party-arrows">
-                                    <button type="button" data-act="party-up" title="인원 +1" ${conf.party >= MAX_PARTY ? 'disabled' : ''}>▲</button>
-                                    <button type="button" data-act="party-down" title="인원 -1" ${conf.party <= MIN_PARTY ? 'disabled' : ''}>▼</button>
-                                </span>
-                            </span>
+                        <td class="col-my">
+                            <button type="button" class="my-btn${picked ? ' is-picked' : ''}" data-act="detail" aria-expanded="false"
+                                title="누르면 난이도별 csv 배율에서 선택">
+                                ${myKey ? difficultyBadge(splitKey(myKey).difficulty) : ''}<span>${myRate == null ? '-' : fmtRate(myRate) + '%'}</span><span class="caret">▼</span>
+                            </button>
+                            ${detailPopHtml(p, row, myKey)}
                         </td>
-                        <td class="col-op" aria-hidden="true">×</td>
-                        <td class="col-rate">
-                            <span class="rate-box${manual ? ' is-manual' : ''}">
-                                <input class="rate-input" type="text" inputmode="decimal" data-act="rate" aria-label="배율"
-                                    value="${rate == null ? '' : fmtRate(rate)}" placeholder="${fmtRate(csvRate)}"
-                                    title="1인 기준 배율 (기본값: csv ${fmtRate(csvRate)}%)">
-                                <span class="unit">%</span>${manualMark}
+                        <td class="col-op" aria-hidden="true">+</td>
+                        <td class="col-add">
+                            <span class="add-box">
+                                <input class="add-input is-party" type="text" inputmode="numeric" maxlength="${PARTY_DIGITS}" data-act="add-party"
+                                    value="${conf.addParty || ''}" aria-label="인원">
+                                <span class="col-op" aria-hidden="true">×</span>
+                                <input class="add-input is-rate" type="text" inputmode="numeric" maxlength="${RATE_DIGITS}" data-act="add-rate"
+                                    value="${conf.addRate || ''}" aria-label="배율">
+                                <span class="unit">%</span>
                             </span>
-                            <button type="button" class="btn btn-sm detail-btn" data-act="detail" aria-expanded="false">상세</button>
-                            ${detailPopHtml(p, row)}
                         </td>
                         <td class="col-op" aria-hidden="true">=</td>
                         <td class="col-time">${time}<span class="time-sub">적용 ${est.adj == null ? '-' : fmtRate(est.adj) + '%'}</span></td>
@@ -1666,7 +1654,7 @@
                             <table class="boss-table">
                                 <thead>
                                     <tr>
-                                        <th>클리어</th><th>난이도</th><th>보스</th><th>인원</th><th class="col-op"></th><th>배율</th><th class="col-op"></th><th>예상시간</th>
+                                        <th>클리어</th><th>난이도</th><th>보스</th><th>내 배율</th><th class="col-op"></th><th>인원 × 배율</th><th class="col-op"></th><th>예상시간</th>
                                         ${buffHeadHtml()}
                                     </tr>
                                 </thead>
@@ -1894,10 +1882,13 @@
                     el.setAttribute('aria-expanded', String(!pop.hidden));
                     return;
                 }
-                if (act === 'party-up' || act === 'party-down') {
+                if (act === 'my-pick') {
+                    // 내 배율 난이도 선택: 행의 CSV 키와 같으면 기본값(null)으로 저장
                     const ctx = rowCtx(el);
                     if (!ctx) return;
-                    ctx.conf.party = clampParty(ctx.conf.party + (act === 'party-up' ? 1 : -1));
+                    const tr = el.closest('tr[data-row]');
+                    const row = scheduleRows(ctx.p).find((r) => r.rowKey === tr.dataset.row);
+                    ctx.conf.myKey = row && el.dataset.key === row.csvKey ? null : el.dataset.key;
                     return commit();
                 }
             });
@@ -1917,26 +1908,10 @@
                 const { p, conf } = ctx;
                 const tr = el.closest('tr[data-row]');
 
-                if (act === 'rate') {
-                    // 비우면 manualRate = null → csv 값으로 복귀
-                    const raw = el.value.trim().replace(/%$/, '');
-                    const row = scheduleRows(p).find((r) => r.rowKey === tr.dataset.row);
-                    const csvRate = row ? csvRateOf(p, row.csvKey) : null;
-                    if (raw === '') {
-                        conf.manualRate = null;
-                    } else {
-                        const n = parseFloat(raw.replace(/,/g, ''));
-                        if (!Number.isFinite(n) || n < 0) {
-                            toast('배율은 0 이상의 숫자로 입력하세요');
-                            return render();
-                        }
-                        conf.manualRate = n === csvRate ? null : n;
-                    }
-                    return commit();
-                }
-                if (act === 'party') {
-                    // 입력 후 blur(change) 시 1~6 범위로 보정
-                    conf.party = clampParty(el.value);
+                if (act === 'add-party' || act === 'add-rate') {
+                    // 빈칸 · 0 = null
+                    const key = act === 'add-party' ? 'addParty' : 'addRate';
+                    conf[key] = clampDigits(el.value, act === 'add-party' ? PARTY_DIGITS : RATE_DIGITS);
                     return commit();
                 }
                 if (act === 'buff') {
@@ -1949,18 +1924,20 @@
                 }
             });
 
-            // 유챔 입력: 숫자만, 5자리까지
+            // 숫자 입력칸: 숫자만 (유챔 5자리, 인원 1자리, 배율 3자리)
+            const DIGIT_INPUTS = { 'champ-num': CHAMP_MAX_DIGITS, 'add-party': PARTY_DIGITS, 'add-rate': RATE_DIGITS };
             $view.addEventListener('input', (e) => {
                 const el = e.target;
-                if (el.dataset.act !== 'champ-num') return;
-                const digits = el.value.replace(/\D/g, '').slice(0, CHAMP_MAX_DIGITS);
+                const max = DIGIT_INPUTS[el.dataset.act];
+                if (!max) return;
+                const digits = el.value.replace(/\D/g, '').slice(0, max);
                 if (digits !== el.value) el.value = digits;
             });
 
             // 엔터 키로 입력 확정
             $view.addEventListener('keydown', (e) => {
                 const act = e.target.dataset.act;
-                if (e.key === 'Enter' && (act === 'rate' || act === 'party' || act === 'champ-num' || act === 'base-minutes')) {
+                if (e.key === 'Enter' && (act in DIGIT_INPUTS || act === 'base-minutes')) {
                     e.target.blur();
                 }
             });
