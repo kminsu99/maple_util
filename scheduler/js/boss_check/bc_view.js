@@ -1,6 +1,6 @@
 /* ── 보스 체크: 화면 HTML (데이터 → HTML 문자열, 계산 · 저장 · 이벤트 없음) ──
  * 화면: 메뉴 · 전체 요약 · 프로파일 · 붙여넣기 · 백업 · 설정
- * 보스 스케줄 표: 행을 끌어서 순서 변경 (월간 제외, boss_check.js) / (클리어) | 난이도 | 보스 | 내 배율 + 인원 × 배율 = 예상시간 | 도핑메모(뿌리기 | 유챔 | 콜렉터 | 세이람)
+ * 보스 스케줄 표: 행을 끌어서 순서 변경 (월간 제외, boss_check.js) / (끌기 아이콘) | (클리어) | 난이도 | 보스 | 내 배율 + 인원 × 배율 = 예상시간 | 도핑메모(뿌리기 | 유챔 | 콜렉터 | 세이람)
  * 의존: util.js, difficulty.js, boss_check/bc_data.js, bc_boss_key.js, bc_estimate.js
  *
  * ctx = { state, view, live }  (live: BcLive.create 결과)
@@ -104,13 +104,14 @@
         return `
             <tr data-row="${esc(row.rowKey)}" data-idx="${row.idx}" class="${row.done ? 'is-cleared' : ''}${row.monthly ? '' : ' is-sortable'}"
                 ${row.monthly ? '' : 'title="끌어서 순서 변경"'}>
+                <td class="col-drag">${row.monthly ? '' : '<span class="drag-icon" aria-hidden="true"></span>'}</td>
                 <td class="col-clear">
                     <input class="clear-check" type="checkbox" ${row.done ? 'checked' : ''} disabled tabindex="-1"
                         aria-label="클리어 (API)" title="${row.done ? '클리어' : '미클리어'} (인게임 스케줄러 기준)">
                 </td>
                 <td class="col-dif">${badge(row.difficulty)}</td>
                 <td class="col-boss">
-                    <span class="drag-icon${row.monthly ? ' is-fixed' : ''}" aria-hidden="true"></span><span class="boss-name">${esc(row.name)}</span>${row.monthly ? '<span class="tag-monthly" title="매월 1일 초기화">월간</span>' : ''}
+                    <span class="boss-name">${esc(row.name)}</span>${row.monthly ? '<span class="tag-monthly" title="매월 1일 초기화">월간</span>' : ''}
                 </td>
                 <td class="col-my">
                     <button type="button" class="my-btn${picked ? ' is-picked' : ''}" data-act="detail" aria-expanded="false"
@@ -183,14 +184,14 @@
                     <table class="boss-table">
                         <thead>
                             <tr class="group-row">
-                                <th class="order-reset-cell">
+                                <th colspan="2" class="order-reset-cell">
                                     <button type="button" class="btn btn-sm" data-act="order-reset" title="보스 순서를 기본 순서(배율 낮은 순)로 되돌림">순서초기화</button>
                                 </th>
                                 <th colspan="7" class="sched-title">${title(totals)}</th>
                                 <th colspan="${BUFFS.length}" class="dop-head">도핑메모</th>
                             </tr>
                             <tr>
-                                <th class="col-clear">클리어</th><th>난이도</th><th>보스</th><th>내 배율</th><th class="col-op"></th><th>인원 × 배율</th><th class="col-op"></th><th>예상시간</th>
+                                <th class="col-drag"></th><th class="col-clear">클리어</th><th>난이도</th><th>보스</th><th>내 배율</th><th class="col-op"></th><th>인원 × 배율</th><th class="col-op"></th><th>예상시간</th>
                                 ${buffHeadHtml()}
                             </tr>
                         </thead>
