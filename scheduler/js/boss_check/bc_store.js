@@ -6,14 +6,13 @@
  *    · 행 키 = 보스컷 키, 보스컷에 없는 보스는 'api:' + API 이름|난이도
  *    · myKey: 내 배율로 고른 보스컷 키 (null = 행의 보스컷 키), addParty · addRate: 인원 × 배율 (빈칸·0 = null)
  *  - 클리어 여부는 저장하지 않음 (매번 API에서 가져옴)
- * 의존: store.js, util.js, boss_check/bc_data.js, (선택) lz-string.js
+ * 의존: store.js, util.js, boss_check/bc_data.js
  */
 (function () {
     'use strict';
 
     const STORE_NAME = 'boss_check';
     const API_CACHE_NAME = 'boss_check_api';        // 마지막 API 응답 (백업 파일에는 넣지 않음)
-    const LEGACY_LZ_KEY = 'maple_util_boss_check';  // v1 (LZ-string 압축) 저장 키 → 처음 열 때 옮기고 삭제
     const VERSION = 3;
     const { LIMITS } = BcData;
 
@@ -95,29 +94,8 @@
         };
     }
 
-    // v1(LZ 압축) 저장값 읽기: 없거나 읽지 못하면 null
-    function loadLegacy() {
-        try {
-            const raw = localStorage.getItem(LEGACY_LZ_KEY);
-            if (!raw || !window.LZString) return null;
-            return JSON.parse(LZString.decompressFromUTF16(raw));
-        } catch (e) {
-            console.warn('[보스 체크] 이전 저장 데이터 읽기 실패', e);
-            return null;
-        }
-    }
-
     function load() {
-        const saved = Store.load(STORE_NAME, null);
-        if (saved) return normalizeState(saved);
-        const legacy = loadLegacy();
-        if (!legacy) return defaultState();
-        // 이전 데이터를 새 저장소로 옮긴 뒤 이전 키 삭제
-        const migrated = normalizeState(legacy);
-        if (Store.save(STORE_NAME, migrated)) {
-            try { localStorage.removeItem(LEGACY_LZ_KEY); } catch (e) { /* 지우지 못해도 다음에 다시 시도 */ }
-        }
-        return migrated;
+        return normalizeState(Store.load(STORE_NAME, null));
     }
 
     // 성공하면 true (저장 공간 부족 · 사생활 보호 모드면 false)
