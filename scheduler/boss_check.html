@@ -143,7 +143,7 @@
             gap: 12px;
         }
 
-        .bc-card .ph + .sub-head {
+        .bc-card .ph + .sched {
             margin-top: 14px;
             padding-top: 12px;
             border-top: 1px solid var(--border);
@@ -209,11 +209,38 @@
             vertical-align: middle;
         }
 
-        .boss-table tfoot td {
-            border-bottom: 0;
-            padding-top: 10px;
-            font-weight: 700;
+        /* 표 맨 윗줄: [보스 스케줄 0/13 ... 총 예상시간 · 남은 시간] (예상시간 칸 오른쪽 끝까지) | [도핑메모] */
+        .boss-table .group-row th {
+            padding: 0 8px 8px;
+            vertical-align: bottom;
+        }
+
+        .boss-table .group-row .sched-title {
+            padding-left: 0;
+            text-align: left;
+            color: var(--text);
+            font-size: 0.82rem;
+            font-weight: 400;
+        }
+
+        .sched-title .card-head {
+            margin-bottom: 0;
+        }
+
+        .sched-total {
+            white-space: nowrap;
+        }
+
+        .sched-total strong {
             color: var(--text-bright);
+            font-weight: 800;
+        }
+
+        .boss-table .group-row .dop-head {
+            color: var(--text-bright);
+            font-size: 0.8rem;
+            font-weight: 800;
+            text-align: center;
         }
 
         /* 클리어 행: 취소선 + 흐리게 (클리어 체크칸은 그대로) */
@@ -423,7 +450,7 @@
         }
 
         .add-input.is-rate {
-            width: calc(3ch + 14px);
+            width: calc(4ch + 14px);
         }
 
         .add-input:focus,
@@ -699,7 +726,7 @@
             const VERSION = 3;
 
             const PARTY_DIGITS = 1;           // 인원 입력칸 숫자 자리수
-            const RATE_DIGITS = 3;            // 배율 입력칸 숫자 자리수
+            const RATE_DIGITS = 4;            // 배율 입력칸 숫자 자리수
             const MIN_RATE = 10;              // 내 배율 + 인원 × 배율이 이 값 미만이면 "불가"
             const DEFAULT_BASE_MINUTES = 20;  // 배율 100%일 때 걸리는 시간(분), 환산시간.user.js 기본값과 같음
             const REFRESH_MS = 5 * 60 * 1000; // 탭을 다시 볼 때 이 시간이 지났으면 API 다시 조회
@@ -1673,46 +1700,49 @@
                 const rows = scheduleRows(p);
                 const msg = liveMessage(p);
 
-                const body = msg
-                    ? `<div class="empty">${msg}</div>`
-                    : rows.length ? `
+                const info = live[p.name];
+                const stale = info && info.stale !== undefined
+                    ? `<p class="stale-note">API를 불러오지 못해 저장된 응답(${fmtDateTime(info.at)})을 표시합니다${info.stale ? ` · ${esc(info.stale)}` : ''}</p>`
+                    : '';
+                const title = (extra) => `
+                    <div class="card-head sub-head">
+                        <h2>보스 스케줄</h2>
+                        ${msg ? '' : `<span class="counter" title="클리어 / 스케줄 보스">${s.cleared}/${s.count}</span>`}
+                        ${extra || ''}
+                    </div>`;
+
+                // 표가 있으면 제목 · 합계를 표 맨 윗줄에 (합계 오른쪽 끝 = 예상시간 칸 오른쪽 끝)
+                if (msg || !rows.length) {
+                    return `
+                        <div class="sched">
+                            ${title()}
+                            ${stale}
+                            <div class="empty">${msg || '인게임 스케줄러에 등록된 주간 · 월간 보스가 없습니다.'}</div>
+                        </div>`;
+                }
+                const totals = `
+                    <span class="grow"></span>
+                    <span class="sched-total">총 예상시간 <strong>${formatTime(s.total)}</strong> · <span title="미클리어 보스 합계">남은 시간</span> <strong>${formatTime(s.remain)}</strong></span>`;
+                return `
+                    <div class="sched">
+                        ${stale}
                         <div class="table-scroll">
                             <table class="boss-table">
                                 <thead>
+                                    <tr class="group-row">
+                                        <th colspan="8" class="sched-title">${title(totals)}</th>
+                                        <th colspan="${BUFFS.length}" class="dop-head">도핑메모</th>
+                                    </tr>
                                     <tr>
                                         <th>클리어</th><th>난이도</th><th>보스</th><th>내 배율</th><th class="col-op"></th><th>인원 × 배율</th><th class="col-op"></th><th>예상시간</th>
                                         ${buffHeadHtml()}
                                     </tr>
                                 </thead>
                                 <tbody class="boss-rows">${rows.map((row) => scheduleRowHtml(p, row)).join('')}</tbody>
-                                <tfoot>
-                                    <tr>
-                                        <td colspan="7" style="text-align:right">총 예상시간</td>
-                                        <td>${formatTime(s.total)}</td>
-                                        <td colspan="${BUFFS.length}"></td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="7" style="text-align:right">남은 시간 <span class="muted">(미클리어 보스)</span></td>
-                                        <td>${formatTime(s.remain)}</td>
-                                        <td colspan="${BUFFS.length}"></td>
-                                    </tr>
-                                </tfoot>
                             </table>
                         </div>
-                        ${s.impossible ? `<p class="muted" style="margin-top:8px">※ '불가' 보스 ${s.impossible}개는 합계에서 제외</p>` : ''}`
-                    : '<div class="empty">인게임 스케줄러에 등록된 주간 · 월간 보스가 없습니다.</div>';
-
-                const info = live[p.name];
-                const stale = info && info.stale !== undefined
-                    ? `<p class="stale-note">API를 불러오지 못해 저장된 응답(${fmtDateTime(info.at)})을 표시합니다${info.stale ? ` · ${esc(info.stale)}` : ''}</p>`
-                    : '';
-                return `
-                    <div class="card-head sub-head">
-                        <h2>보스 스케줄</h2>
-                        ${msg ? '' : `<span class="counter" title="클리어 / 스케줄 보스">${s.cleared}/${s.count}</span>`}
-                    </div>
-                    ${stale}
-                    ${body}`;
+                        ${s.impossible ? `<p class="muted" style="margin-top:8px">※ '불가' 보스 ${s.impossible}개는 합계에서 제외</p>` : ''}
+                    </div>`;
             }
 
             /* ════════════════ 화면: 전체 요약 ════════════════ */
