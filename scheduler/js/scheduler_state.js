@@ -1,6 +1,6 @@
 /* ── 캐릭터 스케줄러 정보 (API) ──
  * GET /maplestory/v1/scheduler/character-state
- * 응답은 저장하지 않고 페이지 메모리에만 둔다.
+ * 호출만 담당 (응답 저장은 schedule_board.js · boss_check가 각자)
  * 의존: nexon_api.js
  */
 (function () {

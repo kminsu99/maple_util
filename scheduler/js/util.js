@@ -43,5 +43,39 @@
         return `<span class="world-label"><span class="world-icon-box">${img}</span>${nameHtml}</span>`;
     }
 
-    window.Util = { esc, worldColor, worldIconSrc, worldLabel };
+    // ── 날짜 · 숫자 · 파일 ──
+    const pad2 = (n) => String(n).padStart(2, '0');
+
+    // 2026-11-24 13:05 형식 (ms 없으면 '-')
+    function fmtDateTime(ms) {
+        if (!ms) return '-';
+        const d = new Date(ms);
+        return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())} ${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
+    }
+
+    // 20261124 형식 (파일 이름용)
+    function dateStamp(d) {
+        const x = d || new Date();
+        return `${x.getFullYear()}${pad2(x.getMonth() + 1)}${pad2(x.getDate())}`;
+    }
+
+    // 입력값에서 숫자만 maxDigits자리까지 → 정수, 숫자가 없으면 null
+    function digitsInt(value, maxDigits) {
+        const n = parseInt(String(value ?? '').replace(/\D/g, '').slice(0, maxDigits), 10);
+        return Number.isFinite(n) ? n : null;
+    }
+
+    // 텍스트를 파일로 내려받기
+    function downloadText(fileName, text, type) {
+        const url = URL.createObjectURL(new Blob([text], { type: type || 'text/plain' }));
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+
+    window.Util = { esc, worldColor, worldIconSrc, worldLabel, fmtDateTime, dateStamp, digitsInt, downloadText };
 })();

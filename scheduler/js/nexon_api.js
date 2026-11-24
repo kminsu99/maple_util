@@ -50,5 +50,11 @@
         return body;
     }
 
-    window.NexonApi = { get, NexonApiError };
+    // 계정의 전체 캐릭터 (API 응답 그대로, 계정 구분 없이 한 줄로)
+    async function characterList() {
+        const body = await get('/maplestory/v1/character/list');
+        return ((body && body.account_list) || []).flatMap((acc) => acc.character_list || []);
+    }
+
+    window.NexonApi = { get, characterList, NexonApiError };
 })();

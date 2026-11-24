@@ -23,12 +23,7 @@
 
     // ── 전체 캐릭터 목록 (API) ──
     async function fetchAll() {
-        const body = await NexonApi.get('/maplestory/v1/character/list');
-        const list = [];
-        ((body && body.account_list) || []).forEach((acc) => {
-            (acc.character_list || []).forEach((c) => list.push(normalize(c)));
-        });
-        return list.sort(byLevelDesc);
+        return (await NexonApi.characterList()).map(normalize).sort(byLevelDesc);
     }
 
     // 서버 목록: 캐릭터 수 많은 순

@@ -1,0 +1,663 @@
+/* ── 보스 체크 전용 스타일 (색상 변수는 base_css/dark.css · light.css) ── */
+.bc-wrap {
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+/* ── 상단 메뉴: [전체 요약] [프로파일 탭들] ······ [붙여넣기] [백업] [설정] ── */
+.bc-menu {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 18px;
+}
+
+.bc-menu .menu-sep {
+    flex: 1 1 auto;
+}
+
+.bc-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+/* 지금 보고 있는 화면 버튼 */
+.top-btn.is-active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--on-accent);
+}
+
+.btn {
+    padding: 6px 12px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font: inherit;
+    font-size: 0.82rem;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.btn:hover {
+    border-color: var(--accent);
+    color: var(--text-bright);
+}
+
+.btn.is-primary {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+.btn.is-danger:hover {
+    border-color: var(--red);
+    color: var(--red);
+}
+
+.btn-sm {
+    padding: 3px 8px;
+    font-size: 0.74rem;
+}
+
+/* ── 카드 ── */
+.bc-card {
+    margin-bottom: 18px;
+    padding: 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow: 0 4px 16px var(--shadow);
+}
+
+.card-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.card-head h2 {
+    font-size: 1rem;
+    font-weight: 800;
+    color: var(--text-bright);
+}
+
+.card-head .grow {
+    flex: 1 1 auto;
+}
+
+.counter {
+    padding: 2px 10px;
+    border-radius: 999px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--accent);
+}
+
+.muted {
+    color: var(--muted);
+    font-size: 0.8rem;
+}
+
+.empty {
+    padding: 24px 8px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.85rem;
+    line-height: 1.7;
+}
+
+/* ── 프로파일 머리 (캐릭 정보 + 버튼) ── */
+.ph {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+}
+
+.bc-card .ph + .sched {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+}
+
+.ph-info {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    flex: 1 1 auto;
+}
+
+.ph-level {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--accent);
+}
+
+.ph-name {
+    font-size: 1.35rem;
+    font-weight: 900;
+    color: var(--text-bright);
+}
+
+.ph-job {
+    font-size: 0.9rem;
+    color: var(--muted);
+}
+
+.ph-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+/* ── 보스 스케줄 표 ── */
+.table-scroll {
+    overflow-x: auto;
+}
+
+.boss-table {
+    width: 100%;
+    min-width: 860px;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+}
+
+.boss-table th {
+    padding: 6px 8px;
+    border-bottom: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: bottom;
+}
+
+.boss-table td {
+    padding: 6px 8px;
+    border-bottom: 1px solid var(--border);
+    text-align: center;
+    vertical-align: middle;
+}
+
+/* 표 맨 윗줄: [보스 스케줄 0/13 ... 총 예상시간 · 남은 시간] (예상시간 칸 오른쪽 끝까지) | [도핑메모] */
+.boss-table .group-row th {
+    padding: 0 8px 8px;
+    vertical-align: bottom;
+}
+
+.boss-table .group-row .sched-title {
+    padding-left: 0;
+    text-align: left;
+    color: var(--text);
+    font-size: 0.82rem;
+    font-weight: 400;
+}
+
+.sched-title .card-head {
+    margin-bottom: 0;
+}
+
+/* 총 예상시간 / 남은 시간 두 줄, 오른쪽 정렬 */
+.sched-total {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+    white-space: nowrap;
+}
+
+.sched-total strong {
+    color: var(--text-bright);
+    font-weight: 800;
+}
+
+.boss-table .group-row .dop-head {
+    color: var(--text-bright);
+    font-size: 0.8rem;
+    font-weight: 800;
+    text-align: center;
+}
+
+/* 클리어 행: 취소선 + 흐리게 (클리어 체크칸은 그대로) */
+.boss-table tbody tr.is-cleared td {
+    opacity: 0.55;
+}
+
+.boss-table tbody tr.is-cleared td.col-clear {
+    opacity: 1;
+}
+
+/* 내 배율 칸: 팝업까지 흐려지지 않게 칸 대신 버튼만 흐리게 */
+.boss-table tbody tr.is-cleared td.col-my {
+    opacity: 1;
+}
+
+.boss-table tbody tr.is-cleared td.col-my .my-btn {
+    opacity: 0.55;
+}
+
+.boss-table tbody tr.is-cleared .boss-name,
+.boss-table tbody tr.is-cleared .time-main {
+    text-decoration: line-through;
+    text-decoration-thickness: 2px;
+}
+
+/* 클리어 체크칸: API 값만 표시 (직접 선택 불가) */
+.clear-check {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--green);
+    pointer-events: none;
+}
+
+.clear-check:disabled {
+    opacity: 1;
+}
+
+.col-dif {
+    width: 1%;
+}
+
+/* 내 배율 + 인원 × 배율 = 예상시간 */
+.boss-table .col-op {
+    width: 1%;
+    padding-left: 0;
+    padding-right: 0;
+    color: var(--muted);
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.col-boss {
+    text-align: left !important;
+}
+
+.boss-name {
+    font-weight: 700;
+    color: var(--text-bright);
+    white-space: nowrap;
+}
+
+.tag-monthly {
+    margin-left: 6px;
+    padding: 0 6px;
+    border-radius: 6px;
+    border: 1px solid var(--gauge-monthly);
+    color: var(--gauge-monthly);
+    font-size: 0.66rem;
+    font-weight: 700;
+    line-height: 16px;
+    white-space: nowrap;
+}
+
+/* 내 배율: 누르면 난이도별 csv 배율 목록, 고르면 저장 */
+.col-my {
+    position: relative;
+}
+
+/* 팝업이 열린 칸은 아래 행(흐린 행 포함)보다 위에 그림 */
+.col-my:has(.rate-pop:not([hidden])) {
+    z-index: 40;
+}
+
+.my-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 8px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    font: inherit;
+    font-size: 0.82rem;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.my-btn:hover,
+.my-btn[aria-expanded="true"] {
+    border-color: var(--accent);
+}
+
+.my-btn.is-picked {
+    border-color: var(--blue);
+    color: var(--blue);
+    font-weight: 700;
+}
+
+/* 배율 자리 고정: 숫자 "xxxxx.xx"(8ch, 고정폭 숫자) + "%" */
+.my-rate {
+    white-space: nowrap;
+}
+
+.my-num {
+    display: inline-block;
+    width: 8ch;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+.my-btn .caret {
+    color: var(--muted);
+    font-size: 0.6rem;
+}
+
+.rate-pop {
+    position: absolute;
+    top: calc(100% - 2px);
+    left: 50%;
+    z-index: 30;
+    min-width: 170px;
+    padding: 8px 10px;
+    transform: translateX(-50%);
+    background: var(--surface);
+    border: 1px solid var(--accent);
+    border-radius: 8px;
+    box-shadow: 0 8px 24px var(--shadow);
+    text-align: left;
+}
+
+.rate-pop-head {
+    margin-bottom: 6px;
+    color: var(--text-bright);
+    font-size: 0.78rem;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.rate-pop ul {
+    list-style: none;
+    display: grid;
+    gap: 2px;
+}
+
+.rate-pop li button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    padding: 3px 6px;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 5px;
+    color: var(--text);
+    font: inherit;
+    font-size: 0.8rem;
+    cursor: pointer;
+}
+
+.rate-pop li button:hover {
+    border-color: var(--accent);
+}
+
+.rate-pop li.is-current button {
+    color: var(--accent);
+    font-weight: 800;
+}
+
+.rate-pop .pop-rate {
+    margin-left: auto;
+    font-variant-numeric: tabular-nums;
+}
+
+/* 인원 × 배율: 빈칸 = 0, 인원 숫자 1자리 · 배율 숫자 3자리 */
+.add-box {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.add-input {
+    padding: 4px 2px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    font: inherit;
+    font-size: 0.82rem;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+}
+
+.add-input.is-party {
+    width: calc(1ch + 14px);
+}
+
+.add-input.is-rate {
+    width: calc(4ch + 14px);
+}
+
+.add-input:focus,
+.champ-input:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+
+.unit {
+    color: var(--muted);
+    font-size: 0.75rem;
+}
+
+.time-main {
+    font-weight: 700;
+    color: var(--text-bright);
+    white-space: nowrap;
+}
+
+.time-impossible {
+    font-weight: 700;
+    color: var(--red);
+}
+
+.time-sub {
+    display: block;
+    margin-top: 2px;
+    color: var(--muted);
+    font-size: 0.7rem;
+}
+
+/* 저장된 API 응답을 보여 줄 때 안내 */
+.stale-note {
+    margin: -4px 0 10px;
+    color: var(--red);
+    font-size: 0.76rem;
+}
+
+/* ── 도핑 선택: 머리 = 이미지 + 아래 글자, 칸 = 체크박스 / 유챔 선택 ── */
+.col-buff {
+    width: 1%;
+}
+
+.buff-head {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+}
+
+.buff-head img {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+}
+
+.buff-check {
+    width: 17px;
+    height: 17px;
+    accent-color: var(--accent);
+    cursor: pointer;
+}
+
+/* 유챔: 숫자 직접입력 (5자리까지) */
+.champ-input {
+    padding: 3px 4px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    font: inherit;
+    font-size: 0.78rem;
+}
+
+.champ-input {
+    width: 5.2em;
+    text-align: right;
+}
+
+/* ── 전체 요약 카드 ── */
+.summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 12px;
+}
+
+.summary-card {
+    padding: 14px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    text-align: left;
+    font: inherit;
+    color: var(--text);
+    cursor: pointer;
+}
+
+.summary-card:hover {
+    border-color: var(--accent);
+}
+
+.sc-head {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    margin-bottom: 4px;
+}
+
+.sc-level {
+    color: var(--accent);
+    font-size: 0.78rem;
+    font-weight: 700;
+}
+
+.sc-name {
+    color: var(--text-bright);
+    font-size: 1.05rem;
+    font-weight: 900;
+}
+
+.sc-job {
+    color: var(--muted);
+    font-size: 0.78rem;
+}
+
+.sc-row {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 6px;
+    font-size: 0.8rem;
+}
+
+.sc-row strong {
+    color: var(--text-bright);
+}
+
+.progress {
+    height: 6px;
+    margin-top: 8px;
+    border-radius: 999px;
+    background: var(--surface);
+    overflow: hidden;
+}
+
+.progress span {
+    display: block;
+    height: 100%;
+    background: var(--green);
+}
+
+/* ── 설정 · 백업 ── */
+.set-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.85rem;
+}
+
+.set-row:last-child {
+    border-bottom: 0;
+}
+
+.set-row label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 700;
+}
+
+.set-input {
+    width: 4.5em;
+    padding: 3px 6px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    font: inherit;
+    text-align: center;
+}
+
+.set-desc {
+    width: 100%;
+    color: var(--muted);
+    font-size: 0.76rem;
+    line-height: 1.6;
+}
+
+/* ── 붙여넣기 칸 · 알림 ── */
+.paste-input {
+    width: 100%;
+    min-height: 220px;
+    margin-top: 10px;
+    padding: 8px 10px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font: inherit;
+    font-size: 0.78rem;
+    resize: vertical;
+}
+
+.paste-input:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+
+.toast {
+    position: fixed;
+    left: 50%;
+    bottom: 24px;
+    z-index: 60;
+    max-width: 90vw;
+    padding: 10px 16px;
+    transform: translateX(-50%);
+    background: var(--surface);
+    border: 1px solid var(--accent);
+    border-radius: 10px;
+    box-shadow: 0 6px 20px var(--shadow);
+    color: var(--text-bright);
+    font-size: 0.85rem;
+    white-space: pre-line;
+}

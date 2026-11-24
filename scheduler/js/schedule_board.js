@@ -30,13 +30,6 @@
         { key: 'daily', module: () => BoardDaily, title: '일일 컨텐츠', reset: 'daily' },
     ];
 
-    // 2026-11-24 13:05 형식
-    function fmtDateTime(ms) {
-        const d = new Date(ms);
-        const p = (n) => String(n).padStart(2, '0');
-        return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`;
-    }
-
     function mount(container, options) {
         if (!container) return;
         container.classList.add('sb');
@@ -72,7 +65,7 @@
             }
             if (opts.refreshAt) {
                 const fails = cache.fails ? ` · 실패 ${cache.fails}` : '';
-                opts.refreshAt.textContent = cache.at ? `${fmtDateTime(cache.at)}${fails}` : '갱신 기록 없음';
+                opts.refreshAt.textContent = cache.at ? `${Util.fmtDateTime(cache.at)}${fails}` : '갱신 기록 없음';
                 opts.refreshAt.classList.toggle('is-error', !!cache.fails);
             }
         }
