@@ -227,7 +227,12 @@
             margin-bottom: 0;
         }
 
+        /* 총 예상시간 / 남은 시간 두 줄, 오른쪽 정렬 */
         .sched-total {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 2px;
             white-space: nowrap;
         }
 
@@ -1601,7 +1606,7 @@
                         <li class="${d.key === myKey ? 'is-current' : ''}">
                             <button type="button" data-act="my-pick" data-key="${esc(d.key)}">
                                 ${difficultyBadge(d.difficulty)}
-                                <span class="pop-rate">${fmtRate(d.rate)}%</span>
+                                <span class="pop-rate">${fmtRate2(d.rate)}%</span>
                             </button>
                         </li>`).join('')}</ul>`
                     : '<p class="muted">CSV에서 이 보스를 찾지 못했습니다</p>';
@@ -1639,6 +1644,11 @@
                     </th>`).join('');
             }
 
+            // 내 배율 표기: 소수 둘째 자리까지 항상 (10.2 → 10.20), 없으면 -
+            function fmtRate2(rate) {
+                return Number.isFinite(rate) ? rate.toFixed(2) : '-';
+            }
+
             function scheduleRowHtml(p, row) {
                 const conf = p.rows[row.rowKey] || normalizeRow(null);
                 const myKey = myKeyOf(p, row, conf);
@@ -1661,7 +1671,7 @@
                         <td class="col-my">
                             <button type="button" class="my-btn${picked ? ' is-picked' : ''}" data-act="detail" aria-expanded="false"
                                 title="누르면 난이도별 csv 배율에서 선택">
-                                <span class="my-rate"><span class="my-num">${myRate == null ? '-' : fmtRate(myRate)}</span>%</span><span class="caret">▼</span>
+                                <span class="my-rate"><span class="my-num">${fmtRate2(myRate)}</span>%</span><span class="caret">▼</span>
                             </button>
                             ${detailPopHtml(p, row, myKey)}
                         </td>
@@ -1722,7 +1732,10 @@
                 }
                 const totals = `
                     <span class="grow"></span>
-                    <span class="sched-total">총 예상시간 <strong>${formatTime(s.total)}</strong> · <span title="미클리어 보스 합계">남은 시간</span> <strong>${formatTime(s.remain)}</strong></span>`;
+                    <span class="sched-total">
+                        <span>총 예상시간 <strong>${formatTime(s.total)}</strong></span>
+                        <span><span title="미클리어 보스 합계">남은 시간</span> <strong>${formatTime(s.remain)}</strong></span>
+                    </span>`;
                 return `
                     <div class="sched">
                         ${stale}
