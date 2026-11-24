@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         환산 클리어 시간 추가
 // @namespace    maple_util
-// @version      1.0
+// @version      2.0
 // @description  메이플 스카우터 보스 카드의 % 아래에 예상 클리어 시간을 표시
 // @match        https://maplescouter.com/*/result*
 // @match        https://maplescouter.com/*/multi-result*
