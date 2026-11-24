@@ -165,7 +165,7 @@
 
 .boss-table {
     width: 100%;
-    min-width: 860px;
+    width: auto;               /* 칸 사이 남는 여백 없이 내용 폭만큼 (좁으면 .table-scroll로 가로 스크롤) */
     border-collapse: collapse;
     font-size: 0.85rem;
 }
@@ -482,6 +482,34 @@
 
 .add-input.is-rate {
     width: calc(4ch + 14px);
+}
+
+.add-input.is-min {
+    width: calc(3ch + 14px);
+    margin-right: 2px;
+}
+
+/* 내 배율: 보스 · 인원 × 배율과의 여백 최소화 */
+.boss-table td.col-boss,
+.boss-table th.col-boss {
+    padding-right: 4px;
+}
+
+.boss-table td.col-my,
+.boss-table th.col-my,
+.boss-table td.col-add,
+.boss-table th.col-add {
+    padding-left: 2px;
+    padding-right: 2px;
+}
+
+/* 시간 직접입력(분): 입력하면 예상시간은 흐리게 (합계는 직접입력 값) */
+.col-manual {
+    white-space: nowrap;
+}
+
+.boss-table td.col-time.is-ignored > * {
+    opacity: 0.4;
 }
 
 .add-input:focus,

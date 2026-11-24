@@ -276,6 +276,7 @@
     const ROW_CHANGE = {
         'add-party': (conf, el) => { conf.addParty = BcStore.positiveDigits(el.value, LIMITS.PARTY_DIGITS); },
         'add-rate': (conf, el) => { conf.addRate = BcStore.positiveDigits(el.value, LIMITS.RATE_DIGITS); },
+        'manual-min': (conf, el) => { conf.manualMin = BcStore.positiveDigits(el.value, LIMITS.MANUAL_MIN_DIGITS); },
         buff: (conf, el) => { conf.buff[el.dataset.buff] = el.checked; },
         'champ-num': (conf, el) => { conf.buff.champ = BcStore.champDigits(el.value); },
     };
@@ -285,6 +286,7 @@
         'champ-num': LIMITS.CHAMP_DIGITS,
         'add-party': LIMITS.PARTY_DIGITS,
         'add-rate': LIMITS.RATE_DIGITS,
+        'manual-min': LIMITS.MANUAL_MIN_DIGITS,
     };
 
     function onClick(e) {

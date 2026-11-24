@@ -8,6 +8,7 @@
         PARTY_DIGITS: 1,           // 인원 입력칸 숫자 자리수
         RATE_DIGITS: 4,            // 배율 입력칸 숫자 자리수
         CHAMP_DIGITS: 5,           // 유챔 입력칸 숫자 자리수
+        MANUAL_MIN_DIGITS: 3,      // 시간 직접입력(분) 칸 숫자 자리수
         MIN_RATE: 10,              // 내 배율 + 인원 × 배율이 이 값 미만이면 "불가"
         DEFAULT_BASE_MINUTES: 20,  // 배율 100%일 때 걸리는 시간(분), 환산시간.user.js 기본값과 같음
     });

@@ -1,6 +1,6 @@
 /* ── 보스 체크: 화면 HTML (데이터 → HTML 문자열, 계산 · 저장 · 이벤트 없음) ──
  * 화면: 메뉴 · 전체 요약 · 프로파일 · 붙여넣기 · 백업 · 설정
- * 보스 스케줄 표: 행을 끌어서 순서 변경 (월간 제외, boss_check.js) / (끌기 아이콘) | (클리어) | 난이도 | 보스 | 내 배율 + 인원 × 배율 = 예상시간 | 도핑메모(뿌리기 | 유챔 | 콜렉터 | 세이람)
+ * 보스 스케줄 표: 행을 끌어서 순서 변경 (월간 제외, boss_check.js) / (끌기 아이콘) | (클리어) | 난이도 | 보스 | 내 배율 + 인원 × 배율 = 예상시간 | 직접입력(분) | 도핑메모(뿌리기 | 유챔 | 콜렉터 | 세이람)
  * 의존: util.js, difficulty.js, boss_check/bc_data.js, bc_boss_key.js, bc_estimate.js
  *
  * ctx = { state, view, live }  (live: BcLive.create 결과)
@@ -130,7 +130,10 @@
                     </span>
                 </td>
                 <td class="col-op" aria-hidden="true">=</td>
-                <td class="col-time">${time}<span class="time-sub">적용 ${est.adj == null ? '-' : E.fmtRate(est.adj) + '%'}</span></td>
+                <td class="col-time${conf.manualMin ? ' is-ignored' : ''}"${conf.manualMin ? ' title="직접입력 시간을 합계에 사용"' : ''}>${time}<span class="time-sub">적용 ${est.adj == null ? '-' : E.fmtRate(est.adj) + '%'}</span></td>
+                <td class="col-manual">
+                    ${digitInput('add-input is-min', 'manual-min', LIMITS.MANUAL_MIN_DIGITS, conf.manualMin, '시간 직접입력 (분)')}<span class="unit">분</span>
+                </td>
                 ${buffCellsHtml(conf)}
             </tr>`;
     }
@@ -191,11 +194,11 @@
                     <table class="boss-table">
                         <thead>
                             <tr class="group-row">
-                                <th colspan="9" class="sched-title">${title(totals, resetBtn)}</th>
+                                <th colspan="10" class="sched-title">${title(totals, resetBtn)}</th>
                                 <th colspan="${BUFFS.length}" class="dop-head">도핑메모</th>
                             </tr>
                             <tr>
-                                <th class="col-drag"></th><th class="col-clear">클리어</th><th>난이도</th><th>보스</th><th>내 배율</th><th class="col-op"></th><th>인원 × 배율</th><th class="col-op"></th><th>예상시간</th>
+                                <th class="col-drag"></th><th class="col-clear">클리어</th><th>난이도</th><th class="col-boss">보스</th><th class="col-my">내 배율</th><th class="col-op"></th><th class="col-add">인원 × 배율</th><th class="col-op"></th><th>예상시간</th><th class="col-manual" title="입력하면 총 예상시간 · 남은 시간에 예상시간 대신 사용">직접입력</th>
                                 ${buffHeadHtml()}
                             </tr>
                         </thead>

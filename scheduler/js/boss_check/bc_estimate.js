@@ -1,6 +1,7 @@
 /* ── 보스 체크: 배율 → 예상시간 계산 · 표기 ──
  * 적용 배율 = 내 배율 + 인원 × 배율 (빈칸은 0)
  * 예상시간 = 기준 시간 ÷ (적용 배율 ÷ 100)  (환산시간.user.js 계산식), MIN_RATE 미만이면 불가
+ * 합계(총 예상시간 · 남은 시간)는 시간 직접입력(분)이 있는 행이면 예상시간 대신 그 값
  * 순수 함수만 (상태 없음)
  * 의존: boss_check/bc_data.js, boss_check/bc_store.js
  */
@@ -42,10 +43,16 @@
         return { adj, seconds: estimateSeconds(adj, baseMinutes) };
     }
 
+    // 합계에 쓰는 행 시간(초): 시간 직접입력(분)이 있으면 그 값, 없으면 예상시간 (불가면 null)
+    function rowSeconds(profile, row, conf, baseMinutes) {
+        if (conf.manualMin) return conf.manualMin * 60;
+        return rowEstimate(profile, row, conf, baseMinutes).seconds;
+    }
+
     // 보스 스케줄 행 목록 → { cleared, count, total, remain, impossible } (초 단위, 불가 보스는 합계 제외)
     function stats(profile, rows, baseMinutes) {
         return rows.reduce((s, row) => {
-            const { seconds } = rowEstimate(profile, row, rowConfOf(profile, row), baseMinutes);
+            const seconds = rowSeconds(profile, row, rowConfOf(profile, row), baseMinutes);
             return {
                 cleared: s.cleared + (row.done ? 1 : 0),
                 count: s.count,

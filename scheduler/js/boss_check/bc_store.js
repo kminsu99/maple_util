@@ -2,9 +2,10 @@
  * state = { version, settings: { baseMinutes }, activeProfile, profiles: { [이름]: profile } }
  * profile = { level, name, job, csvName(처음 불러온 이름), ocid, bosses, rows }
  *  - bosses: { '이름|난이도': { csvRate } }  환산 붙여넣기 배율 (1인 기준)
- *  - rows: { [행 키]: { myKey, addParty, addRate, buff } }  보스 스케줄 행마다 사용자가 바꾼 값
+ *  - rows: { [행 키]: { myKey, addParty, addRate, manualMin, buff } }  보스 스케줄 행마다 사용자가 바꾼 값
  *    · 행 키 = 보스컷 키, 보스컷에 없는 보스는 'api:' + API 이름|난이도
  *    · myKey: 내 배율로 고른 보스컷 키 (null = 행의 보스컷 키), addParty · addRate: 인원 × 배율 (빈칸·0 = null)
+ *    · manualMin: 시간 직접입력(분, 빈칸·0 = null), 있으면 합계에 예상시간 대신 사용
  *  - order: 보스 스케줄 표시 순서 '0x' + 16진수 13자리 (ORDER_SIZE개 필드)
  *    · 자리마다 기본 순서(BcLive rows 참고)의 번호, 앞자리부터 위에 표시 / 기본값 '0x0123456789abc'
  *  - 클리어 여부는 저장하지 않음 (매번 API에서 가져옴)
@@ -59,6 +60,7 @@
             myKey: typeof x.myKey === 'string' && x.myKey ? x.myKey : null,
             addParty: positiveDigits(x.addParty, LIMITS.PARTY_DIGITS),
             addRate: positiveDigits(x.addRate, LIMITS.RATE_DIGITS),
+            manualMin: positiveDigits(x.manualMin, LIMITS.MANUAL_MIN_DIGITS),
             buff: normalizeBuff(x.buff),
         };
     }
