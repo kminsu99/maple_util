@@ -32,9 +32,10 @@
     }
 
     GM_addStyle(`
-        .mst-time { display:block; margin-top:4px; padding-top:4px;
-            border-top:1px solid rgba(255,255,255,.08); font-size:12px; font-weight:600;
-            line-height:1.3; text-align:center; white-space:nowrap; color:#7c8594; }
+        /* 배율과 붙여 표시: 카드의 gap-1(4px)을 margin-top:-4px로 상쇄, 여백·구분선 없음 */
+        .mst-time { display:block; margin-top:-4px; padding:0;
+            font-size:12px; font-weight:600;
+            line-height:1.1; text-align:center; white-space:nowrap; color:#7c8594; }
         .mst-time.mst-fast { color:#2e9e5b; }
         .mst-time.mst-slow { color:#d64545; }
     `);
