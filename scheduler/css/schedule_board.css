@@ -460,6 +460,11 @@
     font-size: 0.78rem;
 }
 
+/* 일일 컨텐츠 편집 중: 월드 공유 칩에 몬스터파크 목표 입력칸이 붙어 좁음 → 편집 중에만 칩 가로 폭 확대 */
+.sb-cat.is-editing .world-shared .sb-items {
+    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+}
+
 .dm-cell .sb-item {
     background: var(--surface);
 }
@@ -663,7 +668,8 @@
      *  - 대분류: 1줄 = 이름 D-day ······ 완료/전체 (오른쪽 끝), 2줄 = 전체 폭 막대
      *  - 캐릭터 줄: └ 이름 | (주간보스만 막대) | 완료/전체 (오른쪽 끝)
      * 숫자는 항상 오른쪽 정렬 → 막대 오른쪽 끝과 맞음, 이름 칸 너비는 섹션별 (아래 gw-*) */
-    grid-template-columns: var(--g-label, 6rem) 1fr auto;
+    /* 숫자 칸 너비 고정 → 모든 줄의 막대 오른쪽 끝이 맞음 */
+    grid-template-columns: var(--g-label, 6rem) 1fr var(--g-num, 3.2rem);
     align-items: center;
     column-gap: 6px;
 }
@@ -688,7 +694,8 @@
  * align-content: start → 옆 묶음(월간보스)이 더 길어 칸이 늘어나도 줄 사이를 벌리지 않고 위에서부터 같은 간격 */
 .wk-gauge-group {
     display: grid;
-    gap: 3px;
+    /* --g-*: js/pixel_snap.js가 확대 비율에 맞춰 기기 픽셀 정수 값으로 넣음 (없으면 기본값) */
+    gap: var(--g-gap, 3px);
     align-content: start;
     min-width: 0;
 }
@@ -789,12 +796,22 @@
     color: var(--muted);
 }
 
+/* 캐릭터 줄 막대(주간보스): 대분류(10px)보다 조금 얇게, 폭은 대분류와 같음 */
 .wk-gauge.is-child .wk-gauge-bar {
-    height: 6px;
+    height: var(--g-bar-child, 7px);
+}
+
+/* 캐릭터 줄 높이를 정수 px로 고정
+ * 글자 줄 높이(0.75rem × line-height)가 소수 px이면 줄마다 막대 y 위치가 소수점만큼 밀려
+ * 안티앨리어싱으로 막대 두께가 줄마다 달라 보임 → 모든 캐릭터 줄이 같은 소수 오프셋을 갖도록 고정 */
+.wk-gauge.is-child {
+    /* 19px: 막대(테두리 포함 7px, border-box)가 가운데 정렬돼도 위 여백 6px로 정수
+     * 확대 비율이 100%가 아니면 js/pixel_snap.js가 기기 픽셀 정수 값으로 바꿔 넣음 */
+    grid-template-rows: var(--g-row, 19px);
 }
 
 
-/* 대분류 줄: 이름(+D-day)은 숫자 앞까지 넓게, 막대는 아래 줄 전체 폭 */
+/* 대분류 줄: 이름(+D-day)은 숫자 앞까지 넓게, 막대는 아래 줄 전체 폭 (이름 왼쪽 끝 ~ 완료/전체 오른쪽 끝) */
 .wk-gauge:not(.is-child) {
     row-gap: 3px;
 }
@@ -816,10 +833,10 @@
 }
 
 .wk-gauge-bar {
-    height: 10px;
+    height: var(--g-bar, 10px);
     border-radius: 999px;
     background: var(--surface2);
-    border: 1px solid var(--border);
+    border: var(--g-bw, 1px) solid var(--border);
     overflow: hidden;
 }
 
